@@ -73,7 +73,7 @@ export interface ArticleStruct {
   rating: Rating;//作品分级
   warning: Warning[];
   fandom: string; //原作
-  relationship: string; //CP名
+  relationship: string[]; //CP名
   category: Category;//性向分类
   character: string[]; //人物
   tag: string[]; //其它说明tag
@@ -93,20 +93,6 @@ export type ArticleSimplified = Omit<ArticleStruct, 'chapters'>
  */
 
 export namespace Article {
-  /**
-   * //获取文章列表
-   * GET /article/list?offset=[number]&amount=[number]
-   */
-  export function getList(amount: number, offset = 0) {
-    return get<List.Response, BaseGetParameters>('/article/list', {amount, offset})
-  }
-
-  export namespace List {
-    export interface Response extends BaseResponse {
-      articles: ArticleSimplified[];
-    }
-  }
-
 
   /**
    * //获取文章信息（包括章节信息）

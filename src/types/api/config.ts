@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-export const API_PREFIX = ''
+export const API_PREFIX = 'https://rikaapi.rika.tech/api/exile?'
 
 export interface BaseGetParameters {
   offset: number
