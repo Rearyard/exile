@@ -1,15 +1,390 @@
 <template>
-  <div>
-      <p>文区-详情和阅读</p>
+  <div v-if="article">
+    <Row style="margin-top:2rem">
+      <i-col
+        :xs="{ span: 20, offset: 2}"
+        :sm="{ span: 18, offset:3 }"
+        :md="{ span: 16, offset: 4 }"
+        :lg="{ span: 14, offset: 5 }"
+      >
+        <Breadcrumb separator=" > " style="margin-bottom: 2rem">
+          <Breadcrumb-item href="/">
+            <Icon type="ios-home-outline"></Icon>放逐地
+          </Breadcrumb-item>
+          <Breadcrumb-item href="/components/breadcrumb">
+            <Icon type="social-buffer-outline"></Icon>文区
+          </Breadcrumb-item>
+          <Breadcrumb-item>
+            <Icon type="pound"></Icon>新文章
+          </Breadcrumb-item>
+          <BreadcrumbItem v-bind:to="'/article/' + '12306'" v-on:click.native="changeSelectedChapter(-1)">
+            <Icon type="pound" />
+            {{article.title}}
+          </BreadcrumbItem>
+          <BreadcrumbItem v-if="selectedChapter" to="/">
+            <Icon type="pound" />
+            第 {{selectedChapter.cid}} 章
+          </BreadcrumbItem>
+        </Breadcrumb>
+
+        <div class="wrap-card">
+          <div class="article-header">
+            <h1>{{article.title}}</h1>
+            <span>{{article.summary}}</span>
+            <span style="font-size: 130%">BY {{article.author.username}} | 分级 {{ratingString}}</span>
+            <span>
+              <Icon type="ios-alert" />
+              :
+              {{article.warning.join(' ')}}
+            </span>
+            <span>注释: {{article.note}}</span>
+            <div class="article-stats">
+              <span>点赞: {{article.like}} 字数: {{article.wordCount}}</span>
+            </div>
+          </div>
+
+          <Divider class="my-divider" />
+
+          <div class="article-body" v-if="article.chapters.length">
+            <div v-if="!selectedChapter" style="width: 100%">
+              <div v-if="!portable">
+                <div style="text-align: center">
+                  <div class="toc-header-box">目录</div>
+                </div>
+                <br />
+                <Row :gutter="16">
+                  <i-col span="6">章节名</i-col>
+                  <i-col span="6">概要</i-col>
+                  <i-col span="2">评论</i-col>
+                  <i-col span="5">发布时间</i-col>
+                  <i-col span="5">最后修改</i-col>
+                </Row>
+                <Divider class="my-divider slim-divider" />
+
+                <Row
+                  class="chapter-summary"
+                  :gutter="16"
+                  v-for="chapter of article.chapters"
+                  v-bind:key="chapter.cid"
+                  v-on:click.native="changeSelectedChapter(chapter.cid)"
+                >
+                  <i-col span="6">{{chapter.title}}</i-col>
+                  <i-col span="6">{{chapter.summary}}</i-col>
+                  <i-col span="2">{{chapter.commentCount}}</i-col>
+                  <i-col span="5">{{dateIntToString(chapter.publish)}}</i-col>
+                  <i-col span="5">{{dateIntToString(chapter.edit)}}</i-col>
+                </Row>
+
+                <Divider class="my-divider slim-divider" />
+              </div>
+
+              <div v-if="portable">
+                <div style="text-align: center">
+                  <div class="toc-header-box">目录</div>
+                </div>
+                <br />
+                <i-col span="5">章节名</i-col>
+                <Divider class="my-divider slim-divider" />
+
+                <Row
+                  class="chapter-summary"
+                  v-for="chapter of article.chapters.slice((chapterListPage-1)*10, chapterListPage*10)"
+                  v-bind:key="chapter.cid"
+                >{{chapter.title}}</Row>
+
+                <Divider class="my-divider slim-divider" />
+              </div>
+
+              <div class="page-turner" style="justify-content: flex-end">
+                <i-button size="small">上一页</i-button>
+                <div style="display: flex; align-items: center">
+                  <span style="color: rgba(74, 144, 226, 1)">{{chapterListPage}}</span>
+                  / {{Math.ceil(article.chapters.length / 10)}}
+                </div>
+                <i-button size="small">下一页</i-button>
+                <i-button size="small">尾页</i-button>
+              </div>
+            </div>
+
+            <div v-if="selectedChapter">
+              <h1>第一章</h1>
+              简介: {{selectedChapter.summary}}
+              {{selectedChapter.content}}
+            </div>
+          </div>
+
+          <Divider class="my-divider" />
+
+          <div class="article-footer">本文著作权为作者 {{article.author.username}} 所有，未经作者授权禁止转载</div>
+        </div>
+
+        <Row :gutter="32" class-name="article-buttons">
+          <i-col span="8" style="text-align: center">
+            <i-button
+              class="cute-button"
+              icon="ios-heart-outline"
+              style="background-color: rgba(157, 209, 169, 1)"
+              @click="changeSelectedChapter(-1)"
+            >收藏</i-button>
+          </i-col>
+          <i-col span="8" style="text-align: center">
+            <i-button
+              class="cute-button"
+              icon="ios-heart-outline"
+              style="background-color: rgba(244, 179, 207, 1)"
+            >喜欢</i-button>
+          </i-col>
+          <i-col span="8" style="text-align: center">
+            <i-button
+              class="cute-button"
+              icon="ios-cash-outline"
+              style="background-color: rgba(255, 195, 0, 1)"
+            >赞助</i-button>
+          </i-col>
+        </Row>
+
+        <div v-if="showComment">
+          <div v-if="comments.length">
+          <div
+            class="wrap-card comment-card"
+            v-for="comment of comments.slice((commentListPage-1)*10, commentListPage*10)"
+            v-bind:key="comment.id"
+          >
+            <div>{{comment.author}}</div>
+            <div>{{comment.like}}</div>
+            <div>{{comment.content}}</div>
+            <div>{{dateIntToString(comment.publish)}}</div>
+          </div>
+
+          <div class="page-turner">
+            <i-button size="small">上一页</i-button>
+            <div style="display: flex; align-items: center">{{commentListPage}} / {{Math.ceil(comments.length / 10)}}</div>
+            <i-button size="small">下一页</i-button>
+            <i-button size="small">尾页</i-button>
+          </div>
+          </div>
+          <div class="wrap-card comment-panel">
+            <h1>评论</h1>
+            <Input
+              v-model="commentInput"
+              maxlength="200"
+              show-word-limit
+              type="textarea"
+              placeholder="请友善发言并遵守《国际膜蛤公约》"
+              style="width: 100%; resize: none; margin-top: 2em"
+              size="large"
+              :rows="5"
+            />
+            <div style="text-align: right; padding-top: 1em">
+              <i-button
+                class="cute-button"
+                icon="ios-checkmark"
+                style="background-color: rgba(157, 209, 169, 1)"
+                @click="submitComment()"
+              >提交</i-button>
+            </div>
+          </div>
+        </div>
+      </i-col>
+    </Row>
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+// import { Vue, Component } from "vue-property-decorator";
+import {
+  Article,
+  ArticleStruct,
+  Chapter,
+  Rating,
+  Comment
+} from "@/types/api/article";
+import moment from "moment";
 
-}
+export default {
+  data() {
+    return {
+      article: undefined as ArticleStruct,
+      chapters: [] as Chapter[],
+      comments: [] as Comment[],
+      selectedChapter: undefined as Chapter,
+      commentInput: "" as string,
+      chapterListPage: 1,
+      commentListPage: 1,
+
+      showComment: true // 逻辑暂定 (不确定 comment 属于什么)
+    };
+  },
+
+  async mounted() {
+    this.article = await Article.getDetail(1).then(v => v.article);
+    console.log(this.article);
+  },
+
+  computed: {
+    ratingString() {
+      return Rating[this.article.rating];
+    },
+
+    portable() {
+      return window.screen.width < 1024;
+    }
+  },
+
+  methods: {
+    dateIntToString(x) {
+      return moment(x).format("YYYY-MM-DD HH:MM:SS");
+    },
+
+    async changeSelectedChapter(cid) {
+      console.log(cid);
+      if (cid == -1) {
+        this.selectedChapter = undefined;
+        this.comments = [];
+      } else {
+        this.selectedChapter = await Chapter.getChapters(12306, 1, cid).then(
+          v => v.chapters[0]
+        );
+        this.loadComment(10, 0);
+        console.log(this.selectedChapter);
+      }
+    },
+
+    async loadComment(limit, offset) {
+      this.comments = [];
+      this.comments = await Comment.getComment(
+        12306,
+        this.article.cid,
+        limit,
+        offset
+      ).then(v => v.comments);
+      console.log(this.comments);
+    }
+  }
+};
 </script>
 
-<style>
+<style scoped>
+.wrap-card {
+  width: 100%;
+  line-height: 2rem;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 5px 0px rgba(208, 208, 208, 0.3) inset,
+    0px 10px 15px 12px rgba(208, 208, 208, 0.5);
+  border-radius: 18px;
+  margin-top: 0.5rem;
+  transition: all 0.2s linear;
+  padding-left: 2em;
+  padding-right: 2em;
+}
 
+.demo-breadcrumb-separator {
+  color: #000000;
+  padding: 0 5px;
+}
+
+.article-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  margin-top: 3em;
+  padding: 3em 3em 0 3em;
+  min-height: 200px;
+  /* align-items: center; */
+}
+
+.article-body {
+  display: flex;
+  width: 100%;
+  padding: 2em 3em 2em 3em;
+}
+
+.article-footer {
+  display: flex;
+  width: 100%;
+  margin-top: 3em;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.article-stats {
+  margin-top: 2m;
+  color: #9ea7b4;
+  width: 100%;
+  text-align: right;
+}
+
+.article-buttons {
+  /* align-items: center; */
+  margin: 3em auto 2em auto !important;
+  width: 300px !important;
+}
+
+.cute-button {
+  width: 73px;
+  height: 36px;
+  border-radius: 12px;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 150%;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.toc-header-box {
+  margin-left: auto;
+  margin-right: auto;
+  width: 4rem;
+  padding: 0.5rem 0 0.5rem 0 !important;
+  border-top: 1px solid #9ea7b4;
+  border-bottom: 1px solid #9ea7b4;
+  font-size: 150%;
+  padding: 1rem;
+}
+
+.my-divider {
+  background: #9ea7b4;
+}
+
+.slim-divider {
+  margin: 0;
+}
+
+.chapter-summary {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chapter-summary > div {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment-card {
+  padding: 1em;
+}
+
+.comment-panel {
+  padding: 3em 2em 2em 2em;
+}
+
+.comment-input {
+  margin-top: 1em;
+}
+
+.page-turner {
+  display: flex;
+  margin: 1em 0 1em 0;
+}
 </style>
