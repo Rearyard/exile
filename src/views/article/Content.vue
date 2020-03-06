@@ -17,7 +17,10 @@
           <Breadcrumb-item>
             <Icon type="pound"></Icon>新文章
           </Breadcrumb-item>
-          <BreadcrumbItem v-bind:to="'/article/' + '12306'" v-on:click.native="changeSelectedChapter(-1)">
+          <BreadcrumbItem
+            v-bind:to="'/article/' + '12306'"
+            v-on:click.native="changeSelectedChapter(-1)"
+          >
             <Icon type="pound" />
             {{article.title}}
           </BreadcrumbItem>
@@ -145,23 +148,25 @@
 
         <div v-if="showComment">
           <div v-if="comments.length">
-          <div
-            class="wrap-card comment-card"
-            v-for="comment of comments.slice((commentListPage-1)*10, commentListPage*10)"
-            v-bind:key="comment.id"
-          >
-            <div>{{comment.author}}</div>
-            <div>{{comment.like}}</div>
-            <div>{{comment.content}}</div>
-            <div>{{dateIntToString(comment.publish)}}</div>
-          </div>
+            <div
+              class="wrap-card comment-card"
+              v-for="comment of comments.slice((commentListPage-1)*10, commentListPage*10)"
+              v-bind:key="comment.id"
+            >
+              <div>{{comment.author}}</div>
+              <div>{{comment.like}}</div>
+              <div>{{comment.content}}</div>
+              <div>{{dateIntToString(comment.publish)}}</div>
+            </div>
 
-          <div class="page-turner">
-            <i-button size="small">上一页</i-button>
-            <div style="display: flex; align-items: center">{{commentListPage}} / {{Math.ceil(comments.length / 10)}}</div>
-            <i-button size="small">下一页</i-button>
-            <i-button size="small">尾页</i-button>
-          </div>
+            <div class="page-turner">
+              <i-button size="small">上一页</i-button>
+              <div
+                style="display: flex; align-items: center"
+              >{{commentListPage}} / {{Math.ceil(comments.length / 10)}}</div>
+              <i-button size="small">下一页</i-button>
+              <i-button size="small">尾页</i-button>
+            </div>
           </div>
           <div class="wrap-card comment-panel">
             <h1>评论</h1>
@@ -205,7 +210,6 @@ export default {
   data() {
     return {
       article: undefined as ArticleStruct,
-      chapters: [] as Chapter[],
       comments: [] as Comment[],
       selectedChapter: undefined as Chapter,
       commentInput: "" as string,
@@ -217,8 +221,13 @@ export default {
   },
 
   async mounted() {
-    this.article = await Article.getDetail(1).then(v => v.article);
-    console.log(this.article);
+    this.article = await Article.getDetail(this.$route.params.aid).then(
+      v => v.article
+    );
+    this.comments = [];
+    if (this.$route.params.cid) {
+      this.changeSelectedChapter(this.$route.params.cid);
+    }
   },
 
   computed: {
@@ -237,28 +246,27 @@ export default {
     },
 
     async changeSelectedChapter(cid) {
-      console.log(cid);
       if (cid == -1) {
-        this.selectedChapter = undefined;
         this.comments = [];
+        this.selectedChapter = undefined;
       } else {
-        this.selectedChapter = await Chapter.getChapters(12306, 1, cid).then(
-          v => v.chapters[0]
-        );
+        this.selectedChapter = await Chapter.getChapters(
+          this.$route.params.aid,
+          1,
+          cid
+        ).then(v => v.chapters[0]);
         this.loadComment(10, 0);
-        console.log(this.selectedChapter);
       }
     },
 
     async loadComment(limit, offset) {
       this.comments = [];
       this.comments = await Comment.getComment(
-        12306,
+        this.$route.params.aid,
         this.article.cid,
         limit,
         offset
       ).then(v => v.comments);
-      console.log(this.comments);
     }
   }
 };
