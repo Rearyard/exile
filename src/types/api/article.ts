@@ -73,7 +73,7 @@ export interface ArticleStruct {
   rating: Rating;//作品分级
   warning: Warning[];
   fandom: string; //原作
-  relationship: string; //CP名
+  relationship: string[]; //CP名
   category: Category;//性向分类
   character: string[]; //人物
   tag: string[]; //其它说明tag
