@@ -1,5 +1,6 @@
-import {BaseResponse} from "./auth";
+import {BaseResponse} from "@/types/api/config";
 import {UserStructSimplified} from "./user";
+import {API_PREFIX, BaseGetParameters, del, get, post, put} from "@/types/api/config";
 
 
 /**
@@ -81,7 +82,6 @@ export interface ArticleStruct {
   // comments: Comment[] //评论已转移到章节下
 }
 
-
 //这里的定义是指 ArticleStruct中除去chapters字段
 export type ArticleSimplified = Omit<ArticleStruct, 'chapters'>
 
@@ -94,24 +94,40 @@ export namespace Article {
    * //获取文章列表
    * GET /article/list?offset=[number]&amount=[number]
    */
+  export function getList(amount: number, offset = 0) {
+    return get<List.Response, BaseGetParameters>('/article/list', {amount, offset})
+  }
+
   export namespace List {
     export interface Response extends BaseResponse {
       articles: ArticleSimplified[];
     }
   }
+
+
   /**
    * //获取文章信息（包括章节信息）
    * GET /article/:aid  //:aid是路由参数，文章id
    */
+  export function getDetail(aid: number) {
+    return get<Detail.Response, BaseGetParameters>('/article/' + aid)
+  }
+
   export namespace Detail {
     export interface Response extends BaseResponse {
       article: ArticleStruct;
     }
   }
+
+
   /**
    * 搜索
    * POST /article/search
    */
+  export function search(request: Search.Request) {
+    return post<Search.Response>('/article/search', request)
+  }
+
   export namespace Search {
     export interface Request {
       query?: string;  // 在所有字段搜索, 包括 title, author, relationship,summary 等
@@ -137,6 +153,14 @@ export namespace Article {
    * PUT    /article       添加/修改文章（不包含章节）
    * DELETE /article/:aid  删除文章
    */
+  export function putArticle(request: PutArticle.Request) {
+    return put<PutArticle.Response>('/article', request)
+  }
+
+  export function deleteArticle(aid: number) {
+    return del<PutArticle.Response>('/article/' + aid)
+  }
+
   export namespace PutArticle {
     export interface Request {//仅用于PUT
       aid?: number; //留空新建
@@ -166,15 +190,28 @@ export namespace Chapter {
   /** //获取章节内容
    GET /article/:aid?offset=[number]&amount=[number]
    */
+  export function getChapters(aid: number, amount: number = 1, offset = 0) {
+    return get<GetChapters.Response, BaseGetParameters>('/article/' + aid, {amount, offset})
+  }
+
   export namespace GetChapters {
     export interface Response extends BaseResponse {
       chapters: Chapter[]; //从offset开始的amount个章节
     }
   }
+
   /**
    * PUT /article/:aid          添加/修改章节
    * DELETE /article/:aid/:cid  删除章节
    */
+  export function putChapter(aid: number, request: PutChapter.Request) {
+    return put<PutChapter.Response>('/article/' + aid, request)
+  }
+
+  export function deleteChapter(aid: number, cid: number) {
+    return del<PutChapter.Response>(`/article/${aid}/${cid}`)
+  }
+
   export namespace PutChapter {
     export interface Request { //仅用于PUT
       cid?: number;//章节id，留空新建
@@ -182,6 +219,7 @@ export namespace Chapter {
       summary: string; //章节简介
       content: string;
     }
+
     export interface Response extends BaseResponse {
       chapter: Chapter;
     }
@@ -191,10 +229,23 @@ export namespace Chapter {
 export namespace Comment {
 
   /**
-   PUT /article/:aid/:cid/comments  //cid是章节号 //添加/修改评论
    GET /article/:aid/:cid/comments?offset=[number]&amount=[number] //拉取评论
+   PUT /article/:aid/:cid/comments  //cid是章节号 //添加/修改评论
    DELETE /article/:aid/:cid/comments/:id //删除评论
    */
+  export function getComment(aid: number, cid: number, amount: number = 1, offset = 0) {
+    return get<Response, BaseGetParameters>(`/article/${aid}/${cid}/comments`,
+      {amount, offset})
+  }
+
+  export function putComment(aid: number, cid: number, request: Request) {
+    return put<Response>(`/article/${aid}/${cid}/comments`, request)
+  }
+
+  export function deleteComment(aid: number, cid: number, id: number) {
+    return del<Response>(`/article/${aid}/${cid}/comments/${id}`)
+  }
+
   export interface Request { //仅用于PUT
     id?: number; //留空为添加
     content: string;
