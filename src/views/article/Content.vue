@@ -8,23 +8,17 @@
         :lg="{ span: 14, offset: 5 }"
       >
         <Breadcrumb separator=" > " style="margin-bottom: 2rem">
-          <Breadcrumb-item href="/">
+          <Breadcrumb-item to="/">
             <Icon type="ios-home-outline"></Icon>放逐地
           </Breadcrumb-item>
-          <Breadcrumb-item href="/components/breadcrumb">
+          <Breadcrumb-item>
             <Icon type="social-buffer-outline"></Icon>文区
           </Breadcrumb-item>
-          <Breadcrumb-item>
-            <Icon type="pound"></Icon>新文章
-          </Breadcrumb-item>
-          <BreadcrumbItem
-            v-bind:to="'/article/' + '12306'"
-            v-on:click.native="changeSelectedChapter(-1)"
-          >
+          <BreadcrumbItem :to="'/article/' + this.$route.params.aid">
             <Icon type="pound" />
             {{article.title}}
           </BreadcrumbItem>
-          <BreadcrumbItem v-if="selectedChapter" to="/">
+          <BreadcrumbItem v-if="selectedChapter">
             <Icon type="pound" />
             第 {{selectedChapter.cid}} 章
           </BreadcrumbItem>
@@ -69,7 +63,7 @@
                   :gutter="16"
                   v-for="chapter of article.chapters"
                   v-bind:key="chapter.cid"
-                  v-on:click.native="changeSelectedChapter(chapter.cid)"
+                  v-on:click.native="openChapter(chapter.cid)"
                 >
                   <i-col span="6">{{chapter.title}}</i-col>
                   <i-col span="6">{{chapter.summary}}</i-col>
@@ -127,7 +121,6 @@
               class="cute-button"
               icon="ios-heart-outline"
               style="background-color: rgba(157, 209, 169, 1)"
-              @click="changeSelectedChapter(-1)"
             >收藏</i-button>
           </i-col>
           <i-col span="8" style="text-align: center">
@@ -146,7 +139,7 @@
           </i-col>
         </Row>
 
-        <div v-if="showComment">
+        <div>
           <div v-if="comments.length">
             <div
               class="wrap-card comment-card"
@@ -205,18 +198,17 @@ import {
   Comment
 } from "@/types/api/article";
 import moment from "moment";
+import router from '../../router';
 
 export default {
   data() {
     return {
-      article: undefined as ArticleStruct,
+      article: null as ArticleStruct,
       comments: [] as Comment[],
-      selectedChapter: undefined as Chapter,
+      selectedChapter: null as Chapter,
       commentInput: "" as string,
       chapterListPage: 1,
       commentListPage: 1,
-
-      showComment: true // 逻辑暂定 (不确定 comment 属于什么)
     };
   },
 
@@ -226,7 +218,7 @@ export default {
     );
     this.comments = [];
     if (this.$route.params.cid) {
-      this.changeSelectedChapter(this.$route.params.cid);
+      this.openChapter(this.$route.params.cid);
     }
   },
 
@@ -245,18 +237,11 @@ export default {
       return moment(x).format("YYYY-MM-DD HH:MM:SS");
     },
 
-    async changeSelectedChapter(cid) {
-      if (cid == -1) {
-        this.comments = [];
-        this.selectedChapter = undefined;
-      } else {
-        this.selectedChapter = await Chapter.getChapters(
-          this.$route.params.aid,
-          1,
-          cid
-        ).then(v => v.chapters[0]);
-        this.loadComment(10, 0);
-      }
+    async openChapter(cid) {
+      // 通过挂在 $route 上的钩子实现跳转
+      router.push({
+        path: `/article/${this.$route.params.aid}/${cid}`,
+      });
     },
 
     async loadComment(limit, offset) {
@@ -267,6 +252,33 @@ export default {
         limit,
         offset
       ).then(v => v.comments);
+    }
+  },
+
+  watch: {
+    async $route(to, from) {
+      if (to.params.aid != from.params.aid) {
+        // article 之间跳转, 全部刷新
+        this.article = await Article.getDetail(this.$route.params.aid).then(
+          v => v.article
+        );
+        this.comments = [];
+      }
+
+      if (to.params.cid) {
+        if (from.params.cid != to.params.cid) {
+          this.selectedChapter = null;
+          this.selectedChapter = await Chapter.getChapters(
+            this.$route.params.aid,
+            1,
+            to.params.cid
+          ).then(v => v.chapters[0]);
+          this.loadComment(10, 0);
+        }
+      } else {
+        this.selectedChapter = null;
+        this.comments = [];
+      }
     }
   }
 };
