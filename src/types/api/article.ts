@@ -47,6 +47,7 @@ export interface Chapter {
   cid: number;//章节id，从0开始
   title: string; //章节标题
   summary: string; //章节简介
+  note:string; //注释
   publish: number; //发布日期  //Date不是基础数据类型，改用时间戳（毫秒级）
   edit: number; //最后编辑日期
   content: string;
@@ -66,6 +67,8 @@ export interface ArticleStruct {
   aid: number;
   title: string;//标题
   summary: string; //简介
+  note:string; //注释
+
   author: UserStructSimplified; //作者名
   rating: Rating;//作品分级
   warning: Warning[];
@@ -166,6 +169,7 @@ export namespace Article {
       aid?: number; //留空新建
       title: string;//标题
       summary: string; //简介
+      note:string; //注释
       rating: Rating;//作品分级
       warning: Warning[];
       fandom: string; //原作
@@ -217,6 +221,8 @@ export namespace Chapter {
       cid?: number;//章节id，留空新建
       title: string; //章节标题
       summary: string; //章节简介
+      note:string; //注释
+
       content: string;
     }
 
