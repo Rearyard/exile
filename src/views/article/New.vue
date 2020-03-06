@@ -1,6 +1,26 @@
 <template>
   <div>
-      <p>文区-新文章</p>
+    <Row style="margin-top:2rem">
+      <i-col :xs="{ span: 20, offset: 2}" :sm="{ span: 16, offset:4 }" :md="{ span: 14, offset: 5 }" :lg="{ span: 12, offset: 6 }">
+        <Breadcrumb separator=" > " style="margin-bottom: 2rem">
+          <Breadcrumb-item href="/">
+              <Icon type="ios-home-outline"></Icon> 放逐地
+          </Breadcrumb-item>
+          <Breadcrumb-item href="/components/breadcrumb">
+              <Icon type="social-buffer-outline"></Icon> 文区
+          </Breadcrumb-item>
+          <Breadcrumb-item>
+              <Icon type="pound"></Icon> 新文章
+          </Breadcrumb-item>
+        </Breadcrumb>
+        <div class="wrap-card">
+            <span>> 创建新的小说</span>
+        </div>
+        <div class="wrap-card">
+            <span>> 从Lofter导出的XML导入</span>
+        </div>
+      </i-col>
+    </Row>
   </div>
 </template>
 
@@ -10,6 +30,37 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.wrap-card {
+  width:100%; 
+  height: 4rem;
+  line-height: 4rem;
+  background-color: #ffffff;
+  box-shadow:
+    0px 0px 5px 0px rgba(208,208,208,0.3) inset,
+    0px 10px 15px 12px rgba(208,208,208,0.5);
+  border-radius:18px;
+  margin-top:0.5rem;
+  transition: all 0.2s linear;
+}
+.wrap-card span{
+    display: table-cell;
+    padding-left: 1rem;
+    vertical-align: middle;
+    font-size: 26px;
+    height: 30px;
+    color: rgba(95, 95, 95, 0.7);
+    text-shadow: 0px 1px 1px rgba(71, 68, 66, 0.6);
+    font-family: "Arvo", "Myriad Pro", "Trebuchet MS", sans-serif;
+    transition: all 0.3s linear;
+}
+.wrap-card:hover{
+    /* background: rgba(170, 77, 27, 0.6); */
+    transform: scale(1.02);
+    box-shadow:    
+        0px 0px 5px 0px rgba(208,208,208,0.5) inset,
+        0px -1px 5px 4px rgba(224, 230, 228, 0.65)inset,
+        0px 3px 2px 2px rgba(208, 208, 208, 0.8);
+}
 
 </style>
