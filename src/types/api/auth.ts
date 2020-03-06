@@ -4,8 +4,8 @@
 import {UserStruct, UserStructSimplified} from "./user";
 
 export interface BaseResponse {
-  status: boolean
-  msg?: string
+  status: boolean;
+  msg?: string;
 }
 
 /**
@@ -21,14 +21,14 @@ export namespace Auth {
   export namespace Login {
     // POST
     export interface Request {
-      username: string,
-      password: string,
-      captcha: string,
+      username: string;
+      password: string;
+      captcha: string;
     }
 
     export interface Response extends BaseResponse {
       //登录失败或没有登录user项为空（也可以设置BaseResponse.status
-      user?: UserStructSimplified
+      user?: UserStructSimplified;
     }
   }
   /**
@@ -38,16 +38,16 @@ export namespace Auth {
   export namespace Captcha {
     //GET
     export interface GetResponse {
-      src: string //返回base64或svg或后端临时图片链接
+      src: string; //返回base64或svg或后端临时图片链接
     }
 
     //POST
     export interface PostRequest {
-      code: string
+      code: string;
     }
 
     export interface PostResponse extends BaseResponse {
-      token: string
+      token: string;
     }
   }
 
@@ -57,17 +57,17 @@ export namespace Auth {
    */
   export namespace Register {
     export interface Request {
-      username: string,
-      password: string,
+      username: string;
+      password: string;
       // rePassword: string, //此处建议不需要把重复密码传入后端，在前端检查即可
-      email: string,
+      email: string;
       // nickName: string, //使用username而不再设nickName
-      captcha: string,
-      invCode: string,//邀请码
+      captcha: string;
+      invCode: string;//邀请码
     }
 
     export interface Response extends BaseResponse {
-      user: UserStructSimplified
+      user: UserStructSimplified;
     }
   }
 
@@ -77,10 +77,9 @@ export namespace Auth {
    */
   export namespace Reset {
     export interface Request {
-      email: string
+      email: string;
     }
 
-    export interface Response extends BaseResponse {
-    }
+    export type Response = BaseResponse
   }
 }
