@@ -1,6 +1,7 @@
 <template>
   <div>
     <Layout class="layout">
+      <Affix>
       <Header class="layout-header-bar" :class="{'layout-header-bar-portable':portable}" v-if="!hideHeader">
         <Menu mode="horizontal" id="menu" theme="dark" active-name="0">
           <div class="wrapper-nav" v-if="!portable">
@@ -41,7 +42,8 @@
           </div>
         </Menu>
       </Header>
-      <Content style="margin-top:74px">
+      </Affix>
+      <Content>
         <router-view />
       </Content>
       <Footer style="text-align:center">@后花园2020</Footer>
@@ -135,8 +137,6 @@ export default {
   min-height: 100vh;
 }
 .layout-header-bar {
-  position: fixed;
-  width: 100%;
   background: #333333;
   color: #fff;
   box-shadow: 0px 0px 5px 1px #6868684f;
