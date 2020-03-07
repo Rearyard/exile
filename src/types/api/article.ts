@@ -47,7 +47,7 @@ export interface Chapter {
   cid: number;//章节id，从0开始
   title: string; //章节标题
   summary: string; //章节简介
-  note:string; //注释
+  note: string; //注释
   publish: number; //发布日期  //Date不是基础数据类型，改用时间戳（毫秒级）
   edit: number; //最后编辑日期
   content: string;
@@ -67,7 +67,7 @@ export interface ArticleStruct {
   aid: number;
   title: string;//标题
   summary: string; //简介
-  note:string; //注释
+  note: string; //注释
 
   author: UserStructSimplified; //作者名
   rating: Rating;//作品分级
@@ -98,7 +98,7 @@ export namespace Article {
    * //获取文章信息（包括章节信息）
    * GET /article/:aid  //:aid是路由参数，文章id
    */
-  export function getDetail(aid: number) {
+  export function getDetail(aid: number | string) {
     return get<Detail.Response, BaseGetParameters>('/article/' + aid)
   }
 
@@ -146,7 +146,7 @@ export namespace Article {
     return put<PutArticle.Response>('/article', request)
   }
 
-  export function deleteArticle(aid: number) {
+  export function deleteArticle(aid: number | string) {
     return del<PutArticle.Response>('/article/' + aid)
   }
 
@@ -155,7 +155,7 @@ export namespace Article {
       aid?: number; //留空新建
       title: string;//标题
       summary: string; //简介
-      note:string; //注释
+      note: string; //注释
       rating: Rating;//作品分级
       warning: Warning[];
       fandom: string; //原作
@@ -180,7 +180,7 @@ export namespace Chapter {
   /** //获取章节内容
    GET /article/:aid?offset=[number]&amount=[number]
    */
-  export function getChapters(aid: number, amount: number = 1, offset = 0) {
+  export function getChapters(aid: number | string, amount: number = 1, offset = 0) {
     return get<GetChapters.Response, BaseGetParameters>('/article/' + aid, {amount, offset})
   }
 
@@ -194,11 +194,11 @@ export namespace Chapter {
    * PUT /article/:aid          添加/修改章节
    * DELETE /article/:aid/:cid  删除章节
    */
-  export function putChapter(aid: number, request: PutChapter.Request) {
+  export function putChapter(aid: number | string, request: PutChapter.Request) {
     return put<PutChapter.Response>('/article/' + aid, request)
   }
 
-  export function deleteChapter(aid: number, cid: number) {
+  export function deleteChapter(aid: number | string, cid: number | string) {
     return del<PutChapter.Response>(`/article/${aid}/${cid}`)
   }
 
@@ -207,7 +207,7 @@ export namespace Chapter {
       cid?: number;//章节id，留空新建
       title: string; //章节标题
       summary: string; //章节简介
-      note:string; //注释
+      note: string; //注释
 
       content: string;
     }
@@ -225,16 +225,16 @@ export namespace Comment {
    PUT /article/:aid/:cid/comments  //cid是章节号 //添加/修改评论
    DELETE /article/:aid/:cid/comments/:id //删除评论
    */
-  export function getComment(aid: number, cid: number, amount: number = 1, offset = 0) {
+  export function getComment(aid: number | string, cid: number | string, amount: number = 1, offset = 0) {
     return get<Response, BaseGetParameters>(`/article/${aid}/${cid}/comments`,
       {amount, offset})
   }
 
-  export function putComment(aid: number, cid: number, request: Request) {
+  export function putComment(aid: number | string, cid: number | string, request: Request) {
     return put<Response>(`/article/${aid}/${cid}/comments`, request)
   }
 
-  export function deleteComment(aid: number, cid: number, id: number) {
+  export function deleteComment(aid: number | string, cid: number | string, id: number | string) {
     return del<Response>(`/article/${aid}/${cid}/comments/${id}`)
   }
 
