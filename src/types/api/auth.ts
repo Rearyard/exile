@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {UserStruct, UserStructSimplified} from "./user";
 import {BaseResponse, get, post} from "@/types/api/config";
 

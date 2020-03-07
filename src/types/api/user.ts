@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {ArticleSimplified} from "./article";
 import {BaseGetParameters, BaseResponse, get, post} from "@/types/api/config";
 
