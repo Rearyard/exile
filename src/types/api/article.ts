@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {BaseResponse} from "@/types/api/config";
 import {UserStructSimplified} from "./user";
 import {API_PREFIX, BaseGetParameters, del, get, post, put} from "@/types/api/config";
@@ -159,7 +160,7 @@ export namespace Article {
       rating: Rating;//作品分级
       warning: Warning[];
       fandom: string; //原作
-      relationship: string; //CP名
+      relationship: string[]; //CP名
       category: Category;//性向分类
       character: string[]; //人物
       tag: string[]; //其它说明tag
