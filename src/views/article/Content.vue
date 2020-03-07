@@ -110,7 +110,7 @@
               <h1>第{{selectedChapter.cid+1}}章</h1>
               简介: {{selectedChapter.summary}}
               <hr/>
-              <p v-for="p in selectedChapter.content.split('\n')">
+              <p v-for="(p,idx) in selectedChapter.content.split('\n')" :key="idx">
                 {{p}}
               </p>
             </div>
