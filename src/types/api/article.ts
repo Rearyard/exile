@@ -123,9 +123,9 @@ export namespace Article {
       title?: string;  // 模糊搜索
       author?: string;  // 模糊搜索
       fandom?: string;  // 为空不限, 模糊搜索
-      relationship?: string; // 为空不限, 模糊搜索
+      relationship?: string[]; // 为空不限, 精确搜索
       category?: Category[];  // 分类
-      tag?: string[]; // 为空不限, 模糊搜索
+      tag?: string[]; // 为空不限, 精确搜索
       rating?: Rating[]; //作品分级
       offset: number;
       amount: number;
