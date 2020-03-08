@@ -47,7 +47,7 @@
         <router-view />
       </Content>
       <Footer style="text-align:center">@后花园2020</Footer>
-      <Affix :offset-bottom="0" v-if="portable">
+      <Affix :offset-bottom="0" v-if="portable&&!hideHeader">
         <div class="wrapper-bottom-nav">
           <Menu mode="horizontal">
             <Row type="flex" justify="space-around" align="middle">
