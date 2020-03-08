@@ -18,51 +18,51 @@
           </Breadcrumb-item>
         </Breadcrumb>
         <div class="wrap-card">
-          <Form v-model="form" :label-width="80" inline>
-            <form-item label="分级：" style="flex-basis: 10em">
+          <Form :model="form" :label-width="80" inline :rules="rules.form" ref="formArticle">
+            <form-item label="分级：" prop="rating" style="flex-basis: 10em">
               <Select v-model="form.rating">
                 <Option v-for="rate in ratings" :value="rate[1]" :key="rate[1]">
                   {{rate[0]}}
                 </Option>
               </Select>
             </form-item>
-            <form-item label="性向：" style="flex-basis: 10em">
+            <form-item label="性向：" prop="category" style="flex-basis: 10em">
               <Select v-model="form.category">
                 <Option v-for="rate in categories" :value="rate[1]" :key="rate[1]">
                   {{rate[0]}}
                 </Option>
               </Select>
             </form-item>
-            <form-item label="警告：" style="flex-basis: 100%">
+            <form-item label="警告：" prop="warning" style="flex-basis: 100%">
               <Select v-model="form.warning" style="width: content-box;" multiple>
-                <Option v-for="rate in warnings" :value="rate[0]" :key="rate[0]">
+                <Option v-for="rate in warnings" :value="rate[1]" :key="rate[1]">
                   {{rate[1]}}
                 </Option>
               </Select>
             </form-item>
-            <form-item label="人物：" style="flex-basis: 15em">
+            <form-item label="人物：" prop="character" style="flex-basis: 15em">
               <TagInput v-model="form.character" placeholder="输入空格确认"/>
             </form-item>
-            <form-item label="CP：" style="flex-basis: 15em">
+            <form-item label="CP：" prop="relationship" style="flex-basis: 15em">
               <TagInput v-model="form.relationship" placeholder="输入空格确认"/>
             </form-item>
-            <form-item label="标签：" style="flex-basis: 15em">
+            <form-item label="标签：" prop="tag" style="flex-basis: 15em">
               <TagInput v-model="form.tag" placeholder="输入空格确认"/>
             </form-item>
-            <form-item label="原作：" style="flex-basis: 15em">
+            <form-item label="原作：" prop="fandom" style="flex-basis: 15em">
               <Input v-model="form.fandom" placeholder="原创作品留空"/>
             </form-item>
             <div class="hr">
               <div>文章信息</div>
               <hr/>
             </div>
-            <form-item label="标题：" style="flex-basis: 100%">
+            <form-item label="标题：" prop="title" style="flex-basis: 100%">
               <Input v-model="form.title" placeholder=""/>
             </form-item>
-            <form-item label="摘要：" style="flex-basis: 15em">
+            <form-item label="摘要：" prop="summary" style="flex-basis: 15em">
               <Input v-model="form.summary" placeholder="可留空"/>
             </form-item>
-            <form-item label="注释：" style="flex-basis: 15em">
+            <form-item label="注释：" prop="note" style="flex-basis: 15em">
               <Input v-model="form.note" placeholder="可留空"/>
             </form-item>
             <form-item label="多章节：">
@@ -76,7 +76,7 @@
               >
                 放弃修改
               </Button>
-              <Button type="info"
+              <Button type="info" @click="submitArticle"
                       style="margin:0 .5rem" size="large">
                 提交文章{{multiChapters?'基础信息':''}}
               </Button>
@@ -87,8 +87,8 @@
               <div>章节 {{chapter.cid+1}}</div>
               <hr/>
             </div>
-            <Form v-model="chapter" :label-width="80">
-              <form-item label="标题：" style="flex-basis: 100%">
+            <Form :model="chapter" :rules="rules.chapter" ref="formChapter" :label-width="80">
+              <form-item label="标题：" prop="title" style="flex-basis: 100%">
                 <Input v-model="chapter.title" placeholder=""/>
               </form-item>
               <form-item label="摘要：" style="flex-basis: 15em">
@@ -104,7 +104,7 @@
                         @click="clearContent(()=>(fetchChapter(form.aid,chapter.cid)))">
                   放弃修改
                 </Button>
-                <Button type="info" style="margin:0 .5rem" size="large">
+                <Button type="info" style="margin:0 .5rem" size="large" @click="submitChapter">
                   提交章节
                 </Button>
               </div>
@@ -120,24 +120,26 @@
       @on-ok="clearContent">
       <p>你确定放弃修改吗？</p>
     </Modal>
+
   </div>
 </template>
 
 <script lang="ts">
   /* eslint-disable */
-  import {Component, Vue, Watch} from "vue-property-decorator";
+  import {Component, Ref, Vue} from "vue-property-decorator";
   import {Article, Category, Chapter, Rating, Warning} from "@/types/api/article";
   import TagInput from "@/components/form/TagInput.vue";
   //@ts-ignore
   import {quillEditor} from 'vue-quill-editor' // 调用富文本编辑器
-  import 'quill/dist/quill.snow.css' // 富文本编辑器外部引用样式  三种样式三选一引入即可
-
+  import 'quill/dist/quill.snow.css'
+  import {Form} from "view-design"; // 富文本编辑器外部引用样式  三种样式三选一引入即可
   @Component({
     components: {TagInput, 'quill-editor': quillEditor}
   })
   export default class ArticleEdit extends Vue {
     defaultForm(): Article.PutArticle.Request {
       return {
+        aid: undefined,
         category: undefined,
         character: [],
         fandom: "",
@@ -188,11 +190,7 @@
         const {warning, tag, title, fandom, summary, rating, note, character, category, relationship, chapters} = res.article
         Object.assign<Article.PutArticle.Request,
           Partial<Article.PutArticle.Request>>(this.form, {
-          warning:
-            warning.map(w =>
-              Object.entries(Warning).find(([k, v]) => v === w)[0],
-            ) as Warning[],
-          note, summary, title, tag, category, fandom, rating, aid, character, relationship
+          warning, note, summary, title, tag, category, fandom, rating, aid, character, relationship
         })
         if (chapters.length > 1)
           this.multiChapters = true
@@ -246,11 +244,79 @@
       return document.body.clientWidth < 1024
     }
 
+    @Ref('formArticle')
+    formArticle: Form
+
+    submitArticle() {
+      this.formArticle.validate(async valid => {
+        if (valid) {
+          let artRes = await Article.putArticle(this.form)
+          if (artRes.status) {
+            for (let field of Object.keys(this.form))
+              this.form[field] = artRes.article[field]
+            if (!this.multiChapters) {
+              let {title, summary, note} = this.form
+              await Chapter.putChapter(this.form.aid, {
+                cid: 0, title, summary, note, content: this.chapter.note
+              })
+            }
+            await this.$router.replace(`/article/${this.form.aid}/${this.chapter.cid}/edit`)
+          }
+        }
+      })
+    }
+
+    @Ref('formChapter')
+    formChapter: Form
+
+    async submitChapter() {
+      this.formChapter.validate(async valid => {
+        if (valid) {
+          let chapRes = await Chapter.putChapter(this.form.aid, this.chapter)
+          if (chapRes.status) {
+            for (let field of Object.keys(this.chapter))
+              this.chapter[field] = chapRes.chapter[field]
+          }
+        }
+      })
+    }
+
+    rules: {
+      [TTarget in (keyof ArticleEdit) & ('form' | 'chapter')]?: {
+        [TK in keyof ArticleEdit[TTarget]]?: {
+          required?: boolean, message?: string, trigger?: 'blur' | 'change',
+          type?: 'array' | 'string' | 'number',
+          validator?: (rule, value: ArticleEdit[TTarget][TK], callback: (e?: Error) => void) => void,
+          range?: { min: number, max: number }
+        }[]
+      }
+    } = {
+      form: {
+        rating: [{required: true, message: '必填项', trigger: "change", type: "number"}],
+        category: [{required: true, message: '必填项', trigger: "change", type: "number"}],
+        warning: [{
+          trigger: "change", required: true, validator(rule, value, cb) {
+            console.log(arguments)
+            if (!value || value.length < 1) return cb(new Error('必填项'))
+            if (value.length > 1) {
+              if (value.includes(Warning.No) || value.includes(Warning.Unknown))
+                return cb(new Error('不得冲突'))
+            }
+            cb()
+          }
+        }],
+        title: [{required: true, message: '必填项', trigger: "change"}],
+      },
+      chapter: {
+        title: [{required: true, message: '必填项', trigger: "change"}],
+      }
+    }
 
   }
+
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .wrap-card {
     width: 100%;
     line-height: 2rem;
