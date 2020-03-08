@@ -510,7 +510,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .wrapper-card {
   margin: 15px 0 15px 0;
   padding: 15px 30px 15px 30px;
