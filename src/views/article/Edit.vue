@@ -18,88 +18,94 @@
           </Breadcrumb-item>
         </Breadcrumb>
         <div class="wrap-card">
-          <Form v-model="form" :label-width="80">
-            <form-item label="分级：">
-              <Select v-model="form.rating" style="max-width:10rem;">
+          <Form v-model="form" :label-width="80" inline>
+            <form-item label="分级：" style="flex-basis: 10em">
+              <Select v-model="form.rating">
                 <Option v-for="rate in ratings" :value="rate[1]" :key="rate[1]">
                   {{rate[0]}}
                 </Option>
               </Select>
             </form-item>
-            <form-item label="警告：">
+            <form-item label="性向：" style="flex-basis: 10em">
+              <Select v-model="form.category">
+                <Option v-for="rate in categories" :value="rate[1]" :key="rate[1]">
+                  {{rate[0]}}
+                </Option>
+              </Select>
+            </form-item>
+            <form-item label="警告：" style="flex-basis: 100%">
               <Select v-model="form.warning" style="width: content-box;" multiple>
                 <Option v-for="rate in warnings" :value="rate[0]" :key="rate[0]">
                   {{rate[1]}}
                 </Option>
               </Select>
             </form-item>
-            <form-item label="原作：">
-              <Input v-model="form.fandom" placeholder="原创作品留空"/>
-            </form-item>
-            <form-item label="性向：">
-              <Select v-model="form.category" style="max-width:10rem;">
-                <Option v-for="rate in categories" :value="rate[1]" :key="rate[1]">
-                  {{rate[0]}}
-                </Option>
-              </Select>
-            </form-item>
-            <form-item label="CP：">
-              <TagInput v-model="form.relationship" placeholder="输入空格确认"/>
-            </form-item>
-            <form-item label="人物：">
+            <form-item label="人物：" style="flex-basis: 15em">
               <TagInput v-model="form.character" placeholder="输入空格确认"/>
             </form-item>
-            <form-item label="标签：">
+            <form-item label="CP：" style="flex-basis: 15em">
+              <TagInput v-model="form.relationship" placeholder="输入空格确认"/>
+            </form-item>
+            <form-item label="标签：" style="flex-basis: 15em">
               <TagInput v-model="form.tag" placeholder="输入空格确认"/>
+            </form-item>
+            <form-item label="原作：" style="flex-basis: 15em">
+              <Input v-model="form.fandom" placeholder="原创作品留空"/>
             </form-item>
             <div class="hr">
               <div>文章信息</div>
               <hr/>
             </div>
-            <form-item label="标题：">
+            <form-item label="标题：" style="flex-basis: 100%">
               <Input v-model="form.title" placeholder=""/>
             </form-item>
-            <form-item label="摘要：">
+            <form-item label="摘要：" style="flex-basis: 15em">
               <Input v-model="form.summary" placeholder="可留空"/>
             </form-item>
-            <form-item label="注释：">
+            <form-item label="注释：" style="flex-basis: 15em">
               <Input v-model="form.note" placeholder="可留空"/>
             </form-item>
-            <form-item label="章节数：">
-              <InputNumber v-model="chaptersCount" style="max-width: 4rem" :min="0"/>
+            <form-item label="多章节：">
+              <i-switch v-model="multiChapters" true-color="#a2d6cd"/>
             </form-item>
-            <div style="display:flex;justify-content: right;">
-              <Button type="warning" style="margin:0 .5rem" size="large">
+            <quill-editor v-model="chapter.content" v-if="!multiChapters && chapter"
+                          style="margin-bottom: 1rem"/>
+            <div class="action-grounp">
+              <Button type="warning" style="margin:0 .5rem" size="large"
+                      @click="clearContent(()=>(fetchArticle(form.aid),multiChapters|| fetchChapter(form.aid,chapter.cid)))"
+              >
                 放弃修改
               </Button>
-              <Button type="primary" style="margin:0 .5rem" size="large">
-                提交文章基础信息
+              <Button type="info"
+                      style="margin:0 .5rem" size="large">
+                提交文章{{multiChapters?'基础信息':''}}
               </Button>
             </div>
           </Form>
-          <div v-for="(chapter,idx) in chapters" v-if="idx<chaptersCount" :key="`chapterEdit`+idx">
-            <div class="hr" :id="'chapter'+idx">
-              <div>章节{{idx+1}}</div>
+          <div v-if="multiChapters">
+            <div class="hr">
+              <div>章节 {{chapter.cid+1}}</div>
               <hr/>
             </div>
-            <Form v-model="chapters[idx]" :label-width="80">
-              <form-item label="标题：">
-                <Input v-model="chapters[idx].title" placeholder=""/>
+            <Form v-model="chapter" :label-width="80">
+              <form-item label="标题：" style="flex-basis: 100%">
+                <Input v-model="chapter.title" placeholder=""/>
               </form-item>
-              <form-item label="摘要：">
-                <Input v-model="chapters[idx].summary" placeholder="可留空"/>
+              <form-item label="摘要：" style="flex-basis: 15em">
+                <Input v-model="chapter.summary" placeholder="可留空"/>
               </form-item>
-              <form-item label="注释：">
-                <Input v-model="chapters[idx].note" placeholder="可留空"/>
+              <form-item label="注释：" style="flex-basis: 15em">
+                <Input v-model="chapter.note" placeholder="可留空"/>
               </form-item>
-              <quill-editor v-model="chapters[idx].content"
+              <quill-editor v-model="chapter.content"
                             style="margin-bottom: 1rem"/>
-              <div style="display:flex;justify-content: right;">
-                <Button type="warning" style="margin:0 .5rem" size="large">
+              <div class="action-grounp">
+                <Button type="warning" style="margin:0 .5rem" size="large"
+                        @click="clearContent(()=>(fetchChapter(form.aid,chapter.cid)))">
                   放弃修改
                 </Button>
-                <Button type="primary" style="margin:0 .5rem" size="large">
-                  提交章节{{idx+1}}
+                <Button type="info" style="margin:0 .5rem" size="large">
+                  提交章节
                 </Button>
               </div>
             </Form>
@@ -107,6 +113,13 @@
         </div>
       </div>
     </Row>
+    <Modal
+      v-model="modals.confirmClear"
+      title="确认放弃修改"
+      @on-cancel="clearContentCB=undefined"
+      @on-ok="clearContent">
+      <p>你确定放弃修改吗？</p>
+    </Modal>
   </div>
 </template>
 
@@ -118,27 +131,31 @@
   //@ts-ignore
   import {quillEditor} from 'vue-quill-editor' // 调用富文本编辑器
   import 'quill/dist/quill.snow.css' // 富文本编辑器外部引用样式  三种样式三选一引入即可
-  // import 'quill/dist/quill.core.css'
-  // import 'quill/dist/quill.bubble.css'
-  import * as Quill from 'quill'; // 富文本基于quill
 
   @Component({
     components: {TagInput, 'quill-editor': quillEditor}
   })
   export default class ArticleEdit extends Vue {
-    form: Article.PutArticle.Request = {
-      category: Category.Unknown,
-      character: [],
-      fandom: "",
-      note: "",
-      rating: Rating.G,
-      relationship: [],
-      summary: "",
-      tag: [],
-      title: "",
-      warning: []
+    defaultForm(): Article.PutArticle.Request {
+      return {
+        category: undefined,
+        character: [],
+        fandom: "",
+        note: "",
+        rating: undefined,
+        relationship: [],
+        summary: "",
+        tag: [],
+        title: "",
+        warning: []
+      }
     }
-    chaptersCount = 0
+
+    form = this.defaultForm()
+    multiChapters = false
+    modals = {
+      confirmClear: false
+    }
 
     defaultChapter(): Chapter.PutChapter.Request {
       return {
@@ -150,16 +167,64 @@
       }
     }
 
-    chapters: Chapter.PutChapter.Request[] = []
+    clearContentCB: () => void
 
-    mounted() {
-      this.chaptersCount = 1
+    clearContent(cb?: () => void) {
+      if (!this.clearContentCB)
+        this.modals.confirmClear = true,
+          this.clearContentCB = cb
+      else
+        this.clearContentCB(),
+          this.clearContentCB = undefined
+    }
+
+    chapter: Chapter.PutChapter.Request = this.defaultChapter()
+
+    async fetchArticle(aid: number) {
+      if (Number.isNaN(aid) || aid == undefined)
+        return this.form = this.defaultForm()
+      let res = await Article.getDetail(aid)
+      if (res.status) {
+        const {warning, tag, title, fandom, summary, rating, note, character, category, relationship, chapters} = res.article
+        Object.assign<Article.PutArticle.Request,
+          Partial<Article.PutArticle.Request>>(this.form, {
+          warning:
+            warning.map(w =>
+              Object.entries(Warning).find(([k, v]) => v === w)[0],
+            ) as Warning[],
+          note, summary, title, tag, category, fandom, rating, aid, character, relationship
+        })
+        if (chapters.length > 1)
+          this.multiChapters = true
+      }
+    }
+
+    async fetchChapter(aid: number, cid: number) {
+      if (Number.isNaN(aid) || aid == undefined)
+        return this.chapter = this.defaultChapter()
+      this.chapter = null
+      let res = await Chapter.getChapters(aid, 1, cid)
+      if (res.status) {
+        const [{content, summary, note, title}] = res.chapters
+        this.chapter = Object.assign<{},
+          Chapter.PutChapter.Request>({}, {
+            content, cid, note, summary, title
+          }
+        )
+      }
+    }
+
+    async mounted() {
       const aid = Number.parseInt(this.$route.params.aid),
         cid = Number.parseInt(this.$route.params.cid)
       if (Number.isNaN(aid)) {
-
+        this.chapter = this.defaultChapter()
+        this.chapter.cid = 0
       } else {
-
+        this.fetchArticle(aid)
+        if (!Number.isNaN(cid)) {
+          this.fetchChapter(aid, cid)
+        }
       }
     }
 
@@ -181,16 +246,7 @@
       return document.body.clientWidth < 1024
     }
 
-    @Watch('chaptersCount')
-    chaptersCountChanged(newVal) {
-      if (newVal > this.chapters.length) {
-        for (let i = this.chapters.length; i < newVal; i++) {
-          const c = this.defaultChapter()
-          c.cid = i
-          this.chapters.push(c)
-        }
-      }
-    }
+
   }
 </script>
 
@@ -211,6 +267,8 @@
     display: flex;
     align-items: center;
     margin: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
 
     & > div {
       padding: 0 1em;
@@ -224,5 +282,25 @@
       color: #a2d6cd77;
       margin-left: 1em
     }
+  }
+
+  .ivu-form {
+    display: flex;
+    flex-wrap: wrap;
+
+    & .ivu-form-item {
+      flex-grow: 1;
+    }
+
+  }
+
+  .quill-editor {
+    height: fit-content;
+  }
+
+  div.action-grounp {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: right;
   }
 </style>
