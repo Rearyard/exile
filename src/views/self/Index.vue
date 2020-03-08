@@ -1,18 +1,79 @@
 <template>
   <div>
-      <p>个人中心-框架</p>
-      <div>
-          <router-view />
-      </div>
+    <Row>
+        <i-col span="18" offset="3">
+            <Breadcrumb separator=" > " style="margin-bottom: 2rem">
+                <Breadcrumb-item href="/">
+                    <Icon type="ios-home-outline"></Icon> 放逐地
+                </Breadcrumb-item>
+                <Breadcrumb-item>
+                    <Icon type="pound"></Icon>文区
+                </Breadcrumb-item>
+            </Breadcrumb>
+            
+            <Row>
+                <!-- 左侧菜单栏 -->
+                <i-col span="6" class="nav-bar">
+                    <router-link to="/self/info" active-class="active">个人中心</router-link>
+                    <router-link to="/self/works" active-class="active">我的作品</router-link>
+                    <router-link to="/self/basic" active-class="active">基础设施</router-link>
+                    <router-link to="/self/account" active-class="active">账号设置</router-link>
+                </i-col>
+                <i-col class="right" span="17" offset="1">
+                    <!-- 右边二级路由 -->
+                    <router-view></router-view>
+                </i-col>
+            </Row>
+        </i-col>
+    </Row>
   </div>
 </template>
 
 <script>
 export default {
-
-}
+    data(){
+        return{
+        }
+    },
+    methods:{
+    }
+};
 </script>
 
-<style>
+<style lang='less'>
+@box-bg:#d8d8d8;
+@box-shadow-big: 0px 10px 15px 12px rgba(208,208,208,0.5);
+@box-shadow-small: 0px 0px 15px 5px rgba(208,208,208,0.2);
+@border-radius:18px;
+.nav-bar{
+    box-shadow: @box-shadow-small;
+    border-radius: @border-radius;
+    background: #fff;
+    padding: 1rem 0;
+    a{
+        display: block;
+        line-height: 5rem;
+        text-align: center;
+        font-size: 1rem;
+        cursor: pointer;
+        color: #505050;
+    }
+    a:hover{
+        background: #d8d8d8;
+        color: #505050;
+        border-radius: 8px;
+    }
+}
+// 激活导航栏后的样式
+.active{
+    border-radius: 8px;
+    background: #d8d8d8;    
+}
 
+.right{
+    background: #fff;
+    box-shadow: @box-shadow-small;
+    border-radius: @border-radius;
+    padding: 4rem;
+}
 </style>
