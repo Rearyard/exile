@@ -106,7 +106,10 @@ export default class SearchRequest extends Vue {
       this.$router.push({
         path:'/article/searchresult',
         query:{
-          req: [this.fandom,this.relationship,this.title,this.author]
+          fandom:this.fandom,
+          relationship:this.relationship,
+          title:this.title,
+          author:this.author,
         }
       })
     }

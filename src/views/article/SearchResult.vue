@@ -10,14 +10,14 @@
               <Icon type="social-buffer-outline"></Icon>文区
           </Breadcrumb-item>
           <Breadcrumb-item>
-              <Icon type="pound"></Icon>{{$route.query.req[0]}}、{{$route.query.req[1]}}
+              <Icon type="pound"></Icon>{{req.fandom}}、{{req.relationship.toString()}}
           </Breadcrumb-item>
         </Breadcrumb>
         <div
           id="tag-card"
           style="height: 7rem; padding-left:1rem; padding-top:1rem">
             <Tag type="dot" closable>{{req.fandom}}</Tag>
-            <Tag type="dot" closable>{{req.relationship[0]}}</Tag>
+            <Tag type="dot" closable>{{req.relationship.toString()}}</Tag>
             <Divider style="margin:0.5rem 0"/>
         </div>
       </iCol>
@@ -42,11 +42,10 @@ export default class SearchResult extends Vue{
   }  */
   async mounted(){
     console.log("search Result Page Mounted")
-    console.log(this.$route.query.req[0])
-    this.req.fandom = this.$route.query.req[0]
-    this.req.relationship = [this.$route.query.req[1]]
-    this.req.title = this.$route.query.req[2]
-    this.req.author = this.$route.query.req[3]
+    this.req.fandom = this.$route.query.fandom.toString()
+    this.req.relationship = String(this.$route.query.relationship).split(',')
+    this.req.title = String(this.$route.query.title)
+    this.req.author = String(this.$route.query.author)
     this.req.orderBy = 'recent'
     //this.res = await Article.search(this.req)
     // console.log("Has found " + searchResponse.count + " results")
