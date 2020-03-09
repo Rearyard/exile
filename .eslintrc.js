@@ -16,6 +16,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-inner-declaration': 'off',
     'no-inferrable-types': 'off',
-    'no-namespace': 'off'
+    '@typescript-eslint/no-namespace': 'off',
+    '@typescript-eslint/no-inner-declarations':'off'
   }
 }

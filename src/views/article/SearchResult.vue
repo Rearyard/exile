@@ -17,7 +17,7 @@
           id="tag-card"
           style="height: 7rem; padding-left:1rem; padding-top:1rem">
             <Tag type="dot" closable>{{req.fandom}}</Tag>
-            <Tag type="dot" closable>{{req.relationship}}</Tag>
+            <Tag type="dot" closable>{{req.relationship[0]}}</Tag>
             <Divider style="margin:0.5rem 0"/>
         </div>
       </iCol>
@@ -42,14 +42,14 @@ export default class SearchResult extends Vue{
   }  */
   async mounted(){
     console.log("search Result Page Mounted")
-    //console.log(this.$route.query.req[0])
+    console.log(this.$route.query.req[0])
     this.req.fandom = this.$route.query.req[0]
-    this.req.relationship = this.$route.query.req[1]
+    this.req.relationship = [this.$route.query.req[1]]
     this.req.title = this.$route.query.req[2]
     this.req.author = this.$route.query.req[3]
     this.req.orderBy = 'recent'
     //this.res = await Article.search(this.req)
-    console.log("Has found " + searchResponse.count + " results")
+    // console.log("Has found " + searchResponse.count + " results")
     
   }
 }
