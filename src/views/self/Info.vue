@@ -1,105 +1,141 @@
 <template>
   <div>
-      <Row>
-        <i-col :xs="2" :sm="4" :md="6" :lg="8">
-          <img class="img" src="" alt="">
-        </i-col>
-        <!-- 等级 -->
-        <i-col :xs="8" :sm="6" :md="4" :lg="3">
-          <div class="grade">lv2</div>          
-        </i-col>
-
-        <i-col :xs="16" :sm="18" :md="8" :lg="8">
-          <!-- 更改头像 -->
-          <Row>
-            <i-col :xs="24" :sm="16" :md="22" :lg="12">
-              <p class="changeImg">更改头像</p>
-            </i-col>
-          </Row>
-          <Row>
-            <i-col :xs="24" :sm="24" :md="24" :lg="20">
-              <p><span style="margin-left:0">0</span>粉丝</p>
-              <p><span>0</span>关注</p>
-              <p><span>0</span>创作</p>
-            </i-col>
-          </Row>
-        </i-col>
+    <Row style="margin-bottom:2em">
+      <iCol span="6">
+        <div class="wrapper-avatar">
+          <Badge text="Lv.1">
+            <img src="https://chinocdn.cafuchino.cn/pic/202003091129722.png" class="avatar" />
+          </Badge>
+        </div>
+      </iCol>
+      <iCol span="10" offset="2">
+        <Button type="success" size="large"  shape="circle">更改头像</Button>
+        <Row type="flex" justify="space-around" align="middle" class="wrapper-count">
+          <iCol span="6" class="count-item">
+            <span class="count">0</span>粉丝
+          </iCol>
+          <Divider type="vertical" />
+          <iCol span="6" class="count-item">
+            <span class="count">0</span>关注
+          </iCol>
+          <Divider type="vertical" />
+          <iCol span="6" class="count-item">
+            <span class="count">0</span>创作
+          </iCol>
+        </Row>
+        <p class="description">个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介个人简介</p>
+      </iCol>
     </Row>
-      <div class="bottom-top" style="margin-top:3rem;">
-        <p><span>昵称</span>CafuChino</p>
-        <p><span>ID</span>00000001</p>
-        <p><span>邮箱</span>admin@admin.com</p>
-        <p><span>注册日期</span>2020.02.02</p>
-      </div>
+    <Row class='info-row'>
+      <iCol span="12">昵称</iCol>
+      <iCol span="12">CafuChino</iCol>
+    </Row>
+    <Divider />
+    <Row class='info-row'>
+      <iCol span="12">ID</iCol>
+      <iCol span="12">00000001</iCol>
+    </Row>
+    <Divider />
+    <Row class='info-row'>
+      <iCol span="12">邮箱</iCol>
+      <iCol span="12">admin@admin.com</iCol>
+    </Row>
+    <Divider />
+    <Row class='info-row'>
+      <iCol span="12">注册日期</iCol>
+      <iCol span="12">2099年12月31日</iCol>
+    </Row>
+    <Divider />
   </div>
 </template>
 
 <script>
 export default {
-
-}
+};
 </script>
 
 <style lang='less'>
-@box-bg:#d8d8d8;
-@box-shadow-big: 0px 10px 15px 12px rgba(208,208,208,0.5);
-@box-shadow-small: 0px 0px 15px 5px rgba(208,208,208,0.2);
-@border-radius:18px;
+@box-bg: #d8d8d8;
+@box-shadow-big: 0px 10px 15px 12px rgba(208, 208, 208, 0.5);
+@box-shadow-small: 0px 0px 15px 5px rgba(208, 208, 208, 0.2);
+@border-radius: 18px;
 
 // 右边
-
-.img{
-    width: 174px;
-    height: 174px;
-    border-radius: 50%;
-    background: #999;
-    margin-right: 1rem;
+.wrapper-avatar {
+  width: 100%;
 }
-.grade{
-    padding: 0 .5rem;
-    height:20px;
-    background: #ffc300;
-    color: #fff;
-    text-align: center;
-    border-radius: 5px;
-    margin-right: 1rem;
+.wrapper-avatar img {
+  width: 100%;
+  border-radius: 200px;
 }
-  // 更改头像
-  .changeImg{
-    width: 8rem;
-    height: 2.4rem;
-    background: rgba(157, 209, 169, 1);
-    font-size: 1.2rem;
-    color:#fff;
-    text-align: center;
-    line-height: 2.4rem;
-    border-radius: @border-radius;
+.wrapper-count {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3em;
+  margin: 1em 0 1em 0;
+}
+.count {
+  margin: 0 10px 0 0;
+}
+.description {
+  color: #9e9e9e;
+  font-size: 0.8em;
+}
+.info-row{
+  font-size: 1.3em;
+}
+.img {
+  width: 174px;
+  height: 174px;
+  border-radius: 50%;
+  background: #999;
+  margin-right: 1rem;
+}
+.grade {
+  padding: 0 0.5rem;
+  height: 20px;
+  background: #ffc300;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  margin-right: 1rem;
+}
+// 更改头像
+.changeImg {
+  width: 8rem;
+  height: 2.4rem;
+  background: rgba(157, 209, 169, 1);
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+  line-height: 2.4rem;
+  border-radius: @border-radius;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+// 粉丝-创作-关注
+.atte-box {
+  display: flex;
+  line-height: 2;
+  p {
+    border-right: 1px solid #999;
+    padding-right: 1rem;
+  }
+  span {
     font-weight: bold;
-    margin-bottom: 10px;
+    margin: 0 1rem;
   }
-  // 粉丝-创作-关注
-  .atte-box{
+}
+// 个人介绍
+.bottom-top {
+  p {
+    line-height: 3;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.2rem;
     display: flex;
-    line-height: 2;
-    p{
-      border-right: 1px solid #999;
-      padding-right: 1rem;
-    }
-    span{
-      font-weight: bold;
-      margin: 0 1rem;
-    }
   }
-    // 个人介绍
-  .bottom-top{
-    p{
-      line-height: 3;
-      border-bottom: 1px solid #ddd;
-      font-size: 1.2rem;
-      display: flex;
-    }
-    span{
-      width: 15rem;
-    }
+  span {
+    width: 15rem;
   }
+}
 </style>

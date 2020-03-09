@@ -15,7 +15,7 @@
     </Row>
     <!-- 提交 -->
       <div class="btn">
-        <i-button style="background:#9dd1a9; color:#fff;" size='large' shape="circle">提交</i-button>
+        <Button type='success' size='large' shape="circle">提交</Button>
       </div>
   </div>
 </template>

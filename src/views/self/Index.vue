@@ -7,7 +7,7 @@
                     <Icon type="ios-home-outline"></Icon> 放逐地
                 </Breadcrumb-item>
                 <Breadcrumb-item>
-                    <Icon type="pound"></Icon>文区
+                    <Icon type="pound"></Icon>个人中心
                 </Breadcrumb-item>
             </Breadcrumb>
             
@@ -16,7 +16,7 @@
                 <i-col span="6" class="nav-bar">
                     <router-link to="/self/info" active-class="active">个人中心</router-link>
                     <router-link to="/self/works" active-class="active">我的作品</router-link>
-                    <router-link to="/self/basic" active-class="active">基础设施</router-link>
+                    <router-link to="/self/basic" active-class="active">基础设置</router-link>
                     <router-link to="/self/account" active-class="active">账号设置</router-link>
                 </i-col>
                 <i-col class="right" span="17" offset="1">
@@ -33,6 +33,11 @@
 export default {
     data(){
         return{
+        }
+    },
+    mounted(){
+        if (this.$route.name=='Self') {
+            this.$router.push('/self/info')
         }
     },
     methods:{
