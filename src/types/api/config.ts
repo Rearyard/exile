@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Axios from "axios";
 
 export const API_PREFIX = 'https://rikaapi.rika.tech/api/exile?'
