@@ -205,6 +205,11 @@ export default {
   background: #333333;
   box-shadow: 0px 0px 5px 1px #0000009c;
   border-radius: 5px;
+  transition: all 0.2s linear;
+  cursor: pointer;
+}
+.tab-quick-add:hover{
+  transform: scale(1.1);
 }
 .wrapper-bottom-nav {
   box-shadow: 0px 0px 5px 1px #6868684f;

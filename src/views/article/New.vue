@@ -48,7 +48,7 @@ export default {
     display: table-cell;
     padding-left: 1rem;
     vertical-align: middle;
-    font-size: 26px;
+    font-size: 1.2rem;
     height: 30px;
     color: rgba(95, 95, 95, 0.7);
     text-shadow: 0px 1px 1px rgba(71, 68, 66, 0.6);

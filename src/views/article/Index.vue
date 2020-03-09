@@ -26,25 +26,28 @@
               <Row style="padding:1em;display: flex;flex-wrap:wrap;">
                 <i-col style="flex-grow: 1;flex-basis: calc(10em*.5);margin:.5rem 1rem">
                   <span style="display:block">原作</span>
-                  <i-input :value.sync="value" placeholder="请输入..." style="width: 100%"></i-input>
+                  <i-input v-model="fandom" placeholder="请输入..." style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(12em*.5);margin:.5rem 1rem">
                   <span style="display:block">配对</span>
-                  <i-input :value.sync="value" placeholder="请输入..." style="width: 100%"></i-input>
+                  <i-input v-model="relationship" placeholder="请输入..." style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(16em*.5);margin:.5rem 1rem">
                   <span style="display:block">标题</span>
-                  <i-input :value.sync="value" placeholder="请输入..." style="width: 100%"></i-input>
+                  <i-input v-model="title" placeholder="请输入..." style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(10em*.5);margin:.5rem 1rem">
                   <span style="display:block">作者</span>
-                  <i-input :value.sync="value" placeholder="请输入..." style="width: 100%"></i-input>
+                  <i-input v-model="author" placeholder="请输入..." style="width: 100%"></i-input>
                 </i-col>
               </Row>
             </div>
           </i-col>
           <i-col span="3">
-            <div id="search-button" style="height: calc(100% - .5rem);display: flex;align-items: center">
+            <div
+              id="search-button"
+              style="height: calc(100% - .5rem);display: flex;align-items: center"
+              @click=btnClick()>
               <img src="../../assets/search.png" width="100%" style="vertical-align: middle;"/>
             </div>
           </i-col>
@@ -65,8 +68,50 @@
   </div>
 </template>
 
-<script>
-  export default {};
+
+
+<script lang="ts">
+import {Component, Vue, Watch} from "vue-property-decorator";
+import router from "vue-router"
+import {
+  Article,
+} from "@/types/api/article";
+
+@Component
+export default class SearchRequest extends Vue {
+  fandom = ""
+  relationship =""
+  title = ""
+  author = ""
+  
+  /* get searchData(){
+    let req = {} as Article.Search.Request
+    req.title = this.title
+    req.fandom = this.fandom
+    req.relationship = this.relationship
+    req.author = this.author
+    req.orderBy = "recent"
+    return req
+  }  */
+
+  btnClick(){
+    console.log(this.title)
+    //输入内容不为空
+    if([this.fandom, this.relationship, this.title, this.author].every( x => x == "" )){
+      console.log("please enter something");
+    }
+    else{
+      //console.log(this.searchData)
+      //this.$store.commit('changeSearchData', this.searchData)
+      this.$router.push({
+        path:'/article/searchresult',
+        query:{
+          req: [this.fandom,this.relationship,this.title,this.author]
+        }
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -87,7 +132,7 @@
     padding-left: 1rem;
     padding-right: 1rem;
     vertical-align: middle;
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: rgba(104, 104, 104, 0.7);
     text-shadow: 0 1px 1px rgba(88, 85, 83, 0.356);
     font-family: "Arvo", "Myriad Pro", "Trebuchet MS", sans-serif;
@@ -108,7 +153,7 @@
     display: table-cell;
     padding-left: 1rem;
     vertical-align: middle;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     color: rgba(95, 95, 95, 0.7);
     text-shadow: 0 1px 1px rgba(71, 68, 66, 0.6);
     font-family: "Arvo", "Myriad Pro", "Trebuchet MS", sans-serif;
@@ -167,6 +212,6 @@
     display: block;
     margin-top: 1.5rem;
     margin-bottom: 1rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 </style>

@@ -2,6 +2,7 @@ import {BaseResponse} from "@/types/api/config";
 import {UserStructSimplified} from "./user";
 import {API_PREFIX, BaseGetParameters, del, get, post, put} from "@/types/api/config";
 
+/* eslint-enable */
 
 /**
  * 性向分类
