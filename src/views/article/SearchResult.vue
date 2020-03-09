@@ -44,7 +44,7 @@ export default class SearchResult extends Vue{
     console.log("search Result Page Mounted")
     //console.log(this.$route.query.req[0])
     this.req.fandom = this.$route.query.req[0]
-    this.req.relationship = this.$route.query.req[1]
+    this.req.relationship[0] = this.$route.query.req[1]
     this.req.title = this.$route.query.req[2]
     this.req.author = this.$route.query.req[3]
     this.req.orderBy = 'recent'
