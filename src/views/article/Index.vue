@@ -26,11 +26,11 @@
               <Row style="padding:1em;display: flex;flex-wrap:wrap;">
                 <i-col style="flex-grow: 1;flex-basis: calc(10em*.5);margin:.5rem 1rem">
                   <span style="display:block">原作</span>
-                  <i-input v-model="fandom" placeholder="请输入..." style="width: 100%"></i-input>
+                  <i-input v-model="fandom" placeholder="可以输入多个，用;分割" style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(12em*.5);margin:.5rem 1rem">
                   <span style="display:block">配对</span>
-                  <i-input v-model="relationship" placeholder="请输入..." style="width: 100%"></i-input>
+                  <i-input v-model="relationship" placeholder="可以输入多个，用;分割." style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(16em*.5);margin:.5rem 1rem">
                   <span style="display:block">标题</span>

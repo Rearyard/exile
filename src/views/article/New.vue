@@ -13,7 +13,7 @@
               <Icon type="pound"></Icon>新文章
           </Breadcrumb-item>
         </Breadcrumb>
-        <div class="wrap-card">
+        <div class="wrap-card" onclick="window.open('/article/1/1/edit','_self')">
             <span>> 创建新的小说</span>
         </div>
         <div class="wrap-card">
@@ -26,7 +26,6 @@
 
 <script>
 export default {
-
 }
 </script>
 

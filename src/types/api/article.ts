@@ -124,7 +124,7 @@ export namespace Article {
       query?: string;  // 在所有字段搜索, 包括 title, author, relationship,summary 等
       title?: string;  // 模糊搜索
       author?: string;  // 模糊搜索
-      fandom?: string;  // 为空不限, 模糊搜索
+      fandom?: string[];  // 为空不限, 模糊搜索
       relationship?: string[]; // 为空不限, 精确搜索
       category?: Category[];  // 分类
       tag?: string[]; // 为空不限, 精确搜索
