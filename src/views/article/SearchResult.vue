@@ -1,24 +1,28 @@
 <template>
   <div>
     <Row style="margin-top:2rem">
-      <iCol :xs="{ span: 20, offset: 2}" :sm="{ span: 18, offset:3 }" :md="{ span: 16, offset: 4 }" :lg="{ span: 14, offset: 5 }">
+      <iCol
+        :xs="{ span: 20, offset: 2}"
+        :sm="{ span: 18, offset:3 }"
+        :md="{ span: 16, offset: 4 }"
+        :lg="{ span: 14, offset: 5 }"
+      >
         <Breadcrumb separator=" > " style="margin-bottom: 2rem">
           <Breadcrumb-item href="/">
-              <Icon type="ios-home-outline"></Icon>放逐地
+            <Icon type="ios-home-outline"></Icon>放逐地
           </Breadcrumb-item>
           <Breadcrumb-item href="/components/breadcrumb">
-              <Icon type="social-buffer-outline"></Icon>文区
+            <Icon type="social-buffer-outline"></Icon>文区
           </Breadcrumb-item>
           <Breadcrumb-item>
-              <Icon type="pound"></Icon>{{req.fandom}}、{{req.relationship.toString()}}
+            <Icon type="pound"></Icon>
+            {{req.fandom}}、{{relationshipText}}
           </Breadcrumb-item>
         </Breadcrumb>
-        <div
-          id="tag-card"
-          style="height: 7rem; padding-left:1rem; padding-top:1rem">
-            <Tag type="dot" closable>{{req.fandom}}</Tag>
-            <Tag type="dot" closable>{{req.relationship.toString()}}</Tag>
-            <Divider style="margin:0.5rem 0"/>
+        <div id="tag-card" style="height: 7rem; padding-left:1rem; padding-top:1rem">
+          <Tag type="dot" closable>{{req.fandom}}</Tag>
+          <Tag type="dot" closable>{{relationshipText}}</Tag>
+          <Divider style="margin:0.5rem 0" />
         </div>
       </iCol>
     </Row>
@@ -26,30 +30,29 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from "vue-property-decorator";
-import searchResponse from '../../../public/search.json'
-import axios from "axios"
-import {
-  Article,
-} from "@/types/api/article";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import searchResponse from "../../../public/search.json";
+import axios from "axios";
+import { Article } from "@/types/api/article";
 
 @Component
-export default class SearchResult extends Vue{
-  req = {} as Article.Search.Request
-  res = {} as Article.Search.Response
+export default class SearchResult extends Vue {
+  req = {} as Article.Search.Request;
+  res = {} as Article.Search.Response;
   /* get searchData(){
     return this.$store.state.searchData
   }  */
-  async mounted(){
-    console.log("search Result Page Mounted")
-    this.req.fandom = this.$route.query.fandom.toString()
-    this.req.relationship = String(this.$route.query.relationship).split(',')
-    this.req.title = String(this.$route.query.title)
-    this.req.author = String(this.$route.query.author)
-    this.req.orderBy = 'recent'
+  relationshipText: string;
+  async beforeMount() {
+    console.log("search Result Page Mounted");
+    this.req.fandom = String(this.$route.query.fandom);
+    this.req.relationship = String(this.$route.query.relationship).split(",");
+    this.relationshipText = String(this.$route.query.relationship)
+    this.req.title = String(this.$route.query.title);
+    this.req.author = String(this.$route.query.author);
+    this.req.orderBy = "recent";
     //this.res = await Article.search(this.req)
     // console.log("Has found " + searchResponse.count + " results")
-    
   }
 }
 </script>
@@ -57,17 +60,16 @@ export default class SearchResult extends Vue{
 
 <style scoped>
 #tag-card {
-  width:100%; 
+  width: 100%;
   height: 4rem;
   line-height: 3rem;
   background-color: #ffffff;
-  box-shadow:
-    0px 0px 5px 0px rgba(208,208,208,0.3) inset,
-    0px 10px 15px 12px rgba(208,208,208,0.5);
-  border-radius:18px;
-  margin-top:0.5rem;
+  box-shadow: 0px 0px 5px 0px rgba(208, 208, 208, 0.3) inset,
+    0px 10px 15px 12px rgba(208, 208, 208, 0.5);
+  border-radius: 18px;
+  margin-top: 0.5rem;
 }
-#tag-text{
+#tag-text {
   font: size 1.2rem;
   padding-left: 1rem;
 }
