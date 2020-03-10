@@ -106,7 +106,10 @@ export default class SearchRequest extends Vue {
       this.$router.push({
         path:'/article/searchresult',
         query:{
-          req: [this.fandom,this.relationship,this.title,this.author]
+          fandom:this.fandom,
+          relationship:this.relationship,
+          title:this.title,
+          author:this.author,
         }
       })
     }
@@ -168,6 +171,7 @@ export default class SearchRequest extends Vue {
 
   #search {
     width: 100%;
+    height: calc(100% - 0.5rem);
     line-height: 2rem;
     background-color: #ffffff;
     box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.2) inset,

@@ -16,7 +16,7 @@ export enum Category {
  * 作品分级
  */
 export enum Rating {
-  G, PG13, NC17
+  G, PG13, R, NC17
 }
 
 /**
