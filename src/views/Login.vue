@@ -27,7 +27,12 @@
                     <iCol span="24">
                       <iInput v-model="form.captcha" size="large"></iInput>
                     </iCol>
-                    <img src="/api/auth/captcha" id="captcha" />
+                    <img
+                      v-if="captcha"
+                      src="/api/auth/captcha"
+                      id="captcha"
+                      @click="captchaRefresh"
+                    />
                   </Row>
                 </FormItem>
                 <FormItem>
@@ -43,16 +48,102 @@
 </template>
 
 <script>
+import cookie from "js-cookie";
+import { mapMutations } from "vuex";
+
 export default {
-  data(){
-    return{
-      icon:require('@/assets/favicon_green.png'),
-      loading:true,
+  data() {
+    return {
+      icon: require("@/assets/favicon_green.png"),
+      captcha: true,
+      loading: true,
       form: {
         username: "",
         password: "",
         captcha: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "用户名不可为空", trigger: "blur" }
+        ],
+        password: [{ required: true, message: "密码不可为空", trigger: "blur" }]
       }
+    };
+  },
+  methods: {
+    captchaRefresh() {
+      (this.captcha = false),
+        setTimeout(() => {
+          this.captcha = true;
+        }, 500);
+    },
+    captchaValidate() {
+      return new Promise((resove, reject) => {
+        const csrfToken = cookie.get("csrfToken");
+        this.$axios
+          .post(
+            "/api/auth/captcha",
+            { captcha: this.form.captcha },
+            {
+              headers: { "x-csrf-token": csrfToken },
+              withCredentials: true
+            }
+          )
+          .then(res => {
+            resove(res.data.result);
+          });
+      });
+    },
+    postLogin() {
+      return new Promise((resove, reject) => {
+        const csrfToken = cookie.get("csrfToken");
+        this.$axios
+          .post(
+            "/api/auth/login",
+            { ...this.form },
+            {
+              headers: { "x-csrf-token": csrfToken },
+              withCredentials: true
+            }
+          )
+          .catch(err => {
+            this.$Message.error("用户名或密码错误，请检查");
+            return false;
+          })
+          .then(res => {
+            resove(res);
+          });
+      });
+    },
+    async handleSubmit() {
+      if (!this.form.captcha) {
+        return this.$Message.error("请输入验证码");
+      }
+      const captcha = await this.captchaValidate();
+      console.log(captcha);
+      if (!captcha) {
+        this.captchaRefresh();
+        return this.$Message.error("验证码错误，请重新输入");
+      }
+      this.$refs["loginForm"].validate(async valid => {
+        if (valid) {
+          const user = await this.postLogin();
+          if (!user) {
+            return;
+          }
+          if (user.data.user_canceled) {
+            return this.$Message.error("用户已被注销");
+          }
+          this.$store.commit("setUserInfo", user.data);
+          this.$Message.success(
+            `欢迎回来，${this.$store.state.user.user_nickname}`
+          );
+          if (this.$route.query.from) {
+            return this.$router.push(this.$route.query.from)
+          }
+          return this.$router.push('/')
+        }
+      });
     }
   }
 };

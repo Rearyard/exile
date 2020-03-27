@@ -79,7 +79,7 @@ export namespace Register {
   export interface Request {
     username: string;
     password: string;
-    // rePassword: string, //此处建议不需要把重复密码传入后端，在前端检查即可
+    // rePassword: string, //此处建议不需要把重复密码传入后端，在前端检查即可 
     email: string;
     // nickName: string, //使用username而不再设nickName
     captcha: string;

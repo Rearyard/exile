@@ -28,10 +28,25 @@
                     class="header-search"
                   ></iInput>
                 </div>
-                <Avatar style="background-color: #87d068" icon="ios-person" />
+                <Avatar
+                  :src="user.user_avatar_url"
+                  style="background-color: #87d068"
+                  icon="ios-person"
+                />
 
                 <span style="display:inline-block;margin: 0 20px 0 20px">
-                  <router-link to="/login" style="color:#fff">登录</router-link>
+                  <Dropdown>
+                    <a v-if="user.id" style="color:#fff">{{user.user_nickname}}</a>
+                    <DropdownMenu slot="list">
+                      <DropdownItem>
+                        <router-link style="color:black" to="/self/info">个人中心</router-link>
+                      </DropdownItem>
+                      <DropdownItem divided>
+                        <a @click="postLogout" style="color:black">登出</a>
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                  <a v-if="!user.id" @click="jumpLogin" style="color:#fff">登录</a>
                 </span>
                 <div class="tab-quick-add" @click="addPassage">
                   <Icon type="md-brush" style="font-size: 25px;position: relative;top: 12px;" />
@@ -119,6 +134,8 @@
 </template>
 
 <script>
+import cookie from "js-cookie";
+import { mapState } from "vuex";
 export default {
   name: "app",
   data() {
@@ -127,6 +144,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["user"]),
     portable() {
       return window.screen.width < 1024;
     },
@@ -138,6 +156,40 @@ export default {
   methods: {
     addPassage() {
       return true;
+    },
+    jumpLogin() {
+      this.$router.push({
+        path: "/login",
+        query: { from: this.$route.fullPath }
+      });
+    },
+    postLogout() {
+      const csrfToken = cookie.get("csrfToken");
+      this.$axios
+        .post(
+          "/api/auth/logout",
+          {},
+          {
+            headers: { "x-csrf-token": csrfToken },
+            withCredentials: true
+          }
+        )
+        .then(res => {
+          this.$router.push('/login')
+        });
+    }
+  },
+  mounted() {
+    if (!this.user.id) {
+      this.$axios.get("/api/auth/callback").then(res => {
+        if (res.data) {
+          this.$store.commit("setUserInfo", res.data);
+        } else {
+          if (this.$route.name != "Register" && this.$route.name != "Login") {
+            this.jumpLogin();
+          }
+        }
+      });
     }
   }
 };
@@ -219,7 +271,7 @@ export default {
   transition: all 0.2s linear;
   cursor: pointer;
 }
-.tab-quick-add:hover{
+.tab-quick-add:hover {
   transform: scale(1.1);
 }
 .wrapper-bottom-nav {

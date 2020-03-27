@@ -8,11 +8,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    user:{},
     searchData:{} as Article.Search.Request
   },
   mutations: {
     changeSearchData(state, req: Article.Search.Request){
       state.searchData = req;
+    },
+    setUserInfo(state,info){
+      state.user = info
     }
   },
   actions: {

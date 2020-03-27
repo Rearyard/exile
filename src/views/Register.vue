@@ -1,14 +1,15 @@
 <template>
   <div>
     <Row type="flex" justify="center" align="middle" id="mainCard">
-      <iCol :xs="20" :lg="6">
+      <iCol :xs="20" :lg="8">
         <Card>
           <Row type="flex" justify="center" align="middle">
             <iCol>
               <Avatar :src="icon" size="90" id="icon" />
             </iCol>
           </Row>
-          <Row>
+          <!-- 基础信息 -->
+          <Row v-if='step == 1'>
             <iCol>
               <Form ref="loginForm" :model="form" :rules="rules" id="login-form">
                 <FormItem label="用户名" prop="username">
@@ -34,7 +35,7 @@
                   <iInput v-model="form.email" size="default"></iInput>
                 </FormItem>
                 <FormItem label="邀请码" prop="invCode">
-                  <iInput v-model="form.invCode" size="default"></iInput>
+                  <iInput disabled v-model="form.invCode" size="default"></iInput>
                 </FormItem>
                 <FormItem v-if="captchaType=='pic'" label="验证码">
                   <Row type="flex" align="middle" style="width:100%">
@@ -45,9 +46,15 @@
                   </Row>
                 </FormItem>
                 <FormItem>
-                  <Button type="success" long @click="handleSubmit">注册</Button>
+                  <Button type="success" long @click="nextStep" v-if="step<4">下一步</Button>
                 </FormItem>
               </Form>
+            </iCol>
+          </Row>
+          <Row v-if='step==2'>
+            <iCol style='text-align:center'>
+              <h2>选择你的年龄</h2>
+              <DatePicker type="date" placeholder="Select date" style="width: 200px"></DatePicker>
             </iCol>
           </Row>
         </Card>
@@ -57,20 +64,92 @@
 </template>
 
 <script>
+import cookie from "js-cookie";
+import moment from "moment";
+
 export default {
   data() {
+    const validateRe = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("需要重复输入密码"));
+      }
+      if (this.rePassword != this.password) {
+        return callback(new Error("前后密码输入不一致"));
+      }
+      callback();
+    };
     return {
       icon: require("@/assets/favicon_green.png"),
+      step:1,
       loading: true,
       form: {
         username: "",
         password: "",
         rePassword: "",
         email: "",
-        captcha: "",
         invCode: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "用户名不可为空", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "密码不可为空", trigger: "blur" }
+        ],
+        rePassword: [{ validator: validateRe, trigger: "blur" }],
+        email: [
+          { required: true, message: "邮箱不可为空", trigger: "blur" },
+          { type: "email", message: "请填写正确邮箱", trigger: "change" },
+          { type: "email", message: "请填写正确邮箱", trigger: "blur" }
+        ],
+        invCode: [{ required: true, message: "密码不可为空", trigger: "blur" }]
       }
     };
+  },
+  mounted() {
+    const csrfToken = cookie.get("csrfToken");
+    if (!this.$route.query.code) {
+      this.$Modal.warning({
+        title: "不可注册",
+        content: "对不起，本站目前仅接受邀请链接来源的注册。"
+      });
+      return this.$router.push("/");
+    }
+    this.form.invCode = this.$route.query.code;
+    this.$axios
+      .post(
+        "/api/auth/invcode",
+        { code: this.form.invCode },
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      )
+      .then(res => {
+        if (res.data.remain <= 0) {
+          this.$Modal.warning({
+            title: "不可注册",
+            content: "对不起，您的注册链接或注册码剩余使用次数不足。",
+            onOk: () => {
+              this.$router.push("/");
+            }
+          });
+        }
+        if (moment(res.data.expire) < moment()) {
+          this.$Modal.warning({
+            title: "不可注册",
+            content: "对不起，您的注册链接或注册码已过期",
+            onOk: () => {
+              this.$router.push("/");
+            }
+          });
+        }
+      });
+  },
+  methods: {
+    nextStep(){
+      this.step++;
+    }
   }
 };
 </script>
