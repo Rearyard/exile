@@ -181,15 +181,9 @@ export default {
   },
   mounted() {
     if (!this.user.id) {
-      this.$axios.get("/api/auth/callback").then(res => {
-        if (res.data) {
-          this.$store.commit("setUserInfo", res.data);
-        } else {
           if (this.$route.name != "Register" && this.$route.name != "Login") {
             this.jumpLogin();
-          }
-        }
-      });
+          }  
     }
   }
 };

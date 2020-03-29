@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from "vuex-persistedstate";
 import {
   Article,
 } from "@/types/api/article";
@@ -7,6 +8,7 @@ import {
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  plugins: [createPersistedState()],
   state: {
     user:{},
     searchData:{} as Article.Search.Request
