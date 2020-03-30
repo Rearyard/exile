@@ -2,8 +2,7 @@
 import {BaseResponse} from "@/types/api/config";
 import {UserStructSimplified} from "./user";
 import {API_PREFIX, BaseGetParameters, del, get, post, put} from "@/types/api/config";
-
-/* eslint-enable */
+import Axios from "axios";
 
 /**
  * 性向分类
@@ -87,6 +86,29 @@ export interface ArticleStruct {
   // comments: Comment[] //评论已转移到章节下
 }
 
+export interface ArticleResponseStruct {
+  id: number;
+  title: string;
+  summary: string;
+  note: string;
+  author: number;
+  rating: string;
+  warning: string;
+  fandom: string;
+  relationship: string;
+  category: string;
+  character: string;
+  tag: string;
+  view: number;
+  like: number;
+  favorite: number;
+  wordCount: number;
+  chapters: string;
+  created: Date;
+  last_edit: Date;
+  deleted?: any;
+}
+
 //这里的定义是指 ArticleStruct中除去chapters字段
 export type ArticleSimplified = Omit<ArticleStruct, 'chapters'>
 
@@ -100,13 +122,19 @@ export namespace Article {
    * //获取文章信息（包括章节信息）
    * GET /article/:aid  //:aid是路由参数，文章id
    */
-  export function getDetail(aid: number | string) {
-    return get<Detail.Response, BaseGetParameters>('/article/' + aid)
+  export async function getDetail(aid: number | string) {
+    let {article, author, chapters} = await Axios.get(`${API_PREFIX}/article/${aid}`).then(
+      v => v.data
+    );
+    article = Object.fromEntries(Object.entries(article).map(([k, v]) => [k.replace('article_', ''), v])) as any
+    return ({article, author, chapters})
   }
 
   export namespace Detail {
     export interface Response extends BaseResponse {
-      article: ArticleStruct;
+      article: ArticleResponseStruct;
+      author: UserStructSimplified;
+      chapters: ChapterSimplified;
     }
   }
 

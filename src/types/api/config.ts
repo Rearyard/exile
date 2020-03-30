@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Axios from "axios";
 
-export const API_PREFIX = 'https://rikaapi.rika.tech/api/exile?'
+export const API_PREFIX = 'http://localhost:8080/api'
 
 export interface BaseGetParameters {
   offset: number
