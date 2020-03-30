@@ -12,28 +12,29 @@
             <iCol>
               <Form ref="loginForm" :model="form" :rules="rules" id="login-form">
                 <FormItem label="用户名" prop="username">
-                  <iInput v-model="form.username" size="large"></iInput>
+                  <iInput v-model="form.username" size="large" @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
                 </FormItem>
                 <FormItem label="密码" prop="password">
-                  <iInput type="password" v-model="form.password" size="large"></iInput>
+                  <iInput type="password" v-model="form.password" size="large"
+                          @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
                 </FormItem>
-                <Row>
-                  <iCol :xs="5" :lg="4" offset="20">
+                <Row style="display:flex;justify-content:end">
                     <router-link to="/reset">忘记密码</router-link>
-                  </iCol>
                 </Row>
                 <FormItem label="验证码">
-                  <Row type="flex" align="middle" style="width:100%">
-                    <iCol span="24">
-                      <iInput v-model="form.captcha" size="large"></iInput>
-                    </iCol>
-                    <img
-                      v-if="captcha"
-                      src="/api/auth/captcha"
-                      id="captcha"
-                      @click="captchaRefresh"
-                    />
-                  </Row>
+                  <div type="flex"
+                       style="width:100%;display: flex;align-items: center">
+                    <div style="flex:3 1 0">
+                      <iInput v-model="form.captcha" size="large" @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
+                    </div>
+                      <img
+                        style="flex: 1 1 0"
+                        v-if="captcha"
+                        :src="captchaSrc"
+                        id="captcha"
+                        @click="captchaRefresh"
+                      />
+                  </div>
                 </FormItem>
                 <FormItem>
                   <Button type="success" long @click="handleSubmit">登录</Button>
@@ -56,6 +57,7 @@ export default {
     return {
       icon: require("@/assets/favicon_green.png"),
       captcha: true,
+      captchaSrc:'/api/auth/captcha',
       loading: true,
       form: {
         username: "",
@@ -70,12 +72,16 @@ export default {
       }
     };
   },
+  mounted() {
+    this.captchaRefresh()
+  },
   methods: {
     captchaRefresh() {
-      (this.captcha = false),
+      this.captchaSrc='/api/auth/captcha?rand='+Math.random();
+      /*(this.captcha = false),
         setTimeout(() => {
           this.captcha = true;
-        }, 500);
+        }, 500);*/
     },
     captchaValidate() {
       return new Promise((resove, reject) => {
@@ -171,9 +177,9 @@ input {
 }
 #captcha {
   height: 33px;
-  position: absolute;
-  right: 0;
-  border: 1px solid #dcdee2;
-  border-radius: 3px;
+  /*position: absolute;*/
+  /*right: 0;*/
+  /*border: 1px solid #dcdee2;*/
+  /*border-radius: 3px;*/
 }
 </style>
