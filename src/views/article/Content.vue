@@ -2,12 +2,9 @@
 <!--suppress ALL -->
 <template>
   <div v-if="article">
-    <Row style="margin-top:2rem">
-      <iCol
-        :xs="{ span: 20, offset: 2}"
-        :sm="{ span: 18, offset:3 }"
-        :md="{ span: 16, offset: 4 }"
-        :lg="{ span: 14, offset: 5 }"
+    <div style="margin-top:2rem;display:flex;justify-content: center;">
+      <div
+        style="flex: 0 1 720px;box-sizing: border-box;max-width: 720px"
       >
         <Breadcrumb separator=" > " style="margin-bottom: 2rem">
           <Breadcrumb-item to="/">
@@ -24,149 +21,148 @@
           </BreadcrumbItem>
           <BreadcrumbItem v-if="selectedChapter">
             <Icon type="pound"/>
-            第 {{selectedChapter.cid+1}} 章
+            {{selectedChapter.title}}
           </BreadcrumbItem>
         </Breadcrumb>
-
         <div class="wrap-card">
+          <!--头部-->
           <div class="article-header" :class="{'article-header-portable':portable}">
             <h1>{{article.title}}</h1>
-            <span>{{article.summary}}</span>
-            <span style="font-size: 130%">BY {{author.nickname}} | 分级 {{article.rating}}</span>
-            <span>
-              <Icon type="ios-alert"/>
-              :
-              {{warnings.join(' | ')}}
-            </span>
-            <span>注释: {{article.note}}</span>
+            <span style="color: #666">{{article.summary}}</span>
+            <div style="display: grid;grid-template-columns: 36px auto;align-items: center;">
+              <Avatar v-if="author.avatar" :src="author.avatar" size="24" style="justify-self: center"/>
+              <Icon v-else type="md-contact" size="24"/>
+              <div><a style="color:#222;text-decoration: underline" href="javascript:;">{{author.nickname}}</a></div>
+              <Icon type="md-funnel" size="24"/>
+              <div>
+                <Tag :color="ratingColor" style="font-weight: bold">{{article.rating}}</Tag>
+              </div>
+              <Icon type="md-warning" size="24"/>
+              <div>
+                <Tag v-for="w in warnings">{{w}}</Tag>
+              </div>
+              <Icon type="md-information-circle" size="24" v-if="article.note"/>
+              <div v-if="article.note">
+                {{article.note}}
+              </div>
+            </div>
             <div class="article-stats">
-              <span>点赞: {{article.like}} 字数: {{article.wordCount}}</span>
+              <span><Icon type="md-heart-outline"/> {{article.like}}
+              <Icon type="md-star-outline"/> {{article.favorite}}
+                字数 {{article.wordCount}}</span>
             </div>
           </div>
 
           <Divider class="my-divider"/>
-
+          <!--主要内容-->
           <div
             class="article-body"
             :class="{'article-body-portable':portable}"
             v-if="article.chapters.length"
           >
             <div v-if="!selectedChapter" style="width: 100%">
-              <div v-if="!portable">
-                <div style="text-align: center">
-                  <div class="toc-header-box">目录</div>
+              <Page :current.sync="chapterListPage" :total="chapters.length" size="small" show-elevator/>
+              <!--              卡片-->
+              <Card v-for="(c,idx) in chapters" v-if="idx<chapterListPage*10 && idx>(chapterListPage-1)*10"
+                    style="margin: 1em 0" :key="c.id">
+                <div slot="title">
+                  <h3 style="text-overflow: ellipsis;white-space: nowrap;overflow:hidden;max-width:100%"
+                      :title="c.title">
+                    <router-link :to="`/article/${article.id}/${c.id}`"
+                                 style="color: #222;">
+                      {{c.title}}
+                    </router-link>
+                  </h3>
+                  <small style="margin-top: .5em;display: block">{{new Date(c.published).toLocaleDateString()}}
+                    <Icon type="md-chatbubbles"/>
+                    {{c.comment_count}}</small>
                 </div>
-                <br/>
-                <Row :gutter="16" style="text-align: center">
-                  <iCol span="6">章节名</iCol>
-                  <iCol span="6">概要</iCol>
-                  <iCol span="2">评论</iCol>
-                  <iCol span="5">发布时间</iCol>
-                  <iCol span="5">最后修改</iCol>
-                </Row>
-                <Divider class="my-divider slim-divider"/>
+                <p style="margin:0">
+                  {{c.summary}}
+                </p>
+              </Card>
 
-                <Row
-                  class="chapter-summary"
-                  :gutter="16"
-                  v-for="chapter of article.chapters"
-                  v-bind:key="chapter.cid"
-                  v-on:click.native="openChapter(chapter.cid)"
-                  style="text-align: center"
-                >
-                  <iCol span="6">{{chapter.title}}</iCol>
-                  <iCol span="6">{{chapter.summary}}</iCol>
-                  <iCol span="2">{{chapter.commentCount}}</iCol>
-                  <iCol span="5">{{dateIntToString(chapter.publish)}}</iCol>
-                  <iCol span="5">{{dateIntToString(chapter.edit)}}</iCol>
-                </Row>
-
-                <Divider class="my-divider slim-divider"/>
-              </div>
-
-              <div v-if="portable">
-                <div style="text-align: center">
-                  <div class="toc-header-box">目录</div>
-                </div>
-                <br/>
-                <iCol span="5">章节名</iCol>
-                <Divider class="my-divider slim-divider"/>
-
-                <Row
-                  class="chapter-summary"
-                  v-for="chapter of article.chapters.slice((chapterListPage-1)*10, chapterListPage*10)"
-                  v-bind:key="chapter.cid"
-                >{{chapter.title}}
-                </Row>
-
-                <Divider class="my-divider slim-divider"/>
-              </div>
-
-              <Page :current="1" :total="article.chapters.length / 10" simple/>
+              <Page :current.sync="chapterListPage" :total="chapters.length" size="small" show-elevator/>
             </div>
-
-            <div v-if="selectedChapter">
-              <h1>第{{selectedChapter.cid+1}}章</h1>
-              简介: {{selectedChapter.summary}}
+            <div v-else>
+              <h2>{{selectedChapter.title}}</h2>
+              <div v-if="selectedChapter.summary">摘要: {{selectedChapter.summary}}</div>
+              <div v-if="selectedChapter.note">注释: {{selectedChapter.note}}</div>
               <hr/>
-              <p v-for="(p,idx) in selectedChapter.content.split('\n')" :key="idx">{{p}}</p>
+              <p style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0"
+                 v-for="(p,idx) in (selectedChapter.content || '<空>').split('\n')" :key="idx">{{p}}</p>
             </div>
           </div>
-
           <Divider class="my-divider divider-footer"/>
-
-          <div class="article-footer">本文著作权为作者 {{article.author.username}} 所有，未经作者授权禁止转载</div>
+          <div class="article-footer">本文著作权为作者
+            <span style="text-decoration: underline">{{author.nickname}}</span>
+            所有，未经作者授权禁止转载
+          </div>
         </div>
-
+        <!--底端按钮-->
         <Row :gutter="32" class-name="article-buttons">
           <iCol span="8" style="text-align: center">
-            <i-button class="cute-button" icon="md-heart-outline" type="success">收藏</i-button>
-          </iCol>
-          <iCol span="8" style="text-align: center">
-            <i-button
-              class="cute-button"
-              icon="md-heart-outline"
-              type="error"
-              style="background-color: rgba(244, 179, 207, 1);border-color: rgb(244, 179, 207);"
-            >喜欢
+            <i-button class="cute-button"
+                      @click="fav"
+                      :icon="judgement.articleFav? 'md-star':'md-star-outline'"
+                      type="success">
+              {{judgement.articleFav?'取消':'收藏'}}
             </i-button>
           </iCol>
           <iCol span="8" style="text-align: center">
-            <i-button class="cute-button" icon="md-cash" type="warning">赞助</i-button>
+            <i-button
+              @click="like"
+              class="cute-button"
+              :icon="judgement.articleLike?'md-heart':'md-heart-outline'"
+              type="error"
+              style="background-color: rgba(244, 179, 207, 1);border-color: rgb(244, 179, 207);"
+            >{{judgement.articleLike?'取消':'喜欢'}}
+            </i-button>
+          </iCol>
+          <iCol span="8" style="text-align: center">
+            <i-button class="cute-button" icon="logo-yen" type="warning">赞助</i-button>
           </iCol>
         </Row>
-
         <div>
-          <div v-if="comments.length">
-            <div
-              class="wrap-card comment-card"
-              v-for="comment of comments.slice((commentListPage-1)*10, commentListPage*10)"
-              v-bind:key="comment.id"
-            >
-              <div>{{comment.author}}</div>
-              <div>{{comment.like}}</div>
-              <div>{{comment.content}}</div>
-              <div>{{dateIntToString(comment.publish)}}</div>
-            </div>
-
-            <div class="page-turner">
-              <i-button size="small">上一页</i-button>
-              <div
-                style="display: flex; align-items: center"
-              >{{commentListPage}} / {{Math.ceil(comments.length / 10)}}
+          <div v-if="comments.length" style="margin: 0 1em">
+            <Page :current.sync="commentListPage" :total="selectedChapter.comment_count" size="small" show-elevator
+                  style="margin-bottom: 1em"/>
+            <Card v-for="c in comments">
+              <div slot="title" style="display: flex;justify-content: space-between;align-items: center">
+                <div style="display: flex;justify-content: left;align-items: center">
+                  <Avatar v-if="c.author.avatar" :src="c.author.avatar" size="24" style="justify-self: center"/>
+                  <Icon v-else type="md-contact" size="24"/>
+                  <div style="margin-left: 12px">
+                    <a style="color:#222;text-decoration: underline" href="javascript:;">{{c.author.nickname}}</a>
+                  </div>
+                </div>
+                <div style="display: flex;justify-content: right;align-items: center">
+                  <Button v-if="$store.state.user.id===c.author.id" size="small" icon="md-trash" type="error" ghost
+                          shape="circle" style="border: none"
+                          @click="delComment(c.id)"/>
+                  <span style="color: #777">{{moment(c.published).fromNow()}}</span>
+                  <span class="vertical-hr"/>
+                  <div style="display: flex;flex-direction: column;align-items: center">
+                    <Icon type="md-heart-outline"/>
+                    <div style="font-size: 50%">{{c.like}}</div>
+                  </div>
+                </div>
               </div>
-              <i-button size="small">下一页</i-button>
-              <i-button size="small">尾页</i-button>
-            </div>
+              <p>
+                {{c.content}}
+              </p>
+            </Card>
+            <Page :current.sync="commentListPage" :total="selectedChapter.comment_count" size="small" show-elevator
+                  style="margin-top: 1em"/>
           </div>
-          <div class="wrap-card comment-panel">
+          <div class="wrap-card comment-panel" v-if="$route.params.cid">
             <h1>评论</h1>
             <Input
               v-model="commentInput"
               maxlength="200"
               show-word-limit
               type="textarea"
-              placeholder="请友善发言并遵守《国际膜蛤公约》"
+              placeholder="请友善发言并遵守《国际卖萌公约》"
               style="width: 100%; resize: none; margin-top: 2em"
               size="large"
               :rows="5"
@@ -176,14 +172,14 @@
                 class="cute-button"
                 icon="md-checkmark"
                 type="success"
-                @click="submitComment()"
+                @click="submitComment"
               >提交
               </i-button>
             </div>
           </div>
         </div>
-      </iCol>
-    </Row>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -194,38 +190,42 @@
     ArticleStruct,
     Chapter,
     Rating,
-    Comment, ArticleResponseStruct, Warning
+    Comment, ArticleSimplified, Warning, ChapterSimplified
   } from "@/types/api/article";
   import Axios from "axios";
   import moment from "moment";
   import router from "../../router";
   import {Component, Vue, Watch} from "vue-property-decorator";
   import {Route} from "vue-router";
-  import {API_PREFIX, get} from "@/types/api/config";
+  import {API_PREFIX, get, post} from "@/types/api/config";
   import {UserStructSimplified} from "@/types/api/user";
   import getDetail = Article.getDetail;
+  import getChapter = Chapter.getChapter;
+  import putComment = Comment.putComment;
+  import deleteComment = Comment.deleteComment;
+
 
   //类的定义，需要加上组件装饰器，类名就是组件名
   @Component
   export default class ArticleContent extends Vue {
     //data直接写在类里，[字段名]:[类型]=[初始值]，类型可以自动推断时省略
-    article: ArticleResponseStruct = null;
+    article: ArticleStruct = null;
     author: UserStructSimplified = null
     comments: Comment[] = [];
     selectedChapter: Chapter = null;
+    chapters: ChapterSimplified[] = []
     commentInput = "";
     chapterListPage = 1;
     commentListPage = 1;
+    judgement = {
+      articleLike: false,
+      articleFav: false,
+    }
+    moment = moment
 
     //生命周期钩子照常写
     async mounted() {
-      let {article, author, chapters} = await getDetail(this.$route.params.aid)
-      this.article = article;
-      this.author = author
-      this.comments = [];
-      if (this.$route.params.cid) {
-        this.openChapter(this.$route.params.cid);
-      }
+      this.refresh()
     }
 
     //computed改为getter，直接写在类里面
@@ -237,59 +237,95 @@
       return this.article.warning.split(',').map(_ => Warning[_])
     }
 
+
+    get ratingColor() {
+      switch (Rating[this.article.rating]) {
+        case Rating.G:
+          return '#9dd1a9'
+        case Rating.PG13:
+          return '#a2d6cd'
+        case Rating.R:
+          return '#f7bb8e'
+        case Rating.NC17:
+          return '#ea534f'
+      }
+    }
+
     get portable() {
       return window.screen.width < 1024;
     }
 
-    //methods直接写在类里面
-    //参数参数如此指定类型，返回值类型可以自动推断时省略
-    dateIntToString(x: number) {
-      return moment(x).format("YYYY-MM-DD HH:MM:SS");
+    getDateDescribeString(c: ChapterSimplified) {
+      let n1 = new Date(c.published).getTime(),
+        n2 = new Date(c.last_edit).getTime()
+      if (n2 > n1)
+        return `编辑于${new Date(c.last_edit).toLocaleTimeString()}`
+      return `${new Date(c.published).toLocaleTimeString()}`
+
     }
 
-    //number|string表示参数类型可以为number或string
-    openChapter(cid: number | string) {
-      // 通过挂在 $route 上的钩子实现跳转
-      router.push({
-        path: `/article/${this.$route.params.aid}/${cid}`
-      });
+    @Watch('commentListPage')
+    async loadComment() {
+      let limit = 10,
+        offset = (this.commentListPage - 1) * 10
+      let {aid, cid} = this.$route.params
+      if (cid === undefined) return
+      Object.assign(this, await Comment.getComments(
+        aid, cid, limit, offset
+      ))
+      if (!this.comments.length && this.commentListPage > 1) {
+        this.commentListPage--
+        this.loadComment()
+      }
     }
 
-    async loadComment(limit, offset) {
+    async refresh() {
+      let {aid, cid} = this.$route.params
+      Object.assign(this, await getDetail(aid))
       this.comments = [];
-      this.comments = await Comment.getComment(
-        this.$route.params.aid,
-        this.$route.params.cid,
-        limit,
-        offset
-      ).then(v => v.comments);
+      if (cid)
+        this.selectedChapter = await getChapter(aid, cid)
+      else
+        this.selectedChapter = null
+      let j = await Promise.all([post('/like/article/judgement', {id: aid}),
+        post('/follow/article/judgement', {id: aid}),
+        this.loadComment()
+      ])
+      this.judgement.articleLike = j[0]
+      this.judgement.articleFav = j[1]
     }
 
-    //watch的函数直接写在类里，函数名任意给定，在前面加上如此的装饰器声明监视的路径
+    async like() {
+      let {id} = this.article
+      post('/like/article', {id})
+        .then(() => post('/like/article/judgement', {id}))
+        .then(value => this.judgement.articleLike = value)
+    }
+
+    async fav() {
+      let {id} = this.article
+      post('/follow/article', {id})
+        .then(() => post('/follow/article/judgement', {id}))
+        .then(value => this.judgement.articleFav = value)
+    }
+
+    submitComment() {
+      let {aid, cid} = this.$route.params
+      putComment(aid, cid, this.commentInput)
+        .then(() => this.refresh())
+        .then(() => this.commentInput = '')
+        .then(() => this.commentListPage = Math.ceil(this.selectedChapter.comment_count / 10))
+    }
+
+    delComment(mid) {
+      let {aid, cid} = this.$route.params
+      deleteComment(aid, cid, mid)
+        .then(value => this.loadComment())
+    }
+
     @Watch("$route")
     async $routeChange(to: Route, from: Route) {
-      if (to.params.aid != from.params.aid) {
-        // article 之间跳转, 全部刷新
-        this.article = await Article.getDetail(this.$route.params.aid).then(
-          v => v.article
-        );
-        this.comments = [];
-      }
-
-      if (to.params.cid) {
-        if (from.params.cid != to.params.cid) {
-          this.selectedChapter = null;
-          this.selectedChapter = await Chapter.getChapters(
-            this.$route.params.aid,
-            1,
-            ~~to.params.cid
-          ).then(v => v.chapters[0]);
-          this.loadComment(10, 0);
-        }
-      } else {
-        this.selectedChapter = null;
-        this.comments = [];
-      }
+      this.refresh()
     }
   }
 </script>
@@ -315,12 +351,12 @@
 
   .article-header {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    /*align-items: center;*/
+    /*justify-content: center;*/
     flex-direction: column;
     width: 100%;
-    text-align: center;
-    margin-top: 3em;
+    /*text-align: center;*/
+    margin-top: 2em;
     padding: 3em 3em 0 3em;
     min-height: 200px;
     /* align-items: center; */
@@ -333,7 +369,7 @@
   .article-body {
     display: flex;
     width: 100%;
-    padding: 2em 3em 2em 3em;
+    padding: 0 2rem
   }
 
   .article-body-portable {
@@ -426,5 +462,11 @@
   .page-turner {
     display: flex;
     margin: 1em 0 1em 0;
+  }
+
+  .vertical-hr {
+    width: 1px;
+    border-left: #777 solid 1px;
+    margin: 0 .5em;
   }
 </style>
