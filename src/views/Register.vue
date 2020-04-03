@@ -68,9 +68,9 @@
                     <div slot="content">
                       <ul>
                         <li
-                          v-for="item in authorityQuery[authority].allow"
+                          v-for="item in permissionRules[authority].rate_allow"
                           :key="item"
-                        >{{ item }}:{{rateDiscription[item]}}</li>
+                        >{{ item }}:{{rateDescription[item]}}</li>
                       </ul>
                     </div>
                   </Panel>
@@ -79,16 +79,16 @@
                     <div slot="content">
                       <ul>
                         <li
-                          v-for="item in authorityQuery[authority].disallow"
+                          v-for="item in permissionRules[authority].rate_disallow"
                           :key="item"
-                        >{{ item }}:{{rateDiscription[item]}}</li>
+                        >{{ item }}:{{rateDescription[item]}}</li>
                       </ul>
                     </div>
                   </Panel>
-                  <Panel v-if="authorityQuery[authority].provement" name="3">
+                  <Panel v-if="permissionRules[authority].provement" name="3">
                     确认这个分级所需要的自证
                     <div slot="content">
-                      <p>{{authorityQuery[authority].provementItem}}</p>
+                      <p>{{permissionRules[authority].provement_item}}</p>
                       <Input
                         v-model="form.provement"
                         maxlength="800"
@@ -112,6 +112,9 @@
             </iCol>
           </Row>
           <Row v-if="step == 3">
+            <Spin size="large" fix v-if="cardLoading">
+              <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+              提交中......</Spin>
             <iCol>
               <h2 style="text-align: center;margin:8px 0 8px 0">用户协议</h2>
               <Scroll
@@ -124,19 +127,20 @@
               </Scroll>
               <Checkbox
                 :disabled="!userAgreementRead"
-                v-model="userAgreementAgreed"
+                v-model="userAgreementAgreed" 
               >我已经阅读并接受《后花园用户协议》</Checkbox>
             </iCol>
-            <Button long type="success" :disabled="!userAgreementAgreed" @click="handleSubmit">下一步</Button>
+            <Button long type="success" :disabled="!userAgreementAgreed" @click="handleSubmit">提交</Button>
           </Row>
           <Row v-if="step == 4">
             <h2 style="text-align: center;margin:8px 0 8px 0">注册完成</h2>
             <p style="text-align: center;margin:18px 0 18px 0">
-              如果您不需要验证自证材料，现在就可以开始体验后花园啦！
-              <br />如果您提交了自证材料，请耐心等待我们的管理人员审核。
-              <br />在审核结束之前，您依然可以阅读非限制级内容，感谢您的谅解。
+              如果您不需要验证自证材料，马上就可以开始体验后花园啦！
+              <br />为了验证您的邮箱有效，您稍后会进入激活账号流程
+              <br />如果您提交了自证材料，还请耐心等待我们的管理人员审核。
+              <br />审核结束之前，只要激活账户您依然可以阅读非限制级内容，感谢您的谅解。
             </p>
-            <Button type="success" long>确定</Button>
+            <Button type="success" long @click="jumpLogin">确定</Button>
           </Row>
         </Card>
       </iCol>
@@ -165,6 +169,7 @@ export default {
       panel: "2",
       ageConfirm: false,
       loading: true,
+      cardLoading:false,
       form: {
         username: "",
         password: "",
@@ -174,8 +179,7 @@ export default {
         birth: "2020-04-01",
         provement: ""
       },
-      userAgreement:
-        "用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议用户协议",
+      userAgreement:"",
       userAgreementRead: false,
       userAgreementAgreed: false,
       rules: {
@@ -207,32 +211,8 @@ export default {
         ],
         invCode: [{ required: true, message: "密码不可为空", trigger: "blur" }]
       },
-      authorityQuery: [
-        { allow: ["G"], disallow: ["PG-13", "R", "NC-17"], provement: false },
-        { allow: ["G", "PG-13"], disallow: ["R", "NC-17"], provement: false },
-        {
-          allow: ["G", "PG-13", "R"],
-          disallow: ["NC-17"],
-          provement: true,
-          provementItem: "谈谈您印象最深的一次考试（越具体越好，比如语文默写）"
-        },
-        {
-          allow: ["G", "PG-13", "R", "NC-17"],
-          disallow: [],
-          provement: true,
-          provementItem:
-            "谈谈您关于高考的印象/大学最喜欢的一门课/职场生活的感触"
-        }
-      ],
-      rateDiscription: {
-        G:
-          "大众级清水文，任何人都可以观看。无裸体、性爱描写，极少吸毒暴力描写。",
-        "PG-13":
-          "普通级，13岁以上观看。一些内容对儿童不适宜，没有粗野的持续暴力描写，一般无裸体性爱描写，有时有吸毒和脏话描写。",
-        R:
-          "限制级，18岁以上观看。包含成人内容，有较多性爱、暴力、吸毒描写和脏话",
-        "NC-17": "成人级，18岁以下禁止观看。存在大量性爱、暴力、吸毒描写和脏话"
-      }
+      permissionRules: [],
+      rateDescription: {}
     };
   },
   computed: {
@@ -241,22 +221,17 @@ export default {
       return Math.abs(moment.duration(moment().diff(birthday)).years());
     },
     authority() {
-      if (this.age < 13) {
-        return 0;
-      }
-      if (13 <= this.age && this.age <= 15) {
-        return 1;
-      }
-      if (16 <= this.age && this.age <= 17) {
-        return 2;
-      }
-      if (this.age >= 18) {
-        return 3;
+      for (const key in this.permissionRules) {
+          const element = this.permissionRules[key];
+          if (element.min_age<=this.age&&this.age<=element.max_age) {
+            return Number(key);
+        }
       }
       return 0;
     }
   },
   mounted() {
+    this.getInfo();
     const csrfToken = cookie.get("csrfToken");
     if (!this.$route.query.code) {
       this.$Modal.warning({
@@ -297,6 +272,17 @@ export default {
       });
   },
   methods: {
+    jumpLogin(){
+      this.$router.push('/login')
+    },
+    getInfo(){
+      this.$axios.get('/api/auth/register/info').then((res)=>{
+        for (const key in res.data) {
+            const element = res.data[key];
+            this[key] = element
+        }
+      })
+    },
     nextStep() {
       this.step++;
     },
@@ -313,7 +299,21 @@ export default {
       this.userAgreementRead = true;
     },
     handleSubmit(){
-      return;
+      const csrfToken = cookie.get("csrfToken");
+      this.cardLoading = true;
+      this.$axios
+      .post(
+        "/api/auth/register",
+        { ...this.form },
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res=>{
+        console.log(res)
+        this.cardLoading = false;
+        this.step++;
+      })
     }
   }
 };
@@ -346,4 +346,12 @@ input {
   border: 1px solid #dcdee2;
   border-radius: 3px;
 }
+.demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+    }
+    @keyframes ani-demo-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
 </style>

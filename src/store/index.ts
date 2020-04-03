@@ -19,7 +19,10 @@ export default new Vuex.Store({
     },
     setUserInfo(state,info){
       state.user = info
-    }
+    },
+    clearUserInfo(state){
+      state.user = {}
+    },
   },
   actions: {
   },

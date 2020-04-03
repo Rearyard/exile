@@ -18,8 +18,8 @@
                   <iInput type="password" v-model="form.password" size="large"
                           @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
                 </FormItem>
-                <Row style="display:flex;justify-content:end">
-                    <router-link to="/reset">忘记密码</router-link>
+                <Row type="flex" justify="end">
+                  <iCol><router-link to="/reset">忘记密码</router-link></iCol>
                 </Row>
                 <FormItem label="验证码">
                   <div type="flex"
