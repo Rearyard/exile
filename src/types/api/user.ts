@@ -3,14 +3,9 @@ import {ArticleSimplified} from "./article";
 import {BaseGetParameters, BaseResponse, get, post} from "@/types/api/config";
 
 export interface UserStructSimplified {
+  nickname: string;
   uid: number;
-  username: string;  //用户名
-  info: string; //个人介绍
-  grade: number;      //用户等级
-  avatar: string;  //个人头像
-  followingCount: number; //关注数量
-  followedCount: number; //粉丝数量
-  articlesCount: number; //作品数量
+  avatar: string;
 }
 
 export interface UserStruct extends UserStructSimplified {
