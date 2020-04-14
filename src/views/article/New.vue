@@ -35,9 +35,8 @@ export default {
   height: 4rem;
   line-height: 4rem;
   background-color: #ffffff;
-  box-shadow:
-    0px 0px 5px 0px rgba(208,208,208,0.3) inset,
-    0px 10px 15px 12px rgba(208,208,208,0.5);
+  box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.2) inset,
+  0 5px 10px 5px rgba(208, 208, 208, 0.3);
   border-radius:18px;
   margin-top:0.5rem;
   cursor:pointer;

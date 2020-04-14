@@ -11,6 +11,11 @@ import SelfInfo from '../views/self/Info.vue'
 import SelfWorks from '../views/self/Works.vue'
 import SelfBasic from '../views/self/Basic.vue'
 import SelfAccount from '../views/self/Account.vue'
+import SelfMobile from '../views/selfmobile/Index.vue'
+import SelfMobileInfo from '../views/selfmobile/Info.vue'
+import SelfMobileBasic from '../views/selfmobile/Basic.vue'
+import SelfMobileWorks from '../views/selfmobile/Works.vue'
+import SelfMobileFavorite from '../views/selfmobile/Favorite.vue'
 import NewArticle from '../views/article/New.vue'
 import EditArticle from '../views/article/Edit.vue'
 import ImportArticle from '../views/article/Load.vue'
@@ -92,29 +97,60 @@ const routes = [
   {
     //个人中心
     //这是个嵌套路由，请负责这一块的小伙伴做好布局
-    path: '/self',
+    path: '/self/:uid',
     name: 'Self',
     component: SelfWrapper,
     children: [
       {
         path: 'info',
-        component:SelfInfo
+        component:SelfInfo,
+        name: 'SelfInfo'
       },
       {
         path: 'basic',
         component:SelfBasic,
+        name: 'SelfBasic'
       },
       {
         path:'works',
         component:SelfWorks,
+        name: 'SelfWorks'
       },
       {
         path: 'account',
         component:SelfAccount,
+        name: 'SelfAccount'
       }
     ]
   },
-
+  {
+    //手机端个人中心
+    path: '/selfmobile/:uid',
+    name: 'SelfMobile',
+    component: SelfMobile,
+    children: [
+      {
+        path: 'info',
+        component:SelfMobileInfo,
+        name: 'SelfMobileInfo'
+      },
+      {
+        path: 'basic',
+        component:SelfMobileBasic,
+        name: 'SelfMobileBasic'
+      },
+      {
+        path:'works',
+        component:SelfMobileWorks,
+        name: 'SelfMobileWorks'
+      },
+      {
+        path: 'favorite',
+        component:SelfMobileFavorite,
+        name: 'SelfMobileFavorite'
+      }
+    ]
+  }
 ]
 
 const router = new VueRouter({

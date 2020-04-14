@@ -13,24 +13,28 @@
             文区
           </Breadcrumb-item>
         </Breadcrumb>
-        <div
-          id="post"
-          style="height: 3rem; margin-bottom:1rem; cursor:pointer;"
-          onclick="window.open('/article/new','_self')">
-          <span>> 发表我的文章</span>
-        </div>
+        <Row>
+          <i-col span="23">
+            <div
+              id="post"
+              style="height: 3rem; margin-bottom:1rem; cursor:pointer;"
+              onclick="window.open('/article/new','_self')">
+              <span>> 发表我的文章</span>
+            </div>
+          </i-col>
+        </Row>
         <span class="text-title">高级搜索</span>
         <Row style="display: flex;flex-wrap:wrap;">
-          <i-col span="21">
+          <i-col span="20">
             <div id="search">
               <Row style="padding:1em;display: flex;flex-wrap:wrap;">
                 <i-col style="flex-grow: 1;flex-basis: calc(10em*.5);margin:.5rem 1rem">
                   <span style="display:block">原作</span>
-                  <i-input v-model="fandom" placeholder="可以输入多个，用;分割" style="width: 100%"></i-input>
+                  <i-input v-model="fandom" placeholder="用空格分割" class="search-input" style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(12em*.5);margin:.5rem 1rem">
                   <span style="display:block">配对</span>
-                  <i-input v-model="relationship" placeholder="可以输入多个，用;分割." style="width: 100%"></i-input>
+                  <i-input v-model="relationship" placeholder="用空格分割" style="width: 100%"></i-input>
                 </i-col>
                 <i-col style="flex-grow: 1;flex-basis: calc(16em*.5);margin:.5rem 1rem">
                   <span style="display:block">标题</span>
@@ -51,18 +55,25 @@
               <img src="../../assets/search.png" width="100%" style="vertical-align: middle;"/>
             </div>
           </i-col>
+          <i-col span="1">
+            <div style="width:100%"></div>
+          </i-col>
         </Row>
         <span class="text-title">我收藏的分类</span>
-        <div class="wrap-card" style="height: 3rem; margin-bottom:1rem">
-          <span style="float:left;" herf="/article">生化危机</span>
-          <span style="float:right;">100阅读</span>
-          <span style="float:right;">100喜欢</span>
-        </div>
-        <div class="wrap-card" style="height: 3rem; margin-bottom:1rem">
-          <span style="float:left;" herf="/article">生化危机</span>
-          <span style="float:right;">100阅读</span>
-          <span style="float:right;">100喜欢</span>
-        </div>
+        <Row>
+          <i-col span="23">
+            <div class="wrap-card" style="height: 3rem; margin-bottom:1rem">
+              <span style="float:left;" herf="/article">生化危机</span>
+              <span style="float:right;">100阅读</span>
+              <span style="float:right;">100喜欢</span>
+            </div>
+            <div class="wrap-card" style="height: 3rem; margin-bottom:1rem">
+              <span style="float:left;" herf="/article">生化危机</span>
+              <span style="float:right;">100阅读</span>
+              <span style="float:right;">100喜欢</span>
+            </div>
+          </i-col>
+        </Row>
       </i-col>
     </Row>
   </div>
@@ -122,8 +133,8 @@ export default class SearchRequest extends Vue {
     width: 100%;
     line-height: 3rem;
     background-color: #ffffff;
-    box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.3) inset,
-    0 10px 15px 12px rgba(208, 208, 208, 0.5);
+    box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.2) inset,
+    0 5px 10px 5px rgba(208, 208, 208, 0.3);
     border-radius: 18px;
     margin-top: 0.5rem;
     transition: all 0.3s linear;
@@ -145,8 +156,8 @@ export default class SearchRequest extends Vue {
     width: 100%;
     line-height: 3rem;
     background-color: #ffffff;
-    box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.3) inset,
-    0 10px 15px 12px rgba(208, 208, 208, 0.5);
+    box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.2) inset,
+    0 5px 10px 5px rgba(208, 208, 208, 0.3);
     border-radius: 18px;
     margin-top: 0.5rem;
     transition: all 0.3s linear;
@@ -180,6 +191,10 @@ export default class SearchRequest extends Vue {
     margin-top: 0.5rem;
     transition: all 0.3s linear;
   }
+
+.search-input{
+  border-radius: 1rem;
+}
 
   #search span {
     line-height: 2rem;
@@ -218,4 +233,5 @@ export default class SearchRequest extends Vue {
     margin-bottom: 1rem;
     font-size: 1rem;
   }
+
 </style>
