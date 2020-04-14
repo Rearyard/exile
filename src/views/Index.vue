@@ -93,7 +93,7 @@
                   </Button>
                 </iCol>
               </Row>
-              <Row gutter="16" type="flex" justify="space-between">
+              <Row :gutter="16" type="flex" justify="space-between">
                 <iCol span="12">
                   <Row>
                     <Card>
@@ -216,7 +216,7 @@
                 </iCol>
               </Row>
             </div>
-            <Row gutter="16" type="flex" justify="space-between">
+            <Row :gutter="16" type="flex" justify="space-between">
               <iCol span="9">
                 <div
                   class="popular-topic-poster"
@@ -298,7 +298,7 @@
                 </iCol>
               </Row>
             </div>
-            <Row gutter="16">
+            <Row :gutter="16">
               <iCol span="3">
                 <Card class="fandom-card">
                   <img

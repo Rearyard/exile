@@ -7,7 +7,7 @@
           :class="{'layout-header-bar-portable':portable}"
           v-if="!hideHeader"
         >
-          <Menu mode="horizontal" id="menu" theme="dark" active-name="0">
+          <Menu mode="horizontal" id="menu" theme="dark" :active-name="activeTab">
             <div class="wrapper-nav" v-if="!portable">
               <div class="wrapper-logo">
                 <img id="logo" src="./assets/logo.png" alt />
@@ -140,6 +140,7 @@ export default {
   name: "app",
   data() {
     return {
+      activeTab: "0",
       searchQuery: ""
     };
   },
@@ -153,8 +154,18 @@ export default {
       return situation.indexOf(this.$route.name) != -1;
     }
   },
+  watch: {
+    $route(to, from) {
+      console.log(this.$store)
+      if (this.$store.state.user.user_status == 0) {
+        this.$router.push('/active')
+      }
+    }
+  },
   methods: {
     addPassage() {
+      this.$router.push("/article/new");
+      this.activeTab = "1";
       return true;
     },
     jumpLogin() {
@@ -180,7 +191,8 @@ export default {
           }
         )
         .then(res => {
-          this.$router.push('/login')
+          this.$store.commit("clearUserInfo");
+          this.$router.push("/login");
         });
     },
     jumpUserCenter() {
