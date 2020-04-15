@@ -14,10 +14,10 @@
             <Row>
                 <!-- 左侧菜单栏 -->
                 <i-col span="6" class="nav-bar">
-                    <router-link to="/self/info" active-class="active">个人中心</router-link>
-                    <router-link to="/self/works" active-class="active">我的作品</router-link>
-                    <router-link to="/self/basic" active-class="active">基础设置</router-link>
-                    <router-link to="/self/account" active-class="active">账号设置</router-link>
+                    <router-link to="info" active-class="active">个人中心</router-link>
+                    <router-link to="works" active-class="active">我的作品</router-link>
+                    <router-link to="basic" active-class="active">基础设置</router-link>
+                    <router-link to="account" active-class="active">修改密码</router-link>
                 </i-col>
                 <i-col class="right" span="17" offset="1">
                     <!-- 右边二级路由 -->
@@ -37,7 +37,7 @@ export default {
     },
     mounted(){
         if (this.$route.name=='Self') {
-            this.$router.push('/self/info')
+            this.$router.push(`/self/${this.$store.state.user.id}/info`)
         }
     },
     methods:{
@@ -45,7 +45,7 @@ export default {
 };
 </script>
 
-<style lang='less'>
+<style lang='less' scoped>
 @box-bg:#d8d8d8;
 @box-shadow-big: 0px 10px 15px 12px rgba(208,208,208,0.5);
 @box-shadow-small: 0px 0px 15px 5px rgba(208,208,208,0.2);

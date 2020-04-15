@@ -1,14 +1,21 @@
 <template>
   <div>
     <Row class="info-row">
-      <iCol span="8">昵称</iCol>
+      <iCol span="8">旧密码</iCol>
       <iCol span="10">
-        <iInput v-model="nickname"></iInput>
+        <iInput v-model="newPassword" placeholder="无需修改则留空"></iInput>
       </iCol>
     </Row>
     <Divider />
     <Row class="info-row">
-      <iCol span="8">密码</iCol>
+      <iCol span="8">旧密码</iCol>
+      <iCol span="10">
+        <iInput v-model="newPassword" placeholder="无需修改则留空"></iInput>
+      </iCol>
+    </Row>
+    <Divider />
+    <Row class="info-row">
+      <iCol span="8">新密码</iCol>
       <iCol span="10">
         <iInput v-model="newPassword" placeholder="无需修改则留空"></iInput>
       </iCol>
@@ -42,6 +49,9 @@
         </p>
       </iCol>
     </Row>
+    <div class="btn">
+      <Button type='success' size='large' shape="circle">提交</Button>
+    </div>
   </div>
 </template>
 
@@ -69,7 +79,7 @@ export default {
     height: 3;
     line-height: 3;
     border-bottom: 1px solid #ddd;
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
     span {
       width: 15rem;

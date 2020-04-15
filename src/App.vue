@@ -37,9 +37,9 @@
                 <span style="display:inline-block;margin: 0 20px 0 20px">
                   <Dropdown>
                     <a v-if="user.id" style="color:#fff">{{user.user_nickname}}</a>
-                    <DropdownMenu slot="list" style="text-align: center">
-                      <DropdownItem>
-                        <router-link style="color:black" to="/self/info">个人中心</router-link>
+                    <DropdownMenu slot="list">
+                      <DropdownItem divided>
+                        <a @click="jumpUserCenter" style="color:black">个人中心</a>
                       </DropdownItem>
                       <DropdownItem divided>
                         <a @click="postLogout" style="color:black">登出</a>
@@ -114,7 +114,7 @@
                 </MenuItem>
               </iCol>
               <iCol span="5" class="bottom-nav">
-                <MenuItem name="p3" to="/self">
+                <MenuItem name="p3" :to="{name: 'SelfMobileInfo', params: {uid: this.user.id}}">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
                       <Icon type="md-person" :size="30" />
@@ -174,6 +174,11 @@ export default {
         query: { from: this.$route.fullPath }
       });
     },
+    _isMobile(){
+      const flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+      console.log(flag)
+      return flag ? 1 : 0;
+    },
     postLogout() {
       const csrfToken = cookie.get("csrfToken");
       this.$axios
@@ -189,13 +194,40 @@ export default {
           this.$store.commit("clearUserInfo");
           this.$router.push("/login");
         });
-    }
+    },
+    jumpUserCenter() {
+      // console.log(`user id is ${this.user.id}`);
+      // this.$router.push(`/self/${this.user.id}/info`)
+      this.$router.push({
+        name: 'Self',
+        params: {
+          uid: this.user.id
+        }
+      })
+    },
+    jumpMobileCenter() {
+      this.$router.push({
+        name: 'SelfMobile',
+        params: {
+          uid: this.user.id
+        }
+      })
+    },
   },
   mounted() {
     if (!this.user.id) {
-      if (this.$route.name != "Register" && this.$route.name != "Login") {
-        this.jumpLogin();
-      }
+      this.$axios.get("/api/auth/callback").then(res => {
+        if (res.data) {
+          const user = res.data;
+          user.isMobile = this._isMobile();
+          console.log(user);
+          this.$store.commit("setUserInfo", user);
+        } else {
+          if (this.$route.name != "Register" && this.$route.name != "Login") {
+            this.jumpLogin();
+          }
+        }
+      });
     }
   }
 };

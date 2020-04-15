@@ -8241,6 +8241,11 @@ vue-cli-plugin-iview@~2.0.0:
   resolved "https://registry.npm.taobao.org/vue-cli-plugin-iview/download/vue-cli-plugin-iview-2.0.0.tgz#e4f62ebc5056fea4c5b36229e6cbc2f68059863b"
   integrity sha1-5PYuvFBW/qTFs2Ip5svC9oBZhjs=
 
+vue-cropper@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.npm.taobao.org/vue-cropper/download/vue-cropper-0.5.2.tgz#069b2ffe5336b3f800d3049df2b0746263bd8642"
+  integrity sha1-Bpsv/lM2s/gA0wSd8rB0YmO9hkI=
+
 vue-eslint-parser@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npm.taobao.org/vue-eslint-parser/download/vue-eslint-parser-7.0.0.tgz#a4ed2669f87179dedd06afdd8736acbb3a3864d6"

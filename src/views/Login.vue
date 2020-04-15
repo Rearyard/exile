@@ -84,7 +84,7 @@ export default {
         }, 500);*/
     },
     captchaValidate() {
-      return new Promise((resove, reject) => {
+      return new Promise((resolve, reject) => {
         const csrfToken = cookie.get("csrfToken");
         this.$axios
           .post(
@@ -96,12 +96,12 @@ export default {
             }
           )
           .then(res => {
-            resove(res.data.result);
+            resolve(res.data.result);
           });
       });
     },
     postLogin() {
-      return new Promise((resove, reject) => {
+      return new Promise((resolve, reject) => {
         const csrfToken = cookie.get("csrfToken");
         this.$axios
           .post(
@@ -117,7 +117,7 @@ export default {
             return false;
           })
           .then(res => {
-            resove(res);
+            resolve(res);
           });
       });
     },
