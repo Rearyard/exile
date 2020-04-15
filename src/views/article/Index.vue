@@ -13,12 +13,13 @@
             文区
           </Breadcrumb-item>
         </Breadcrumb>
-        <div
+        <router-link to="/article/new">
+          <div
           id="post"
-          style="height: 3rem; margin-bottom:1rem; cursor:pointer;"
-          onclick="window.open('/article/new','_self')">
+          style="height: 3rem; margin-bottom:1rem; cursor:pointer;">
           <span>> 发表我的文章</span>
         </div>
+        </router-link>
         <span class="text-title">高级搜索</span>
         <Row style="display: flex;flex-wrap:wrap;">
           <i-col span="21">

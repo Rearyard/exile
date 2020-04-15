@@ -20,5 +20,6 @@ module.exports = {
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-inner-declarations':'off',
     '@typescript-eslint/no-inferrable-types': 'off',
+    '@typescript-eslint/camelcase': 'off',
   }
 }

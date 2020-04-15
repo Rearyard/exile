@@ -11,7 +11,8 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     user:{},
-    searchData:{} as Article.Search.Request
+    searchData:{} as Article.Search.Request,
+    draftTempData:{}
   },
   mutations: {
     changeSearchData(state, req: Article.Search.Request){
@@ -23,6 +24,12 @@ export default new Vuex.Store({
     clearUserInfo(state){
       state.user = {}
     },
+    setDraftTemp(state,info){
+      state.draftTempData = info
+    },
+    clearDraftTemp(state){
+      state.draftTempData = {}
+    }
   },
   actions: {
   },

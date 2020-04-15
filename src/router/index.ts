@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Active from '../views/Active.vue'
 import Article from '../views/article/Index.vue'
+import Draft from '../views/article/Draft.vue'
 import Join from '../views/Join.vue'
 import SelfWrapper from '../views/self/Index.vue'
 import SelfInfo from '../views/self/Info.vue'
@@ -75,19 +76,27 @@ const routes = [
     component: ArticleSearchResult,
   },
   {
+    //文区-编辑
+    //新文章和修改文章共用
+    //在/article/new选择新文章的时候跳转前应该先和后端请求aid和cid
+    path: '/article/edit/:aid?/:cid?',
+    name: 'EditArticle',
+    component: EditArticle,
+  },
+  //文区-草稿箱
+  //目前很鸡肋
+  //没大用处
+  {
+    path: '/article/draft',
+    name: 'ArticleDraft',
+    component: Draft,
+  },
+  {
     //文区-详情和阅读
     //详情和阅读页共用
     path: '/article/:aid/:cid?',
     name: 'ArticleContent',
     component: ArticleContent,
-  },
-  {
-    //文区-编辑
-    //新文章和修改文章共用
-    //在/article/new选择新文章的时候跳转前应该先和后端请求aid和cid
-    path: '/article/:aid/:cid/edit',
-    name: 'EditArticle',
-    component: EditArticle,
   },
   {
     //个人中心

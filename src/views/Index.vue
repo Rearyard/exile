@@ -68,7 +68,7 @@
             </div>
             <Row>
               <iCol>
-                <Button v-for="tag in tagList" v-bind:key="tag" size="small" class="tag">{{tag}}</Button>
+                <Button v-for="tag in tagList" v-bind:key="tag.id" size="small" class="tag">{{tag.tag_name}}</Button>
               </iCol>
             </Row>
           </iCol>
@@ -216,7 +216,8 @@
                 </iCol>
               </Row>
             </div>
-            <Row :gutter="16" type="flex" justify="space-between">
+            <Row :gutter="16" type="flex" justify="space-between" style='overflow:hidden'>
+              <Spin fix>开发中——敬请期待</Spin>
               <iCol span="9">
                 <div
                   class="popular-topic-poster"
@@ -468,44 +469,18 @@ export default {
             "文章内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
         }
       ],
-      tagList: [
-        "标签",
-        "标签标",
-        "标签标签",
-        "标签",
-        "标签标签",
-        "标签标",
-        "tag",
-        "tagtag",
-        "标签",
-        "标签标签",
-        "标签",
-        "标签标签",
-        "标签标",
-        "tag",
-        "tagtag",
-        "标签",
-        "标签标",
-        "tag",
-        "tagtag",
-        "标签",
-        "标签标签",
-        "标签",
-        "标签标签",
-        "标签标",
-        "tag",
-        "tagtag",
-        "标签",
-        "标签标",
-        "tag",
-        "tagtag"
-      ]
+      tagList: []
     };
   },
   computed: {
     portable() {
       return window.screen.width < 1024;
     }
+  },
+  mounted() {
+    this.$axios.get('/api/statistics/tag').then(res=>{
+      this.tagList = res.data
+    })
   }
 };
 </script>
