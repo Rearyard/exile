@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Row>
+    <Row style="margin-top:2rem">
         <i-col span="18" offset="3">
             <Breadcrumb separator=" > " style="margin-bottom: 2rem">
                 <Breadcrumb-item href="/">
@@ -13,11 +13,10 @@
             
             <Row>
                 <!-- 左侧菜单栏 -->
-                <i-col span="6" class="nav-bar">
-                    <router-link to="info" active-class="active">个人中心</router-link>
+                <i-col span="5" class="nav-bar">
+                    <router-link to="info" active-class="active">基本信息</router-link>
                     <router-link to="works" active-class="active">我的作品</router-link>
-                    <router-link to="basic" active-class="active">基础设置</router-link>
-                    <router-link to="account" active-class="active">修改密码</router-link>
+                    <router-link to="favorite" active-class="active">我的收藏</router-link>
                 </i-col>
                 <i-col class="right" span="17" offset="1">
                     <!-- 右边二级路由 -->
@@ -62,6 +61,7 @@ export default {
         font-size: 1rem;
         cursor: pointer;
         color: #505050;
+        transition: all 0.2s linear;
     }
     a:hover{
         background: #d8d8d8;

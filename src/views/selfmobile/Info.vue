@@ -6,7 +6,7 @@
               <div class="center">
                 <img :src="user.user_avatar_url" class="avatar" />
                 <Upload
-                  v-if="user.isMyself"
+                  v-show="user.isMyself"
                   ref="upload"
                   :show-upload-list="false"
                   :on-success="handleSuccess"
@@ -18,17 +18,15 @@
                   accept="image/*"
                   action=" "
                 >
-                  <div v-if="user.isMyself" class="outside">
+                  <div v-show="user.isMyself" class="outside">
                     <Icon type="ios-camera" />
                   </div>
                 </Upload>
               </div>
-            
             <Modal
               title="设置头像"
               v-model="avatarCropper"
               :mask-closable="false"
-              :loading="loading"
               fullscreen
             >
               <div id="avatar-cropper">
@@ -52,13 +50,10 @@
                 ></vueCropper>
               </div>
               <div slot = "footer">
-                <Button type ="info" @click="uploadFile">确认</Button>
+                <Button type ="info" :loading="loading" @click="uploadFile">确认</Button>
                 <Button class = "button-cancel" @click="closeModal">取消</Button>
               </div>
             </Modal>
-            <!-- <span v-else>
-              <img src="https://chinocdn.cafuchino.cn/pic/202003091129722.png" class="avatar" />
-            </span> -->
           </Badge>
         </i-col>
         <i-col span="14" offset="2">
@@ -66,7 +61,7 @@
             <div class="username">
               <strong>{{user.user_nickname}}</strong>
             </div>
-            <div style = "font-size: 0.7rem;" v-if="user.isMyself">
+            <div style = "font-size: 0.7rem;" v-show="user.isMyself">
               UID：{{user.id}}
             </div>
           </Row>
@@ -83,20 +78,99 @@
       <Row class = "info-card">
         <Row style = "padding-left:0.5rem;">
           <i-col span="5">
-            <div v-if = "user.isMyself"><strong>用户名： </strong></div>
+            <div v-show="user.isMyself"><strong>用户名： </strong></div>
             <strong>昵称：</strong>
           </i-col>
           <i-col span="13">
-            <div v-if = "user.isMyself">
+            <div v-show="user.isMyself">
             {{user.user_login}}
             </div>
-            {{user.user_nickname}} &nbsp;&nbsp;
-            <Icon v-if="user.isMyself" type="ios-create-outline" size="20"/>
+            <span v-if="!editname">
+              {{user.user_nickname}}&nbsp;&nbsp;
+              <Icon
+                @click="editNickname"
+                v-show="user.isMyself"
+                type="ios-create-outline"
+                size="20"         
+              />
+            </span>
+            <span v-else>
+              <iInput
+                @on-blur="cancelChangeName"
+                @on-enter="changeUserInfo"
+                :disabled="inputLoading"
+                v-model = "nickname"
+                placeholder="请输入新的昵称"
+                size = "small"
+                class = "editname"
+              >
+                <Button
+                  @click="changeUserInfo"
+                  slot="append"
+                  icon="ios-arrow-dropleft"
+                ></Button>
+              </iInput>
+            </span>
           </i-col>
           <i-col span="6">
-            <span v-if="user.isMyself">
+            <span v-show="user.isMyself" @click="openPswModal">
               <strong>>> 改密码</strong>
             </span>
+            <Modal
+              title="修改密码"
+              v-model="pswModal"
+              :mask-closable="false"
+              fullscreen
+            >
+              <Steps :current=pswStep  style="margin-bottom:2rem;">
+                  <Step title="输入密码" content=""></Step>
+                  <Step title="确认密码" content=""></Step>
+                  <Step title="新密码" content=""></Step>
+              </Steps>
+              <Divider />
+              <Row class="info-row" v-if="pswStep == 0">
+                <p>请输入旧密码：</p>
+                <Input
+                  style="margin-top:1rem"
+                  type="password"
+                  password 
+                  v-model="oldpsw"
+                  placeholder="无需修改则留空"
+                />       
+              </Row>  
+              <Row class="info-row"  v-if="pswStep == 1">
+                <p>请输入新密码：</p>
+                <Input
+                  style="margin-top:1rem"
+                  type="password"
+                  password 
+                  v-model="newpsw"
+                  placeholder="无需修改则留空"
+                />
+              </Row>              
+              <Row class="info-row"  v-if="pswStep == 2">
+                <p>请再重复一遍新密码：</p>
+                <Input
+                  style="margin-top:1rem"
+                  type="password"
+                  password 
+                  v-model="newpswConfirm"
+                  placeholder="无需修改则留空"
+                />
+              </Row>
+              <Button
+                @click="pswNextStep"
+                style = "float:right; margin-top:1rem"
+                type ="info"
+                :loading = pswLoading
+              >
+                <span v-if="pswStep<2">继续</span>
+                <span v-else>确认</span>
+              </Button>
+              <div slot = "footer">
+                <Button class = "button-cancel" @click="closePswModal">关闭</Button>
+              </div>
+            </Modal>
           </i-col>
         </Row>
         <Row style = "padding-left:0.5rem;">
@@ -104,11 +178,36 @@
             <strong>简介： </strong>
           </i-col>
           <i-col span="19">
-            {{user.user_signature}}&nbsp;&nbsp;
-            <Icon v-if="user.isMyself" type="ios-create-outline" size="20"/>
+            <span v-if="!editsignature">
+              {{user.user_signature}}&nbsp;&nbsp;
+              <Icon
+                @click="editSignature"
+                v-show="user.isMyself"
+                type="ios-create-outline"
+                size="20"
+              />
+            </span>
+            <span v-else>
+              <iInput
+                v-model = "signature"
+                @on-blur="cancelChangeSignature"
+                @on-enter="changeUserInfo"
+                :disabled="inputLoading"
+                placeholder="请输入新的简介"
+                icon="ios-arrow-dropleft"
+                size = "small"
+                class = "editname"
+              >
+                <Button
+                  @click="changeUserInfo"
+                  slot="append"
+                  icon="ios-arrow-dropleft"
+                ></Button>
+              </iInput>
+            </span>
           </i-col>
         </Row>
-        <Row v-if="user.isMyself" style = "padding-left:0.5rem;">
+        <Row v-show="user.isMyself" style = "padding-left:0.5rem;">
           <i-col span="5">
             <strong>邮箱： </strong>
           </i-col>
@@ -117,7 +216,7 @@
           </i-col>
         </Row>
       </Row>
-      <Row v-if="user.isMyself" style = "padding: 0px 2px; margin-top: 5px;">
+      <Row v-show="user.isMyself" style = "padding: 0px 2px; margin-top: 5px;">
         <Button type="error" @click="postLogout" style="border-radius:10px" long>注销</Button>
       </Row>
     </div>
@@ -130,7 +229,6 @@ export default {
   data(){
     return{
       user:{},
-      csrfToken: cookie.get("csrfToken"),
       avatarCropper: false,
       cropperOption: {
         img: '', // 裁剪图片的地址
@@ -153,14 +251,24 @@ export default {
       previews: {},
       fileInfo: '',
       // 防止提交多次
-      loading: false
+      loading: false,
+      editname: false,
+      editsignature: false,
+      nickname: '',
+      signature: '',
+      inputLoading: false,
+      pswModal: false,
+      pswStep:0,
+      oldpsw: '',
+      newpsw: '',
+      newpswConfirm:'',
+      pswLoading: false,
     }
   },
   components: { 
     VueCropper 
   }, 
   mounted(){
-    console.log(this.csrfToken)
     this.getUserInfo();
   },
   methods:{
@@ -211,6 +319,9 @@ export default {
       this.avatarCropper=false;
       console.log(this.avatarCropper);
     },
+    closePswModal(){
+      this.pswModal = false;
+    },
     uploadFile(){
       const csrfToken = cookie.get("csrfToken");
       console.log(`fileinfo${this.fileInfo.name}`);
@@ -244,7 +355,6 @@ export default {
           if(error.response.status == 500){
             console.log('500 Internal Server Error')
             this.$Spin.hide();
-            this.count = 0;
             this.$Message.warning({
                 content: '服务器出现了一些错误。',
                 duration: 10,
@@ -255,15 +365,193 @@ export default {
             this.jumpLogin();
           } else {
             this.$Spin.hide();
-            this.count = 0;
             this.$Message.warning({
-                content: '网络出现了一些问题，请刷新重试',
+                content: '上传的图片格式不正确',
                 duration: 10,
                 closable: true
             });
           }
         })
       })
+    },
+    editNickname(){
+      this.editname=true;
+    },
+    editSignature(){
+      this.editsignature = true;
+    },
+    cancelChangeName(){
+      this.editname = false;
+    },
+    cancelChangeSignature(){
+      this.editsignature = false;
+    },
+    changeUserInfo(){
+      const csrfToken = cookie.get("csrfToken");
+      const data = {
+        nickname: this.nickname,
+        signature: this.signature,
+      }
+      if(this.nickname === ''&&this.signature === ''){
+        this.$Message.warning({
+          content: '请勿输入空数据',
+          duration: 10,
+          closable: true
+        });
+        return;
+      }
+      this.inputLoading = true;
+      this.$axios.put(`/api/user/${this.$route.params.uid}`, data,
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res => {
+        if(res.status == 204) {
+          this.$Message.success({
+            content: '修改成功',
+            duration: 10,
+            closable: true
+          });
+          this.editname=false;
+          this.editsignature=false;
+          this.inputLoading = false;
+          this.nickname = '';
+          this.signature = '';
+          this.getUserInfo();
+        }
+      }).catch(error => {
+        this.inputLoading = false;
+        if(error.response.status == 500){
+          console.log('500 Internal Server Error')
+          this.$Message.error({
+            content: '服务器出现了一些问题，请确保输入正确格式的数据',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 403){
+          this.$Spin.hide();
+          this.jumpLogin();
+        } else if(error.response.status == 405){
+          this.$Message.error({
+            content: '您没有权限进行此操作',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 412){
+          this.$Message.error({
+            content: '请输入合法的字符串',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        }
+      });
+    },
+    openPswModal(){
+      console.log('change password');
+      this.pswModal = true;
+    },
+    pswNextStep(){
+      console.log(`psw step: ${this.pswStep}`);
+      let data = {};
+      if(this.pswStep == 0){
+        if(this.oldpsw === ''){
+          this.$Message.warning({
+            content: '请勿输入空字符串',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          data = {
+            oldpsw: this.oldpsw,
+          }
+          this.submitPassword(data);
+        }
+      } else if(this.pswStep == 1){
+        if(this.oldpsw!=this.newpsw){
+          this.pswStep++;
+        }else{
+          this.$Message.warning({
+            content: '新密码不能和旧密码一样',
+            duration: 10,
+            closable: true
+          });
+        }
+      } else if(this.pswStep == 2){
+        if(this.newpsw != this.newpswConfirm){
+          this.$Message.warning({
+            content: '两次输入的密码不一致',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          data = {
+            oldpsw: this.oldpsw,
+            newpsw: this.newpswConfirm
+          };
+          this.submitPassword(data);
+        }
+      }
+    },
+    submitPassword(data){
+      this.pswLoading = true;
+      const csrfToken = cookie.get("csrfToken");
+      this.$axios.put(`/api/user/${this.$route.params.uid}/password`, data,
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res => {
+        this.pswLoading = false;
+        if(res.status == 204) {
+          if(this.pswStep == 0){
+            this.$Message.success({
+              content: '密码正确',
+              duration: 10,
+              closable: true
+            });
+            this.pswStep++;
+          } else if(this.pswStep == 2){
+            this.$Message.success({
+              content: '修改成功',
+              duration: 10,
+              closable: true
+            });
+            this.pswStep = 0;
+            this.closePswModal()
+          }
+        }
+      }).catch(error => {
+        this.pswLoading = false;
+        if(error.response.status == 403){
+          this.jumpLogin();
+        } else if(error.response.status == 405){
+          this.$Message.error({
+            content: '您没有权限进行此操作',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 412){
+          this.$Message.error({
+            content: '输入的密码不正确',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        }
+        return true;
+      });
     },
     getUserInfo() {
       this.$Spin.show({
@@ -283,7 +571,7 @@ export default {
         },
       });
       this.$axios.get(`/api/user/${this.$route.params.uid}`).then(res => {
-        console.log(res);
+        // console.log(res);
         if(!res){
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
@@ -300,9 +588,8 @@ export default {
         if(error.response.status == 500){
           console.log('500 Internal Server Error')
           this.$Spin.hide();
-          this.count = 0;
           this.$Message.warning({
-            content: '您访问的用户不存在',
+            content: '网络出现了一些问题，请刷新重试',
             duration: 10,
             closable: true
           });
@@ -310,8 +597,6 @@ export default {
           this.$Spin.hide();
           this.jumpLogin();
         } else {
-          this.$Spin.hide();
-          this.count = 0;
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
               duration: 10,
@@ -421,6 +706,11 @@ export default {
   width: 100%;
   height: 100%;
 }
-
+.editname{
+  width: auto;
+}
+.info-row{
+  font-size: 1rem;
+}
 </style>
 

@@ -14,6 +14,7 @@
           style="float:left"
         />
       </Row>
+      <Divider style="margin-bottom: 0rem"/>
       <div
         v-for="item in fandoms.fandom"
         :key="item.id"
@@ -28,30 +29,35 @@
         <span style="float:right;" @click="jumpSearchFandom(item.fandom_name)">
           {{item.fandom_article_amount}}篇文章
         </span>
+        <Divider/>
       </div>
     </div>
     <div v-else class="wrap-card">
       <span>暂无收藏的分类哦</span>
     </div>
-    <strong style="font-size:1rem;">收藏的文章：</strong>
-    <Row style="margin-top:1rem">
-      <Page
-        :total=articleCount
-        :current.sync=articlePageCount
-        size="small"
-        show-elevator
-        simple
-        @on-change="changeArticlePage"
-        style="float:left"
-      />
-    </Row>
-    <Row style="margin-top:1rem">
-      <iCol>
+    <div style="font-size:1rem; margin-top:1rem"><strong>收藏的文章：</strong></div>
+    <Row>
+      <div v-if="articleCount == 0" class = "article-card-wrapper">
+        <p>暂无文章</p>
+      </div>
+      <div v-else>
+        <Row style="margin-top:1rem">
+          <Page
+            :total=articleCount
+            :current.sync=articlePageCount
+            size="small"
+            show-elevator
+            simple
+            @on-change="changeArticlePage"
+            style="float:left"
+          />
+        </Row>
         <div
           v-for="article in articles.article"
           :key = "article.id"
-          class = "search-result-article-card"
+          class = "article-card-wrapper"
         >
+          <Divider style="margin-top: 0rem; margin-bottom: 1rem;" />
           <span v-if= "article.article_fandom ==''">
             <Tag color="#9dd1a9">
               原创
@@ -73,7 +79,6 @@
           <span @click="jumpArticle(article.id)" id="title">{{article.article_title}}</span>
           <p id="summary" v-if="article.article_summary!=''">{{article.article_summary}}</p>
           <p id="summary" v-else>无内容简介</p>
-          <Divider style="margin:0.8rem 0 0.5rem 0" />
           <div id="warning">
             <Icon type="ios-warning-outline" /><strong>警告：</strong>
             <span
@@ -119,12 +124,7 @@
             <span>{{article.article_view}}次阅读</span>
           </div>
         </div>
-      </iCol>
-      <iCol v-if="articleCount == 0">
-        <div class = "search-result-article-card">
-          <p>暂无文章</p>
-        </div>
-      </iCol>
+      </div>
     </Row>
   </div>
 </template>
@@ -381,13 +381,7 @@ export default {
   width: 100%;
   line-height: 3rem;
   background-color: #ffffff;
-  box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.2) inset,
-  0 5px 10px 5px rgba(208, 208, 208, 0.3);
-  border-radius: 18px;
-  margin-top: 0.5rem;
-  transition: all 0.3s linear;
   height:3rem;
-  margin-bottom:1rem
 }
 
 .wrap-card span {
@@ -403,6 +397,41 @@ export default {
 }
 #warning{
   margin-top: 0px;
+}
+
+.article-card-wrapper {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 1rem 1rem 2rem 1rem;
+  line-height: 1rem;
+  background-color: #ffffff;
+}
+.article-card-wrapper #title{
+  font-size: 1rem;
+  color: rgba(83, 81, 81, 0.8);
+  text-shadow: 0px 1px 1px rgba(71, 68, 66, 0.2);
+  font-family: "Arvo", "Myriad Pro", "Trebuchet MS", sans-serif;
+  cursor: pointer;
+}
+.article-card-wrapper #summary{
+  display: block;
+  margin-top:1rem;
+}
+.article-card-wrapper #wordcount{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.article-card-wrapper #others{
+  float:right;
+  height:1rem;
+  padding-top: 0.8rem;
+  strong{
+    cursor: pointer;
+  }
+}
+.article-card-wrapper #warning{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 </style>
 

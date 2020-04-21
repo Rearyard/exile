@@ -59,6 +59,8 @@
               </div>
               <div class="wrapper-search wrapper-search-portable" v-if="portable">
                 <iInput
+                  @on-click="jumpSearchResult"
+                  @on-enter="jumpSearchResult"
                   v-model="searchQuery"
                   placeholder="搜索"
                   icon="md-search"
@@ -156,7 +158,7 @@ export default {
   },
   watch: {
     $route(to, from) {
-      console.log(this.$store)
+      // console.log(this.$store)
       if (this.$store.state.user.user_status == 0) {
         this.$router.push('/active')
       }
@@ -199,7 +201,7 @@ export default {
       // console.log(`user id is ${this.user.id}`);
       // this.$router.push(`/self/${this.user.id}/info`)
       this.$router.push({
-        name: 'Self',
+        name: 'SelfInfo',
         params: {
           uid: this.user.id
         }
@@ -213,14 +215,27 @@ export default {
         }
       })
     },
+    jumpSearchResult(){
+      if(this.searchQuery === ''){
+        console.log("please enter something");
+      } else {
+        this.$router.push({
+          path:'/article/searchresult',
+          query:{
+            query : this.searchQuery
+          }
+        })
+      }
+    }
   },
   mounted() {
+    const isMobile = this._isMobile();
+    this.$store.commit("setIsMobile", isMobile);
+    // console.log(isMobile);
     if (!this.user.id) {
       this.$axios.get("/api/auth/callback").then(res => {
         if (res.data) {
           const user = res.data;
-          user.isMobile = this._isMobile();
-          console.log(user);
           this.$store.commit("setUserInfo", user);
         } else {
           if (this.$route.name != "Register" && this.$route.name != "Login") {

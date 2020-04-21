@@ -26,7 +26,7 @@
             </Tag>
           </span>
           <Tag v-if="article.article_rating == 'G' " color="#f7bb8e">G</Tag>
-          <Tag v-else-if="article.article_rating == 'PG' " color="#f7bb8e">PG-13</Tag>
+          <Tag v-else-if="article.article_rating == 'PG13' " color="#f7bb8e">PG-13</Tag>
           <Tag v-else-if="article.article_rating == 'R' " color="#ea534f">R</Tag>
           <Tag v-else color="#ea534f">NC-17</Tag>
           <span id="title" @click="jumpArticle(article.id)">{{article.article_title}}</span>
@@ -99,11 +99,12 @@ export default {
     }
   },
   mounted(){
-    this.getMyFamdom(0,10)
+    this.getMyFamdom(0,10);
+    // console.log(this.$store.state.user);
   },
   methods:{
     getMyFamdom(offset, amount) {
-      console.log(`offset ${offset} amount ${amount}`);
+      // console.log(`offset ${offset} amount ${amount}`);
       this.$Spin.show({
         render: (h) => {
           return h('div', [
@@ -126,7 +127,7 @@ export default {
           amount: amount
         }
       }).then(res => {
-        console.log(res);
+        // console.log(res);
         this.$Spin.hide();
         if(!res){
           this.$Message.warning({
@@ -165,15 +166,15 @@ export default {
       });
     },
     changePage(pageCount){
-      console.log(pageCount);
+      // console.log(pageCount);
       this. getMyFamdom((pageCount-1)*10, 10);
     },
     jumpArticle(id){
       this.$router.push(`/article/${id}`)
     },
     jumpUser(id){
-      const user=this.$store.state.user;
-      if(user.isMobile){
+      const isMobile=this.$store.state.isMobile;
+      if(isMobile){
         this.$router.push(`/selfmobile/${id}/info`)
       }else{
         this.$router.push(`/self/${id}/info`)

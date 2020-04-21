@@ -45,8 +45,8 @@ export default {
 <style scoped>
 .wrap-card {
   width: 100%;
-  height: 4rem;
-  line-height: 4rem;
+  height: 3rem;
+  line-height: 3rem;
   background-color: #ffffff;
   box-shadow: 0px 0px 5px 0px rgba(208, 208, 208, 0.3) inset,
     0px 10px 15px 12px rgba(208, 208, 208, 0.5);
