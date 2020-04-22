@@ -10,11 +10,9 @@ import Join from '../views/Join.vue'
 import SelfWrapper from '../views/self/Index.vue'
 import SelfInfo from '../views/self/Info.vue'
 import SelfWorks from '../views/self/Works.vue'
-import SelfBasic from '../views/self/Basic.vue'
-import SelfAccount from '../views/self/Account.vue'
+import SelfFavorite from '../views/self/Favorite.vue'
 import SelfMobile from '../views/selfmobile/Index.vue'
 import SelfMobileInfo from '../views/selfmobile/Info.vue'
-import SelfMobileBasic from '../views/selfmobile/Basic.vue'
 import SelfMobileWorks from '../views/selfmobile/Works.vue'
 import SelfMobileFavorite from '../views/selfmobile/Favorite.vue'
 import NewArticle from '../views/article/New.vue'
@@ -116,20 +114,15 @@ const routes = [
         name: 'SelfInfo'
       },
       {
-        path: 'basic',
-        component:SelfBasic,
-        name: 'SelfBasic'
+        path: 'favorite',
+        component:SelfFavorite,
+        name: 'SelfFavorite'
       },
       {
         path:'works',
         component:SelfWorks,
         name: 'SelfWorks'
       },
-      {
-        path: 'account',
-        component:SelfAccount,
-        name: 'SelfAccount'
-      }
     ]
   },
   {
@@ -142,11 +135,6 @@ const routes = [
         path: 'info',
         component:SelfMobileInfo,
         name: 'SelfMobileInfo'
-      },
-      {
-        path: 'basic',
-        component:SelfMobileBasic,
-        name: 'SelfMobileBasic'
       },
       {
         path:'works',
