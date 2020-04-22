@@ -16,13 +16,32 @@
         <Row type="flex" justify="center" class="wrap-card" v-if="!edit">
           <iCol span="22">
             <Steps :current="step">
-              <Step title="基本信息" content="确定文章的基本信息"></Step>
-              <Step title="编辑文章" content="新的开始√"></Step>
-              <Step title="确认和提交" content="一切就绪？准备发布！"></Step>
+              <Step  content="确定文章的基本信息">
+                <template slot="title"><a @click="jumpStep(0)">基本信息</a></template>
+              </Step>
+              <Step content="新的开始√">
+                <template slot="title"><a @click="jumpStep(1)">编辑章节</a></template>
+              </Step>
+              <Step content="一切就绪？准备发布！">
+                <template slot="title"><a @click="jumpStep(2)">确认和提交</a></template>
+              </Step>
             </Steps>
           </iCol>
         </Row>
-        <div class="wrap-card">
+        <Row class="wrap-card" style="margin:18px 0 18px 0;" v-if="!edit">
+          <Row type="flex" justify="center">
+            <iCol span="4">
+              <div class="title-topic-icon">
+                <img src="../../assets/icons/emoticon.svg" />
+              </div>
+            </iCol>
+            <iCol span="20">
+              <span class="ins-title">{{instructions[step].title}}</span>
+              <p>{{instructions[step].content}}</p>
+            </iCol>
+          </Row>
+        </Row>
+        <div class="wrap-card" style="z-index:999">
           <Form
             :model="form"
             :rules="articleRules"
@@ -155,12 +174,12 @@
             <Row>
               <iCol>
                 <div class="hr">
-                  <div>文章信息</div>
+                  <div>章节信息</div>
                   <hr />
                 </div>
                 <Form ref="formChapter" :model="chapter" :rules="chapterRules">
                   <form-item label="标题：" prop="title">
-                    <i-input :disabled="!multiChapter" v-model="chapter.title" placeholder />
+                    <i-input :disabled="!multiChapter" v-model="chapter.title" placeholder="章节标题" />
                   </form-item>
                   <form-item label="摘要：" prop="summary" style="flex-basis: 15em">
                     <i-input v-model="chapter.summary" placeholder="可留空" />
@@ -198,8 +217,16 @@
                     :loading="loading.confirm"
                     style="margin:0 .5rem"
                     size="large"
-                    v-if="edit"
+                    v-if="edit&&action!='new'"
                   >提交修改</Button>
+                  <Button
+                    type="info"
+                    size="large"
+                    v-if="edit&&action=='new'"
+                    style="margin:0 .5rem"
+                    :loading="loading.confirm"
+                    @click="addChapter(aid)"
+                  >提交章节</Button>
                 </div>
               </iCol>
             </Row>
@@ -212,7 +239,6 @@
                 <Step title="提交完成" v-if="postStep>=2"></Step>
               </Steps>
             </Spin>
-            <Alert show-icon>最终发布之前，请核对文章的关键信息是否正确</Alert>
             <Row>
               <iCol>
                 <p>文章标题：{{form.title}}</p>
@@ -362,6 +388,21 @@ export default {
         { text: "强奸/非自愿性行为", value: "Rape" },
         { text: "未成年人性行为", value: "Teen" },
         { text: "无警告内容", value: "Unknown" }
+      ],
+      instructions: [
+        {
+          title: "创建新文章",
+          content:
+            "您正在创建一篇全新的文章，在后花园中文章是一个或多个章节的合集，所以稍后您将开始创建文章的正文部分。在此之前，您应该先设置文章的基本属性和信息。请注意，文章的基础信息很重要，它将直接影响到您的文章可以被哪些人阅读，请认真填写。"
+        },
+        {
+          title:"编辑第一章",
+          content: "现在您可以编辑您文章的第一章了！如果您在之前取消选择了“多章节”，那么在这一步您章节的标题将会被自动填写完成且不可修改。不过不用担心，这并不影响你以后继续向此文章添加章节，这一设定仅是为了方便编辑和展示。",
+        },
+        {
+          title:"确认和提交",
+          content:"现在在提交之前，您还有一次机会确认您的各项设置是否正确，请务必认真核对！"
+        }
       ]
     };
   },
@@ -413,6 +454,12 @@ export default {
     }
   },
   methods: {
+    jumpStep(step){
+      if (this.step<=step) {
+        return;
+      }
+      return this.step = step
+    },
     articleInfoCheck() {
       this.$refs["formArticle"].validate(valid => {
         if (valid) {
@@ -524,13 +571,32 @@ export default {
       });
     },
     addChapter(aid) {
+      this.loading.confirm = true;
       this.$axios
         .post(`/api/article/${aid}`, this.chapterRequestBody, {
           headers: { "x-csrf-token": this.csrfToken },
           withCredentials: true
         })
         .then(res => {
-          alert(JSON.stringify(res.data));
+          if (res.data.cid) {
+            this.$Notice.success({
+              title: "提交成功，稍后将为您跳转文章页"
+            });
+            setTimeout(() => {
+              this.$router.push(`/article/${aid}/${res.data.cid}`);
+            }, 1500);
+          } else {
+            this.loading.confirm = false;
+            this.$Notice.error({
+              title: "提交失败，请稍后重新尝试"
+            });
+          }
+        })
+        .catch(e => {
+          this.loading.confirm = false;
+          this.$Notice.error({
+            title: "提交失败，请稍后重新尝试"
+          });
         });
     },
     editChapter() {
@@ -631,6 +697,7 @@ export default {
       //文章编辑模式
       this.edit = true;
       this.aid = this.$route.params.aid;
+      this.$Spin.show();
       this.$axios.get(`/api/article/${this.aid}`).then(res => {
         const tmp = res.data;
         if (res.data.author.uid != this.$store.state.user.id) {
@@ -642,11 +709,12 @@ export default {
             }
           });
         }
+        this.$Spin.hide();
         if (this.$route.query.action) {
           if (this.$route.query.action == "new") {
             // 章节新增模式
             this.action = "new";
-            return this.step = 1;
+            return (this.step = 1);
           }
         }
         console.log(tmp);
@@ -737,7 +805,7 @@ export default {
   line-height: 2rem;
   background-color: #ffffff;
   box-shadow: 0 0 5px 0 rgba(208, 208, 208, 0.3) inset,
-    0 10px 15px 12px rgba(208, 208, 208, 0.5);
+    0 0px 7px 4px rgba(208, 208, 208, 0.5);
   border-radius: 18px;
   margin-top: 0.5rem;
   transition: all 0.2s linear;
@@ -769,5 +837,9 @@ div.action-grounp {
   flex-basis: 100%;
   display: flex;
   justify-content: right;
+}
+.ins-title {
+  font-size: 1.2em;
+  font-weight: bold;
 }
 </style>
