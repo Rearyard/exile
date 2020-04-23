@@ -30,9 +30,9 @@
                   <div class="card-textarea">
                     <div class="card-quote card-quote-top">“</div>
                     <div class="card-article">
-                      <div class="card-article-title">{{article.title}}</div>
+                      <div class="card-article-title">{{article.article_title}}</div>
                       <div class="card-article-content">
-                        <p>{{article.content}}</p>
+                        <p>{{filterText(article.chapter_content)}}</p>
                       </div>
                     </div>
                     <div class="card-quote card-quote-bottom">”</div>
@@ -41,7 +41,8 @@
                     <Row type="flex" align="middle" style="height: 100%;">
                       <iCol offset="1">
                         <span>
-                          <Icon type="md-person" />&nbsp;作者作者作者
+                          <Icon type="md-person" />
+                          &nbsp;{{article.user_nickname}}
                         </span>
                       </iCol>
                     </Row>
@@ -68,7 +69,12 @@
             </div>
             <Row>
               <iCol>
-                <Button v-for="tag in tagList" v-bind:key="tag.id" size="small" class="tag">{{tag.tag_name}}</Button>
+                <Button
+                  v-for="tag in tagList"
+                  v-bind:key="tag.id"
+                  size="small"
+                  class="tag"
+                >{{tag.tag_name}}</Button>
               </iCol>
             </Row>
           </iCol>
@@ -180,13 +186,13 @@
                 </iCol>
               </Row>
             </div>
-            <Card>
+            <Card v-for="user in userList" :key="user.uid">
               <Row type="flex" align="middle">
                 <iCol span="4">
                   <Avatar shape="square" icon="ios-person" />
                 </iCol>
                 <iCol span="14">
-                  <span>作者作者</span>
+                  <span>{{user.user_nickname}}</span>
                 </iCol>
                 <iCol span="4">
                   <Button type="info" ghost>关注</Button>
@@ -216,7 +222,7 @@
                 </iCol>
               </Row>
             </div>
-            <Row :gutter="16" type="flex" justify="space-between" style='overflow:hidden'>
+            <Row :gutter="16" type="flex" justify="space-between" style="overflow:hidden">
               <Spin fix>开发中——敬请期待</Spin>
               <iCol span="9">
                 <div
@@ -300,106 +306,19 @@
               </Row>
             </div>
             <Row :gutter="16">
-              <iCol span="3">
+              <iCol v-for="fandom in fandomList" :key="fandom.id" span="3">
                 <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
+                  <Row justify="center">
+                    <iCol span="20">
+                      <Avatar
+                        size="100"
+                        style="color: #EAE0D0;background-color: #151F2F;font-weight: bold;"
+                      >{{fandom.fandom_name}}</Avatar>
+                    </iCol>
+                  </Row>
                   <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
-                    <Button type="info">加入圈子</Button>
-                  </div>
-                </Card>
-              </iCol>
-              <iCol span="3">
-                <Card class="fandom-card">
-                  <img
-                    src="https://chinocdn.cafuchino.cn/pic/202003071558507.png"
-                    class="fandom-card-poster"
-                  />
-                  <div class="fandom-card-content">
-                    <span>圈子名称</span>
-                    <span class="fandom-card-popularity">人气789.2w+</span>
+                    <span>{{fandom.fandom_name}}</span>
+                    <span class="fandom-card-popularity">人气{{fandom.fandom_article_amount}}</span>
                     <Button type="info">加入圈子</Button>
                   </div>
                 </Card>
@@ -416,9 +335,9 @@
           <div class="card-textarea">
             <div class="card-quote card-quote-top">“</div>
             <div class="card-article">
-              <div class="card-article-title">{{article.title}}</div>
+              <div class="card-article-title">{{article.article_title}}</div>
               <div class="card-article-content">
-                <p>{{article.content}}</p>
+                <p>{{filterText(article.chapter_content)}}</p>
               </div>
             </div>
             <div class="card-quote card-quote-bottom">”</div>
@@ -427,7 +346,7 @@
             <Row type="flex" align="middle" style="height: 100%;">
               <iCol offset="1">
                 <span>
-                  <Icon type="md-person" />&nbsp;作者作者作者
+                  <Icon type="md-person" />&nbsp;{{article.user_nickname}}
                 </span>
               </iCol>
             </Row>
@@ -443,33 +362,16 @@
 export default {
   data() {
     return {
-      articleList: [
-        {
-          id: 0,
-          title: "文章标题标题标题",
-          content:
-            "文章内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-        },
-        {
-          id: 1,
-          title: "文章标题标题标题",
-          content:
-            "文章内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-        },
-        {
-          id: 2,
-          title: "文章标题标题标题",
-          content:
-            "文章内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-        },
-        {
-          id: 3,
-          title: "文章标题标题标题",
-          content:
-            "文章内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容"
-        }
-      ],
-      tagList: []
+      loading: {
+        article: true,
+        tag: true,
+        user: true,
+        fandom: true
+      },
+      tagList: [],
+      userList: [],
+      articleList: [],
+      fandomList: []
     };
   },
   computed: {
@@ -477,10 +379,29 @@ export default {
       return window.screen.width < 1024;
     }
   },
+  methods: {
+    async getData() {
+      const data = await Promise.all([
+        this.$axios.get("/api/statistics/user"),
+        this.$axios.get("/api/statistics/article"),
+        this.$axios.get("/api/statistics/tag"),
+        this.$axios.get("/api/statistics/fandom")
+      ]);
+      this.userList = data[0].data;
+      this.articleList = data[1].data.slice(0, 4);
+      this.tagList = data[2].data;
+      this.fandomList = data[3].data.slice(0, 8);
+    },
+    filterText(text) {
+      const preg = /<("[^"]*"|'[^']*'|[^'">])*>/gm;
+      return text.replace(preg, "").replace(/&nbsp;/gm, " ");
+    }
+  },
   mounted() {
-    this.$axios.get('/api/statistics/tag').then(res=>{
-      this.tagList = res.data
-    })
+    this.$axios.get("/api/statistics/tag").then(res => {
+      this.tagList = res.data;
+    });
+    this.getData();
   }
 };
 </script>
@@ -502,7 +423,7 @@ export default {
   font-weight: 600;
 }
 .article-card {
-  background:#fff;
+  background: #fff;
   border: 1px solid rgb(226, 226, 226);
   border-radius: 5px;
   overflow: hidden;
@@ -519,6 +440,10 @@ export default {
 .card-article-title {
   font-weight: bold;
   margin-bottom: 1em;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .card-article-content {
   display: -webkit-box;
@@ -615,9 +540,16 @@ export default {
   min-height: 180px;
 }
 .fandom-card-poster {
+  background: url("../assets/posterBg.jpg");
   width: 100%;
   border-radius: 200px;
   box-shadow: 0 0 7px #13131385;
+  padding-bottom: 100%;
+  background-size: cover;
+}
+.fandom-card-poster-content {
+  text-align: center;
+  position: absolute;
 }
 .fandom-card-content {
   width: 100%;
@@ -632,5 +564,24 @@ export default {
   color: #9e9e9e;
   font-size: 0.8em;
   margin-bottom: 1em;
+}
+.demo-spin-icon-load {
+  animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.demo-spin-col {
+  height: 100px;
+  position: relative;
+  border: 1px solid #eee;
 }
 </style>

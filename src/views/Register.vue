@@ -121,9 +121,9 @@
                 :on-reach-bottom="handleReachBottom"
                 :distance-to-edge="0"
                 loading-text="感谢你阅读完毕，可以继续"
-                style="border: 1px solid gainsboro;border-radius: 4px;padding: 8px;;margin:8px 0 8px 0"
+                style="border: 1px solid gainsboro;border-radius: 4px;padding: 8px;;margin:8px 0 8px 0;line-height: 2em;"
               >
-                <p>{{userAgreement}}</p>
+                <div v-html="userAgreement"></div>
               </Scroll>
               <Checkbox
                 :disabled="!userAgreementRead"

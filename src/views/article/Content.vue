@@ -23,7 +23,9 @@
         <div class="wrap-card">
           <!--头部-->
           <div class="article-header" :class="{ 'article-header-portable': portable }">
-            <h1>{{ article.title }}</h1>
+            <Row>
+              <iCol span="24"><h1>{{ article.title }}</h1></iCol>
+            </Row>
             <span style="color: #666">{{ article.summary }}</span>
             <div style="display: grid;grid-template-columns: 36px auto;align-items: center;">
               <Avatar
@@ -66,7 +68,8 @@
             </div>
             <Row type="flex" justify="space-between" class="article-stats">
               <iCol>
-                <ButtonGroup>
+                <ButtonGroup v-if="author.uid==$store.state.user.id">
+                  <Button type="info" @click="$router.push('/article/'+article.id)" v-if="selectedChapter">目录</Button>
                   <Button type="info" @click="jumpEdit">编辑{{selectedChapter?"章节":"文章"}}</Button>
                   <Button type="info" @click="jumpNewChapter">写新章节</Button>
                 </ButtonGroup>
@@ -122,14 +125,14 @@
               <div v-if="selectedChapter.summary">摘要: {{ selectedChapter.summary }}</div>
               <div v-if="selectedChapter.note">注释: {{ selectedChapter.note }}</div>
               <hr />
-              <p
-                style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0"
+              <div
+                style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0;white-space: break-spaces;"
                 v-for="(p, idx) in (selectedChapter.content || '<空>').split(
                   '\n'
                 )"
                 :key="idx"
                 v-html="p"
-              ></p>
+              ></div>
             </div>
           </div>
           <Divider class="my-divider divider-footer" />
@@ -328,18 +331,22 @@ export default class ArticleContent extends Vue {
   get portable() {
     return window.screen.width < 1024;
   }
+
   get tags() {
     const tag = String(this.article.tag).split(",");
     return array.compact(tag);
   }
+
   get fandoms() {
     const fandom = String(this.article.fandom).split(",");
     return array.compact(fandom);
   }
+
   get relationships() {
     const relationship = String(this.article.relationship).split(",");
     return array.compact(relationship);
   }
+
   getDateDescribeString(c: ChapterSimplified) {
     let n1 = new Date(c.published).getTime(),
       n2 = new Date(c.last_edit).getTime();
@@ -362,11 +369,11 @@ export default class ArticleContent extends Vue {
 
   async refresh() {
     let { aid, cid } = this.$route.params;
-    this.$Spin.show();
+    (this as any).$Spin.show();
     Object.assign(this, await getDetail(aid));
-    this.$Spin.hide();
+    (this as any).$Spin.hide();
     if (!this.article.id) {
-      return this.$Modal.error({
+      return (this as any).$Modal.error({
         title: "回去吧",
         content: "您所访问的文章不存在或已删除",
         onOk: () => {
@@ -385,6 +392,7 @@ export default class ArticleContent extends Vue {
     this.judgement.articleLike = j[0];
     this.judgement.articleFav = j[1];
   }
+
   jumpEdit() {
     this.$router.push({
       name: "EditArticle",
@@ -394,17 +402,19 @@ export default class ArticleContent extends Vue {
       }
     });
   }
-  jumpNewChapter(){
+
+  jumpNewChapter() {
     this.$router.push({
       name: "EditArticle",
-      params:{
-        aid: String(this.article.id),
+      params: {
+        aid: String(this.article.id)
       },
-      query:{
-        action:'new'
+      query: {
+        action: "new"
       }
-    })
+    });
   }
+
   async like() {
     let { id } = this.article;
     post("/like/article", { id })
@@ -475,9 +485,11 @@ export default class ArticleContent extends Vue {
   min-height: 200px;
   /* align-items: center; */
 }
+
 .article-title {
   text-align: center;
 }
+
 .article-header-portable {
   padding: 3em 0 0 0;
 }
@@ -491,6 +503,7 @@ export default class ArticleContent extends Vue {
 .article-body-portable {
   padding: 0;
 }
+
 .article-footer {
   color: #808695;
   padding-bottom: 3em;
@@ -507,14 +520,17 @@ export default class ArticleContent extends Vue {
   margin: 3em auto 2em auto !important;
   width: 300px !important;
 }
+
 .card-title {
   font-weight: bold;
   color: #515a6e;
 }
+
 .card-sub {
   font-size: 0.8em;
   color: #808695;
 }
+
 .cute-button {
   width: 73px;
   height: 36px;
