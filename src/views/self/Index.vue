@@ -30,17 +30,7 @@
 
 <script>
 export default {
-    data(){
-        return{
-        }
-    },
-    mounted(){
-        if (this.$route.name=='Self') {
-            this.$router.push(`/self/${this.$store.state.user.id}/info`)
-        }
-    },
-    methods:{
-    }
+
 };
 </script>
 

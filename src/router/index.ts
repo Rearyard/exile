@@ -7,6 +7,7 @@ import Active from '../views/Active.vue'
 import Article from '../views/article/Index.vue'
 import Draft from '../views/article/Draft.vue'
 import Join from '../views/Join.vue'
+import JoinMobile from '../views/JoinMobile.vue'
 import SelfWrapper from '../views/self/Index.vue'
 import SelfInfo from '../views/self/Info.vue'
 import SelfWorks from '../views/self/Works.vue'
@@ -59,6 +60,12 @@ const routes = [
     path: '/join',
     name: 'Join',
     component:Join
+  },
+  {
+    //技术交流手机端
+    path: '/joinmobile',
+    name: 'JoinMobile',
+    component:JoinMobile
   },
   {
     //文区-新文章

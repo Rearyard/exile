@@ -33,12 +33,14 @@
       </div>
     </div>
     <div v-else class="wrap-card">
-      <span>暂无收藏的分类哦</span>
+      <span v-if="isMyself">暂无收藏的分类哦</span>
+      <span v-else>暂不公开</span>
     </div>
     <div style="font-size:1rem; margin-top:1rem"><strong>收藏的文章：</strong></div>
     <Row>
       <div v-if="articleCount == 0" class = "article-card-wrapper">
-        <p>暂无文章</p>
+        <p v-if="isMyself">暂无文章</p>
+        <p v-else>暂不公开</p>
       </div>
       <div v-else>
         <Row style="margin-top:1rem">
@@ -140,6 +142,7 @@ export default {
       fandoms:{},
       fandomCount:0,
       fandomPageCount:1,
+      isMyself: true,
     }
   },
   mounted(){
@@ -171,6 +174,7 @@ export default {
           amount: amount
         }
       }).then(res => {
+        this.isMyself = true;
         // console.log(res);
         this.$Spin.hide();
         if(!res){
@@ -198,6 +202,13 @@ export default {
         } else if(error.response.status == 403){
           this.$Spin.hide();
           this.jumpLogin();
+        } else if(error.response.status == 405){
+          this.isMyself = false;
+          this.$Message.warning({
+            content: '抱歉，该用户暂时不开放收藏哦',
+            duration: 10,
+            closable: true
+          });
         } else {
           this.$Spin.hide();
           this.articleCount = 0;
@@ -233,6 +244,7 @@ export default {
         }
       }).then(res => {
         // console.log(res)
+        this.isMyself = true;
         this.$Spin.hide();
         if(!res){
           this.$Message.warning({
@@ -259,6 +271,9 @@ export default {
         } else if(error.response.status == 403){
           this.$Spin.hide();
           this.jumpLogin();
+        } else if(error.response.status == 405){
+          this.isMyself = false;
+          this.$Spin.hide();
         } else {
           this.$Spin.hide();
           this.fandomCount = 0;
@@ -376,7 +391,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .wrap-card {
   width: 100%;
   line-height: 3rem;

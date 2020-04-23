@@ -104,7 +104,7 @@
                 </MenuItem>
               </iCol>
               <iCol span="5" class="bottom-nav">
-                <MenuItem name="p2" to="/join">
+                <MenuItem name="p2" to="/joinmobile">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
                       <Icon type="md-git-branch" :size="30" />

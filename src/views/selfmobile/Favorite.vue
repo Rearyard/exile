@@ -31,22 +31,23 @@
       </div>
     </div>
     <div v-else class="wrap-card">
-      <span>暂无收藏的分类哦</span>
+      <span v-if="isMyself">暂无收藏的分类哦</span>
+      <span v-else>暂不公开</span>
     </div>
     <strong style="font-size:1rem;">收藏的文章：</strong>
     <Row style="margin-top:1rem">
-      <Page
-        :total=articleCount
-        :current.sync=articlePageCount
-        size="small"
-        show-elevator
-        simple
-        @on-change="changeArticlePage"
-        style="float:left"
-      />
-    </Row>
-    <Row style="margin-top:1rem">
-      <iCol>
+      <div v-if="articleCount != 0">
+        <Row style="margin-top:1rem">
+          <Page
+            :total=articleCount
+            :current.sync=articlePageCount
+            size="small"
+            show-elevator
+            simple
+            @on-change="changeArticlePage"
+            style="float:left"
+          />
+        </Row>
         <div
           v-for="article in articles.article"
           :key = "article.id"
@@ -119,12 +120,13 @@
             <span>{{article.article_view}}次阅读</span>
           </div>
         </div>
-      </iCol>
-      <iCol v-if="articleCount == 0">
+      </div>
+      <div v-else>
         <div class = "search-result-article-card">
-          <p>暂无文章</p>
+          <p v-if="isMyself">暂无文章</p>
+          <p v-else>暂不公开</p>
         </div>
-      </iCol>
+      </div>
     </Row>
   </div>
 </template>
@@ -140,6 +142,7 @@ export default {
       fandoms:{},
       fandomCount:0,
       fandomPageCount:1,
+      isMyself: true,
     }
   },
   mounted(){
@@ -198,6 +201,14 @@ export default {
         } else if(error.response.status == 403){
           this.$Spin.hide();
           this.jumpLogin();
+        } else if(error.response.status == 405){
+          this.$Spin.hide();
+          this.isMyself = false;
+          this.$Message.warning({
+            content: '该用户暂不开放收藏哦',
+            duration: 10,
+            closable: true
+          });
         } else {
           this.$Spin.hide();
           this.articleCount = 0;
@@ -259,6 +270,9 @@ export default {
         } else if(error.response.status == 403){
           this.$Spin.hide();
           this.jumpLogin();
+        } else if(error.response.status == 405){
+          this.$Spin.hide();
+          this.isMyself = false;
         } else {
           this.$Spin.hide();
           this.fandomCount = 0;
