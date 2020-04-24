@@ -191,8 +191,8 @@ export default {
       this.$router.push(`/article/${id}`)
     },
     jumpUser(id){
-      const user=this.$store.state.user;
-      if(user.isMobile){
+      const isMobile=this.$store.state.isMobile;
+      if(isMobile){
         this.$router.push(`/selfmobile/${id}/info`)
       }else{
         this.$router.push(`/self/${id}/info`)

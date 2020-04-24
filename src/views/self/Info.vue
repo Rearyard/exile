@@ -291,6 +291,7 @@ export default {
       this.$axios.get(`/api/user/${this.$route.params.uid}`).then(res => {
         // console.log(res);
         if(!res){
+          this.$Spin.hide();
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
               duration: 10,
@@ -315,6 +316,7 @@ export default {
           this.$Spin.hide();
           this.jumpLogin();
         } else {
+          this.$Spin.hide();
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
               duration: 10,
@@ -487,8 +489,11 @@ export default {
       });
     },
     openPswModal(){
-      console.log('change password');
+      // console.log('change password');
       this.pswModal = true;
+    },
+    closePswModal(){
+      this.pswModal = false;
     },
     pswNextStep(){
       console.log(`psw step: ${this.pswStep}`);
@@ -589,7 +594,7 @@ export default {
   },
   watch:{
     '$route'(to, from) {
-      console.log('change')
+      // console.log('change')
       if(to.params.uid != from.params.uid){
         this.getUserInfo();
       }
