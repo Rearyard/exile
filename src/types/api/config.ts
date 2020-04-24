@@ -2,7 +2,7 @@
 import Axios from "axios";
 import cookie from "js-cookie";
 
-export const API_PREFIX = 'http://localhost:8080/api'
+export const API_PREFIX = '/api'
 
 export interface BaseGetParameters {
   offset: number

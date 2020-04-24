@@ -93,7 +93,7 @@
             阅读：{{article.article_view}}
           </iCol>
           <iCol span="8">
-            <i>{{article.article_last_edit}}/{{article.article_created}}</i>
+            <i>{{dateFormat(article.article_last_edit)}} / {{dateFormat(article.article_created)}}</i>
           </iCol>
         </Row>
       </div>
@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   data() {
     return {
@@ -114,6 +115,9 @@ export default {
     this.getMyFamdom(0,10);
   },
   methods:{
+    dateFormat(str){
+      return moment(str).format('YYYY-MM-DD kk:mm:ss')
+    },
     jumpLogin(){
       this.$router.push({
         path: "/login",

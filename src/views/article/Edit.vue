@@ -242,7 +242,7 @@
             <Row>
               <iCol>
                 <p>文章标题：{{form.title}}</p>
-                <p>分级：{{form.rate}}</p>
+                <p>分级：{{form.rating}}</p>
                 <p>性向：{{form.category}}</p>
                 <p>警告：{{warningTextArray.toString()}}</p>
                 <p>CP：{{form.relationship.toString()}}</p>

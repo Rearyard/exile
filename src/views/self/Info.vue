@@ -2,12 +2,11 @@
   <div>
     <Row style="margin-bottom:2em">
       <iCol span="6">
-          <Badge text="Lv.1">
-              <div class="center">
-                <img :src="user.user_avatar_url" class="avatar" />
-              </div>
-
-          </Badge>
+        <Badge text="Lv.1">
+          <div class="center">
+            <img :src="user.user_avatar_url" class="avatar" />
+          </div>
+        </Badge>
       </iCol>
       <iCol span="10" offset="2">
         <Upload
@@ -23,21 +22,9 @@
           accept="image/*"
           action=" "
         >
-          <Button
-            v-show="user.isMyself"
-            type="success"
-            size="large"
-            shape="circle"
-          >
-            更改头像
-          </Button>
+          <Button v-show="user.isMyself" type="success" size="large" shape="circle">更改头像</Button>
         </Upload>
-        <Modal
-          title="设置头像"
-          v-model="avatarCropper"
-          :mask-closable="false"
-          fullscreen
-        >
+        <Modal title="设置头像" v-model="avatarCropper" :mask-closable="false" fullscreen>
           <div id="avatar-cropper">
             <vueCropper
               ref="cropper"
@@ -58,15 +45,15 @@
               :maxImgSize="1500"
             ></vueCropper>
           </div>
-          <div slot = "footer">
-            <Button type ="info" :loading="avatarLoading" @click="uploadFile">确认</Button>
-            <Button class = "button-cancel" @click="closeModal">取消</Button>
+          <div slot="footer">
+            <Button type="info" :loading="avatarLoading" @click="uploadFile">确认</Button>
+            <Button class="button-cancel" @click="closeModal">取消</Button>
           </div>
         </Modal>
         <Row v-show="!user.isMyself" style="height: 2rem;"></Row>
         <Row type="flex" justify="space-around" align="middle" class="wrapper-count">
           <iCol span="6" class="count-item">
-            <span class="count">{{user.myFollowed}} </span>粉丝 
+            <span class="count">{{user.myFollowed}}</span>粉丝
           </iCol>
           <Divider type="vertical" />
           <iCol span="6" class="count-item">
@@ -74,11 +61,9 @@
           </iCol>
         </Row>
         <Row class="description">
-          <i-col span="6">
-          简介：
-          </i-col>
-          <i-col span ="18">
-            <span v-if="!editsignature"> 
+          <i-col span="6">简介：</i-col>
+          <i-col span="18">
+            <span v-if="!editsignature">
               {{user.user_signature}}
               <Icon
                 @click="editSignature"
@@ -89,17 +74,16 @@
             </span>
             <span v-else>
               <iInput
-                v-model = "signature"
+                v-model="signature"
                 @on-enter="changeUserInfo"
                 :disabled="inputLoading"
                 placeholder="请输入新的简介"
-                :autosize="{minRows: 2,maxRows: 4}" 
+                :autosize="{minRows: 2,maxRows: 4}"
                 style="width: 80%;"
                 icon="md-close"
                 @on-click="cancelChangeSignature"
-              >
-              </iInput>
-              <Button type="info" @click="changeUserInfo" icon = "md-checkmark" />
+              ></iInput>
+              <Button type="info" @click="changeUserInfo" icon="md-checkmark" />
             </span>
           </i-col>
         </Row>
@@ -110,15 +94,11 @@
             </span>
           </i-col>
         </Row>
-        <Modal
-          title="修改密码"
-          v-model="pswModal"
-          :mask-closable="false"
-        >
-          <Steps :current=pswStep  style="margin-bottom:2rem;">
-              <Step title="输入密码" content=""></Step>
-              <Step title="确认密码" content=""></Step>
-              <Step title="新密码" content=""></Step>
+        <Modal title="修改密码" v-model="pswModal" :mask-closable="false">
+          <Steps :current="pswStep" style="margin-bottom:2rem;">
+            <Step title="输入密码" content></Step>
+            <Step title="确认密码" content></Step>
+            <Step title="新密码" content></Step>
           </Steps>
           <Divider />
           <Row class="info-row" v-if="pswStep == 0">
@@ -126,46 +106,42 @@
             <Input
               style="margin-top:1rem"
               type="password"
-              password 
+              password
               v-model="oldpsw"
               placeholder="无需修改则留空"
-            />       
-          </Row>  
-          <Row class="info-row"  v-if="pswStep == 1">
+            />
+          </Row>
+          <Row class="info-row" v-if="pswStep == 1">
             <p>请输入新密码：</p>
             <Input
               style="margin-top:1rem"
               type="password"
-              password 
+              password
               v-model="newpsw"
               placeholder="无需修改则留空"
             />
-          </Row>              
-          <Row class="info-row"  v-if="pswStep == 2">
+          </Row>
+          <Row class="info-row" v-if="pswStep == 2">
             <p>请再重复一遍新密码：</p>
             <Input
               style="margin-top:1rem"
               type="password"
-              password 
+              password
               v-model="newpswConfirm"
               placeholder="无需修改则留空"
             />
           </Row>
-          <div slot = "footer">
-            <Button
-              @click="pswNextStep"
-              type ="info"
-              :loading = pswLoading
-            >
+          <div slot="footer">
+            <Button @click="pswNextStep" type="info" :loading="pswLoading">
               <span v-if="pswStep<2">继续</span>
               <span v-else>确认</span>
             </Button>
-            <Button class = "button-cancel" @click="closePswModal">关闭</Button>
+            <Button class="button-cancel" @click="closePswModal">关闭</Button>
           </div>
         </Modal>
       </iCol>
     </Row>
-    <Row class='info-row'>
+    <Row class="info-row">
       <iCol span="12">昵称</iCol>
       <iCol span="12">
         <span v-if="!editname">
@@ -175,43 +151,42 @@
             v-show="user.isMyself"
             type="ios-create-outline"
             style="cursor: pointer;"
-            size="24"         
+            size="24"
           />
         </span>
         <span v-else>
           <iInput
             @on-enter="changeUserInfo"
             :disabled="inputLoading"
-            v-model = "nickname"
+            v-model="nickname"
             placeholder="请输入新的昵称"
-            class = "editname"
+            class="editname"
             style="width: 80%;"
             icon="md-close"
             @on-click="cancelChangeName"
-          >
-          </iInput>
-          <Button type="info" @click="changeUserInfo" icon = "md-checkmark" />
+          ></iInput>
+          <Button type="info" @click="changeUserInfo" icon="md-checkmark" />
         </span>
       </iCol>
     </Row>
     <Divider />
-    <div  v-show="user.isMyself">
-      <Row class='info-row'>
+    <div v-show="user.isMyself">
+      <Row class="info-row">
         <iCol span="12">用户名</iCol>
         <iCol span="12">{{user.user_login}}</iCol>
       </Row>
       <Divider />
     </div>
-    <div  v-show="user.isMyself">
-      <Row class='info-row' v-show="user.isMyself">
+    <div v-show="user.isMyself">
+      <Row class="info-row" v-show="user.isMyself">
         <iCol span="12">邮箱</iCol>
         <iCol span="12">{{user.user_email}}</iCol>
       </Row>
       <Divider />
     </div>
-    <Row class='info-row'>
+    <Row class="info-row">
       <iCol span="12">注册日期</iCol>
-      <iCol span="12">{{user.user_registered}}</iCol>
+      <iCol span="12">{{formatedData}}</iCol>
     </Row>
     <Divider />
   </div>
@@ -220,6 +195,7 @@
 <script>
 import cookie from 'js-cookie'
 import { VueCropper }  from 'vue-cropper'
+import moment from 'moment'
 
 export default {
   data(){
@@ -261,6 +237,11 @@ export default {
   components: { 
     VueCropper 
   }, 
+  computed: {
+    formatedData(){
+      return moment(this.user.user_registered).format('YYYY-MM-DD')
+    }
+  },
   mounted() {
     this.getUserInfo();
   },
@@ -633,7 +614,7 @@ export default {
   color: #9e9e9e;
   font-size: 1rem;
 }
-.info-row{
+.info-row {
   font-size: 1.3em;
 }
 .img {
@@ -701,11 +682,11 @@ export default {
   margin: 0 auto;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.562);
 }
-.avatar{
+.avatar {
   border-radius: 100%;
-  width: 100%
+  width: 100%;
 }
-#avatar-cropper{
+#avatar-cropper {
   width: 100%;
   height: 100%;
 }
