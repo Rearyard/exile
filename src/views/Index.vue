@@ -30,7 +30,7 @@
                   <div class="card-textarea">
                     <div class="card-quote card-quote-top">“</div>
                     <div class="card-article">
-                      <div class="card-article-title">{{article.article_title}}</div>
+                      <div class="card-article-title"><router-link :to="'/article/'+article.aid" style="color:#515a6e">{{article.article_title}}</router-link></div>
                       <div class="card-article-content">
                         <p>{{filterText(article.chapter_content)}}</p>
                       </div>
@@ -42,7 +42,7 @@
                       <iCol offset="1">
                         <span>
                           <Icon type="md-person" />
-                          &nbsp;{{article.user_nickname}}
+                          &nbsp;<router-link :to="'/self/'+article.article_author+'/info'" style="color: #515a6e;">{{article.user_nickname}}</router-link>
                         </span>
                       </iCol>
                     </Row>
@@ -56,7 +56,7 @@
             <div class="title-sub">
               <Row type="flex" align="middle" style="margin-bottom:1em;">
                 <iCol>
-                  <span>标签墙</span>
+                  <span>CP墙</span>
                 </iCol>
                 <iCol offset="13">
                   <Button type="info" size="small" ghost>
@@ -70,11 +70,12 @@
             <Row>
               <iCol>
                 <Button
-                  v-for="tag in tagList"
-                  v-bind:key="tag.id"
+                  v-for="cp in cpList"
+                  v-bind:key="cp.id"
                   size="small"
                   class="tag"
-                >{{tag.tag_name}}</Button>
+                  @click="jumpCPSerch(cp.cp_name)"
+                >{{cp.cp_name}}</Button>
               </iCol>
             </Row>
           </iCol>
@@ -100,7 +101,7 @@
                 </iCol>
               </Row>
               <Row :gutter="16" type="flex" justify="space-between">
-                <iCol span="12">
+                <iCol span="12" v-for="topUser in userList.slice(0,2)" :key="topUser.id">
                   <Row>
                     <Card>
                       <Row slot="title">
@@ -109,48 +110,14 @@
                         </iCol>
                         <iCol span="20" class="wrapper-popular-user-card">
                           <p class="popular-user-card-title">
-                            作者作者
+                            {{topUser.user_nickname}}
                             <Badge text="Lv.1" type="info" style="margin-left:8px;z-index:1" />
                             <span></span>
                           </p>
-                          <span class="popular-user-card-motto">个人简介简介简介</span>
+                          <span class="popular-user-card-motto">{{topUser.user_signature}}</span>
                         </iCol>
                       </Row>
-                      <Button slot="extra" type="info">关注</Button>
-                      <Row type="flex" justify="space-between">
-                        <iCol span="11">
-                          <div
-                            class="article-poster"
-                            :style="{'background-image':'url('+'https://chinocdn.cafuchino.cn/pic/202003071245654.png'+')'}"
-                          ></div>
-                        </iCol>
-                        <iCol span="11">
-                          <div
-                            class="article-poster"
-                            :style="{'background-image':'url('+'https://chinocdn.cafuchino.cn/pic/202003071245654.png'+')'}"
-                          ></div>
-                        </iCol>
-                      </Row>
-                    </Card>
-                  </Row>
-                </iCol>
-                <iCol span="12">
-                  <Row>
-                    <Card>
-                      <Row slot="title">
-                        <iCol span="3">
-                          <Avatar shape="square" icon="ios-person" />
-                        </iCol>
-                        <iCol span="20" class="wrapper-popular-user-card">
-                          <p class="popular-user-card-title">
-                            作者作者
-                            <Badge text="Lv.1" type="info" style="margin-left:8px;z-index:1" />
-                            <span></span>
-                          </p>
-                          <span class="popular-user-card-motto">个人简介简介简介</span>
-                        </iCol>
-                      </Row>
-                      <Button slot="extra" type="info">关注</Button>
+                      <Button slot="extra" type="info" @click="followUser(topUser.uid)">{{topUser.followed?'已关注':'关注'}}</Button>
                       <Row type="flex" justify="space-between">
                         <iCol span="11">
                           <div
@@ -191,11 +158,11 @@
                 <iCol span="4">
                   <Avatar shape="square" icon="ios-person" />
                 </iCol>
-                <iCol span="14">
+                <iCol span="13">
                   <span>{{user.user_nickname}}</span>
                 </iCol>
-                <iCol span="4">
-                  <Button type="info" ghost>关注</Button>
+                <iCol span="5">
+                  <Button type="info" ghost @click="followUser(user.uid)">{{user.followed?'已关注':'关 注'}}</Button>
                 </iCol>
               </Row>
             </Card>
@@ -223,7 +190,7 @@
               </Row>
             </div>
             <Row :gutter="16" type="flex" justify="space-between" style="overflow:hidden">
-              <Spin fix>开发中——敬请期待</Spin>
+              <Spin fix style="border-radius: 18px;">开发中——敬请期待</Spin>
               <iCol span="9">
                 <div
                   class="popular-topic-poster"
@@ -319,7 +286,7 @@
                   <div class="fandom-card-content">
                     <span>{{fandom.fandom_name}}</span>
                     <span class="fandom-card-popularity">人气{{fandom.fandom_article_amount}}</span>
-                    <Button type="info">加入圈子</Button>
+                    <Button type="info" @click="followFandom(fandom.id)">{{fandom.followed?'已关注':'关注圈子'}}</Button>
                   </div>
                 </Card>
               </iCol>
@@ -346,7 +313,8 @@
             <Row type="flex" align="middle" style="height: 100%;">
               <iCol offset="1">
                 <span>
-                  <Icon type="md-person" />&nbsp;{{article.user_nickname}}
+                  <Icon type="md-person" />
+                  &nbsp;{{article.user_nickname}}
                 </span>
               </iCol>
             </Row>
@@ -359,6 +327,7 @@
 </template>
 
 <script>
+import cookie from "js-cookie";
 export default {
   data() {
     return {
@@ -368,7 +337,7 @@ export default {
         user: true,
         fandom: true
       },
-      tagList: [],
+      cpList: [],
       userList: [],
       articleList: [],
       fandomList: []
@@ -377,6 +346,9 @@ export default {
   computed: {
     portable() {
       return window.screen.width < 1024;
+    },
+    csrfToken() {
+      return cookie.get("csrfToken");
     }
   },
   methods: {
@@ -384,23 +356,57 @@ export default {
       const data = await Promise.all([
         this.$axios.get("/api/statistics/user"),
         this.$axios.get("/api/statistics/article"),
-        this.$axios.get("/api/statistics/tag"),
+        this.$axios.get("/api/statistics/cp"),
         this.$axios.get("/api/statistics/fandom")
       ]);
       this.userList = data[0].data;
       this.articleList = data[1].data.slice(0, 4);
-      this.tagList = data[2].data;
+      this.cpList = data[2].data;
       this.fandomList = data[3].data.slice(0, 8);
     },
     filterText(text) {
       const preg = /<("[^"]*"|'[^']*'|[^'">])*>/gm;
       return text.replace(preg, "").replace(/&nbsp;/gm, " ");
+    },
+    async jumpCPSerch(query){
+      this.$router.push({
+          path:'/article/searchresult',
+          query:{
+            fandom: '',
+            title: '',
+            author: '',
+            relationship: query,
+          }
+        })
+    },
+    async followUser(uid) {
+      const res = await this.$axios.post(
+        "/api/follow/user",
+        { id: uid },
+        { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
+      ).catch(err => {
+        this.$Message.error("关注/取关失败");
+      });
+      if (res.status == 204) {
+        this.$Message.success("关注/取关成功！");
+      }
+      this.getData();
+    },
+    async followFandom(fandom_id) {
+      const res = await this.$axios.post(
+        `/api/follow/fandom/${fandom_id}`,
+        {},
+        { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
+      ).catch(err => {
+        this.$Message.error("关注/取关失败");
+      });
+      if (res.status == 204) {
+        this.$Message.success("关注/取关成功！");
+      } 
+      this.getData();
     }
   },
   mounted() {
-    this.$axios.get("/api/statistics/tag").then(res => {
-      this.tagList = res.data;
-    });
     this.getData();
   }
 };

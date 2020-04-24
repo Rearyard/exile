@@ -7,7 +7,7 @@
           :class="{'layout-header-bar-portable':portable}"
           v-if="!hideHeader"
         >
-          <Menu mode="horizontal" id="menu" theme="dark" :active-name="activeTab">
+          <Menu mode="horizontal" id="menu" theme="dark" :active-name="activeTab" @on-select='storeTab'>
             <div class="wrapper-nav" v-if="!portable">
               <div class="wrapper-logo">
                 <img id="logo" src="./assets/logo.png" alt />
@@ -77,7 +77,7 @@
       <Footer style="text-align:center">@后花园2020</Footer>
       <Affix :offset-bottom="0" v-if="portable&&!hideHeader">
         <div class="wrapper-bottom-nav">
-          <Menu mode="horizontal">
+          <Menu mode="horizontal" :active-name="activeTab" @on-select='storeTab'>
             <Row type="flex" justify="space-around" align="middle">
               <iCol span="5" class="bottom-nav">
                 <MenuItem name="p0" to="/">
@@ -157,14 +157,17 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
+    $route() {
       // console.log(this.$store)
       if (this.$store.state.user.user_status == 0) {
         this.$router.push('/active')
       }
-    }
+    },
   },
   methods: {
+    storeTab(name){
+      sessionStorage.activeTab = name;
+    },
     addPassage() {
       this.$router.push("/article/new");
       this.activeTab = "1";
@@ -230,6 +233,9 @@ export default {
   },
   mounted() {
     const isMobile = this._isMobile();
+    if (sessionStorage.activeTab) {
+      this.activeTab = sessionStorage.activeTab
+    }
     this.$store.commit("setIsMobile", isMobile);
     // console.log(isMobile);
     if (!this.user.id) {
