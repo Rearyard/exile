@@ -93,7 +93,7 @@
             阅读：{{article.article_view}}
           </iCol>
           <iCol span="8">
-            <i>{{dateFormat(article.article_last_edit)}} / {{dateFormat(article.article_created)}}</i>
+            <i>{{dateFormat(article.article_last_edit)}} /  {{dateFormat(article.article_created)}}</i>
           </iCol>
         </Row>
       </div>

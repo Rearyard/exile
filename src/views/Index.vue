@@ -302,7 +302,7 @@
           <div class="card-textarea">
             <div class="card-quote card-quote-top">“</div>
             <div class="card-article">
-              <div class="card-article-title">{{article.article_title}}</div>
+              <div class="card-article-title"><router-link :to="'/article/'+article.aid" style="color:#515a6e">{{article.article_title}}</router-link></div>
               <div class="card-article-content">
                 <p>{{filterText(article.chapter_content)}}</p>
               </div>
@@ -314,7 +314,7 @@
               <iCol offset="1">
                 <span>
                   <Icon type="md-person" />
-                  &nbsp;{{article.user_nickname}}
+                  &nbsp;<router-link :to="'/selfmobile/'+article.article_author+'/info'" style="color: #515a6e;">{{article.user_nickname}}</router-link>
                 </span>
               </iCol>
             </Row>

@@ -71,7 +71,7 @@
             {{user.myFollowed}} 粉丝
           </div>
           <div style="margin-top:1rem; font-size:0.7rem">
-            来到后花园已经{{user.user_registered}}天
+            来到后花园已经{{registerTimeFormated}}
           </div>
         </i-col>
       </Row>
@@ -223,6 +223,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import cookie from 'js-cookie'
 import { VueCropper }  from 'vue-cropper'
 export default {
@@ -268,6 +269,12 @@ export default {
   components: { 
     VueCropper 
   }, 
+  computed: {
+    registerTimeFormated(){
+      moment.locale('zh-cn');
+      return moment(this.user.user_registered).toNow(true)
+    }
+  },
   mounted(){
     this.getUserInfo();
   },
