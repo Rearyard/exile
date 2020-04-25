@@ -9,7 +9,7 @@
       >
         <Breadcrumb separator=" > " style="margin-bottom: 2rem">
           <Breadcrumb-item href="/">
-            <Icon type="ios-home-outline"></Icon>放逐地
+            <Icon type="ios-home-outline"></Icon>后花园
           </Breadcrumb-item>
           <Breadcrumb-item href="/components/breadcrumb">
             <Icon type="social-buffer-outline"></Icon>文区

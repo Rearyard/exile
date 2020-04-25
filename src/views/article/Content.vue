@@ -6,7 +6,7 @@
       <div style="flex: 0 1 720px;box-sizing: border-box;max-width: 720px">
         <Breadcrumb separator=" > " style="margin-bottom: 2rem">
           <Breadcrumb-item to="/">
-            <Icon type="ios-home-outline"></Icon>放逐地
+            <Icon type="ios-home-outline"></Icon>后花园
           </Breadcrumb-item>
           <Breadcrumb-item>
             <Icon type="social-buffer-outline"></Icon>文区

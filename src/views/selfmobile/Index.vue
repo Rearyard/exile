@@ -5,7 +5,7 @@
         <Breadcrumb separator=" > " style="margin-bottom: 0.8rem">
           <Breadcrumb-item href="/">
             <Icon type="ios-home-outline"></Icon>
-            放逐地
+            后花园
           </Breadcrumb-item>
           <Breadcrumb-item>
             <Icon type="pound"></Icon>

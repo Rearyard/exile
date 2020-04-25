@@ -6,7 +6,7 @@
         <Breadcrumb separator=" > " style="margin-bottom: 1rem">
           <Breadcrumb-item to="/">
             <Icon type="ios-home-outline"/>
-            放逐地
+            后花园
           </Breadcrumb-item>
           <Breadcrumb-item>
             <Icon type="social-buffer-outline"/>

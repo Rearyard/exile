@@ -4,7 +4,7 @@
         <i-col span="18" offset="3">
             <Breadcrumb separator=" > " style="margin-bottom: 2rem">
                 <Breadcrumb-item href="/">
-                    <Icon type="ios-home-outline"></Icon> 放逐地
+                    <Icon type="ios-home-outline"></Icon> 后花园
                 </Breadcrumb-item>
                 <Breadcrumb-item>
                     <Icon type="pound"></Icon>个人中心
