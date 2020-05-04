@@ -40,8 +40,8 @@
           <span class="title"  @click="jumpArticle(article.id)">{{article.article_title}}</span>
           </iCol>
           <iCol span="4">
-            <Button v-if="articles.isMyself" type="info">编辑</Button>
-            <Button v-else type="info">查看</Button>
+            <Button v-if="articles.isMyself" type="info" @click="jumpEditArticle(article.id)">编辑</Button>
+            <Button v-else type="info" @click="jumpArticle(article.id)">查看</Button>
           </iCol>
         </Row>
         <Row class="list-content">
@@ -93,7 +93,8 @@
             阅读：{{article.article_view}}
           </iCol>
           <iCol span="8">
-            <i>{{dateFormat(article.article_last_edit)}} /  {{dateFormat(article.article_created)}}</i>
+            <p>最后编辑：{{dateFormat(article.article_last_edit)}}<p>
+            <p>创建时间：{{dateFormat(article.article_created)}}</p>
           </iCol>
         </Row>
       </div>
@@ -202,6 +203,11 @@ export default {
         this.$router.push(`/self/${id}/info`)
       }
     },
+    jumpEditArticle(id){
+      this.$router.push({
+        path: `/article/edit/${id}`,
+      });
+    }
   }
 };
 </script>

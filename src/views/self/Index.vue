@@ -16,6 +16,8 @@
                 <i-col span="5" class="nav-bar">
                     <router-link to="info" active-class="active">基本信息</router-link>
                     <router-link to="works" active-class="active">我的作品</router-link>
+                    <router-link to="following" active-class="active">我的关注</router-link>
+                    <router-link to="followed" active-class="active">我的粉丝</router-link>
                     <router-link to="favorite" active-class="active">我的收藏</router-link>
                 </i-col>
                 <i-col class="right" span="17" offset="1">
