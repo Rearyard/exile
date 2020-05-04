@@ -5,6 +5,7 @@
     </Row>
     <Row v-else>
       <Page
+        v-show="articles.count > 10"
         :total="articles.count"
         :page-size = "10"
         :current="pageCount" size="small"

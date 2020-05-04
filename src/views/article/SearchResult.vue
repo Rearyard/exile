@@ -30,6 +30,17 @@
               <a v-if= "fandomList== ''"></a>
               <a v-else>
                 <Tag
+                  style="border-radius:1rem"
+                  type="dot"
+                  closable
+                  v-for= "(str,i) in fandomList"
+                  :key="str"
+                  :name = "i"
+                  @on-close="deleteFandom"
+                >
+                  {{str}}
+                </Tag>
+                <!-- <Tag
                   style="border-radius:1rem; height:32px; background: white; line-height:32px; padding: 0 10px;"
                   closable
                   v-for= "(str,i) in fandomList"
@@ -52,7 +63,7 @@
                     style="margin-right: 8px;"
                   />
                   <span style= "margin-right: 8px;">{{str}}</span>
-                </Tag>
+                </Tag> -->
               </a>
               <Input
                 v-model="addFandom"

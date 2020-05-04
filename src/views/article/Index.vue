@@ -134,6 +134,7 @@
             <div v-if="fandomCount!=0">
               <Row style="margin-top:1rem; margin-bottom:1rem">
                 <Page
+                   v-show="fandomCount > 5"
                   :total=fandomCount
                   :current.sync=fandomPageCount
                   size="small"
@@ -154,7 +155,7 @@
                   {{item.fandom_name}}
                 </span>
                 <span style="float:right;">
-                  <Icon @click="addtoFavorite(item.fandom_name)" type="md-star" size="24"/>
+                  <Icon @click="followFandom(item.id)" type="md-star" size="24"/>
                 </span>
                 <span style="float:right;" @click="jumpSearchFandom(item.fandom_name)">
                   {{item.fandom_article_amount}}篇文章
@@ -367,6 +368,43 @@ export default {
             this.loading.fandom = false;
           });
       }
+    },
+    followFandom(fandom_id) {
+      const csrfToken = cookie.get("csrfToken");
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+                'class': 'search-spin-icon-load',
+                props: {
+                    type: 'ios-loading',
+                    size: 18
+                }
+            }),
+            h('div', {
+              'style': 'color: rgb(100, 119, 113);'
+            },'Loading')
+          ])
+        },
+      });
+      this.$axios.post(
+        `/api/follow/fandom`,
+        { fandomId: fandom_id },
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res=>{
+        this.$Spin.hide();
+        if(res.status == 200){
+          this.$Message.error("取关成功");
+          this.fandomPageCount = 1;
+          this.getFavoriteFandom(0,5);
+        }
+      }).catch(err => {
+        this.$Spin.hide();
+        this.$Message.error("取关失败");
+      });
     },
     addtoFavorite(name){
       // console.log(name);

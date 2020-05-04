@@ -286,7 +286,7 @@
                   <div class="fandom-card-content">
                     <span>{{fandom.fandom_name}}</span>
                     <span class="fandom-card-popularity">人气{{fandom.fandom_article_amount}}</span>
-                    <Button type="info" @click="followFandom(fandom.id)">{{fandom.followed?'已关注':'关注圈子'}}</Button>
+                    <Button :loading=addFandomLoading type="info" @click="followFandom(fandom.id)">{{fandom.followed?'取消关注':'关注圈子'}}</Button>
                   </div>
                 </Card>
               </iCol>
@@ -340,7 +340,8 @@ export default {
       cpList: [],
       userList: [],
       articleList: [],
-      fandomList: []
+      fandomList: [],
+      addFandomLoading: false,
     };
   },
   computed: {
@@ -363,6 +364,7 @@ export default {
       this.articleList = data[1].data.slice(0, 4);
       this.cpList = data[2].data;
       this.fandomList = data[3].data.slice(0, 8);
+      this.addFandomLoading = false;
     },
     filterText(text) {
       const preg = /<("[^"]*"|'[^']*'|[^'">])*>/gm;
@@ -393,11 +395,13 @@ export default {
       this.getData();
     },
     async followFandom(fandom_id) {
+      this.addFandomLoading = true
       const res = await this.$axios.post(
-        `/api/follow/fandom/${fandom_id}`,
-        {},
+        `/api/follow/fandom`,
+        { fandomId: fandom_id },
         { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
       ).catch(err => {
+        this.addFandomLoading = false;
         this.$Message.error("关注/取关失败");
       });
       if (res.status == 204) {
