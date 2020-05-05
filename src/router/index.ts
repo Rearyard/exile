@@ -12,6 +12,8 @@ import SelfWrapper from '../views/self/Index.vue'
 import SelfInfo from '../views/self/Info.vue'
 import SelfWorks from '../views/self/Works.vue'
 import SelfFavorite from '../views/self/Favorite.vue'
+import Following from '../views/self/Following.vue'
+import Followed from '../views/self/Followed.vue'
 import SelfMobile from '../views/selfmobile/Index.vue'
 import SelfMobileInfo from '../views/selfmobile/Info.vue'
 import SelfMobileWorks from '../views/selfmobile/Works.vue'
@@ -130,6 +132,16 @@ const routes = [
         component:SelfWorks,
         name: 'SelfWorks'
       },
+      {
+        path: 'following',
+        component: Following,
+        name: 'Following',
+      },
+      {
+        path: 'followed',
+        component: Followed,
+        name: 'Followed'
+      }
     ]
   },
   {

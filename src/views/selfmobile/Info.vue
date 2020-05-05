@@ -60,15 +60,93 @@
           <Row>          
             <div class="username">
               <strong>{{user.user_nickname}}</strong>
+              <Button v-show="!user.isMyself && user.isFollowed" shape="circle" type="info" size="small" @click="followUser('unfollow', user.id)">
+                - 取关
+              </Button>
+              <Button v-show="!user.isMyself && !user.isFollowed" shape="circle" type="info" size="small" @click="followUser('follow', user.id)">
+                + 关注
+              </Button>
             </div>
             <div style = "font-size: 0.7rem;" v-show="user.isMyself">
               UID：{{user.id}}
             </div>
           </Row>
           <div>
-            {{user.myFollowing}} 关注
+            <strong @click="openFollowingModal">{{user.myFollowing}}</strong> 关注
             <Divider type="vertical" />
-            {{user.myFollowed}} 粉丝
+            <strong @click="openFollowedModal">{{user.myFollowed}}</strong> 粉丝
+            <Modal
+              :closable=false
+              v-model="followingModal"
+              :mask-closable="false"
+              fullscreen
+            >
+              <div slot="header" class="following-header">
+                <Icon type="ios-arrow-back" size="20" @click="closeFollowingModal"/>
+                <p>我的关注（{{following.count}}）</p>
+              </div>
+              <div v-if="following.count!=0" class="following-wrapper">
+                  <div
+                    v-for="item in following.author"
+                    :key="item.id"
+                    class="following-card"
+                  >
+                    <img v-show="item.user_avatar_url" :src = "item.user_avatar_url"/>
+                    <img v-show="item.user_avatar_url===null" src="https://chinocdn.cafuchino.cn/pic/202003091129722.png"/>
+                    <span style="line-height: 4rem;" @click="jumpUser(item.id)">{{item.user_nickname}}</span>
+                    <Button type = "info" @click="followUser('unfollow', item.id)" v-if="user.isMyself">取关</Button>
+                    <Button type = "info" @click="jumpUser(item.id)" v-else>查看</Button>
+                  </div>
+              </div>
+              <div v-else>
+                <p>还没有关注用户哦！</p>
+              </div>
+              <div slot="footer">
+                <Page
+                  v-show = "following.count>10"
+                  :current.sync=followingPage
+                  :total=following.count
+                  @on-change="changeFollowingPage"
+                  simple
+                />
+              </div>
+            </Modal>
+            <Modal
+              :closable=false
+              v-model="followedModal"
+              :mask-closable="false"
+              fullscreen
+            >
+              <div slot="header" class="following-header">
+                <Icon type="ios-arrow-back" size="20" @click="closeFollowedModal"/>
+                <p>我的粉丝（{{followed.count}}）</p>
+              </div>
+              <div v-if="followed.count!=0" class="following-wrapper">
+                <div
+                  v-for="user in followed.author"
+                  :key="user.id"
+                  class="following-card"
+                >
+                  <img v-show="user.user_avatar_url" :src = "user.user_avatar_url"/>
+                  <img v-show="user.user_avatar_url===null" src="https://chinocdn.cafuchino.cn/pic/202003091129722.png"/>
+                  <span style="line-height: 4rem;" @click="jumpUser(user.id)">{{user.user_nickname}}</span>
+                  <Button type = "info" @click="jumpUser(user.id)">查看</Button>
+                </div>
+              </div>
+              <div v-else>
+                <p>还没有粉丝哦！</p>
+              </div>
+              <div slot="footer">
+                <Page
+                  v-show = "followed.count>10"
+                  :current.sync=followedPage
+                  :total=followed.count
+                  @on-change="changeFollowedPage"
+                  simple
+                />
+              </div>
+            </Modal>
+            
           </div>
           <div style="margin-top:1rem; font-size:0.7rem">
             来到后花园已经{{registerTimeFormated}}
@@ -264,6 +342,14 @@ export default {
       newpsw: '',
       newpswConfirm:'',
       pswLoading: false,
+      followingModal: false,
+      following: {},
+      followingPage: 1,
+      followingLoading: '加载中',
+      followedModal: false,
+      followed: {},
+      followedPage: 1,
+      userFollowed: 0
     }
   },
   components: { 
@@ -578,7 +664,7 @@ export default {
         },
       });
       this.$axios.get(`/api/user/${this.$route.params.uid}`).then(res => {
-        // console.log(res);
+        console.log(res);
         if(!res){
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
@@ -596,7 +682,7 @@ export default {
           console.log('500 Internal Server Error')
           this.$Spin.hide();
           this.$Message.warning({
-            content: '网络出现了一些问题，请刷新重试',
+            content: '访问的用户不存在',
             duration: 10,
             closable: true
           });
@@ -617,12 +703,244 @@ export default {
         path: "/login",
         query: { from: this.$route.fullPath }
       });
-    }
+    },
+    jumpUser(id){
+      const isMobile=this.$store.state.isMobile;
+      if(isMobile){
+        this.$router.push(`/selfmobile/${id}/info`)
+      }else{
+        this.$router.push(`/self/${id}/info`)
+      }
+    },
+    getMyFollowing(offset, amount) {
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+                'class': 'search-spin-icon-load',
+                props: {
+                    type: 'ios-loading',
+                    size: 18
+                }
+            }),
+            h('div', {
+              'style': 'color: rgb(100, 119, 113);'
+            },'Loading...')
+          ])
+        },
+      });
+      this.$axios.get(`/api/user/${this.$route.params.uid}/following`,{
+        params: {
+          offset: offset,
+          amount: amount
+        }    
+      }).then(res => {
+        this.$Spin.hide();
+        console.log(res);
+        if(!res){
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        } else {
+          if(res.status == 200) {
+            this.following=res.data;
+          }
+        }
+      }).catch(error => {
+        this.$Spin.hide();
+        if(error.response.status == 500){
+          console.log('500 Internal Server Error')
+          this.$Message.warning({
+            content: '网络出现了一些问题，请刷新重试',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 403){
+          this.jumpLogin();
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        }
+      });
+    },
+    getMyFollowed(offset, amount) {
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+                'class': 'search-spin-icon-load',
+                props: {
+                    type: 'ios-loading',
+                    size: 18
+                }
+            }),
+            h('div', {
+              'style': 'color: rgb(100, 119, 113);'
+            },'Loading...')
+          ])
+        },
+      });
+      this.$axios.get(`/api/user/${this.$route.params.uid}/followed`, {
+        params: {
+          offset: offset,
+          amount: amount
+        }    
+      }).then(res => {
+        console.log(res);
+        if(!res){
+          this.$Spin.hide();
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        } else {
+          if(res.status == 200){
+            this.followed = res.data;
+            this.$Spin.hide();
+          }
+        }
+      }).catch(error => {
+        if(error.response.status == 500){
+          console.log('500 Internal Server Error')
+          this.$Spin.hide();
+          this.$Message.warning({
+            content: '网络出现了一些问题，请刷新重试',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 403){
+          this.$Spin.hide();
+          this.jumpLogin();
+        } else {
+          this.$Spin.hide();
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        }
+      });
+    },
+    openFollowingModal(){
+      this.followingModal = true;
+      this.followingPage = 1;
+      this.getMyFollowing(0,10);
+    },
+    closeFollowingModal(){
+      this.followingModal = false;
+      this.followingPage=1;
+    },
+    changeFollowingPage(){
+      this.getMyFollowing(10*(this.followingPage-1), 10);
+    },
+    changeFollowedPage(){
+      this.getMyFollowing(10*(this.followedPage-1), 10);
+    },
+    openFollowedModal(){
+      this.followedModal = true;
+      this.followedPage = 1;
+      this.getMyFollowed(0,10);
+    },
+    closeFollowedModal(){
+      this.followedModal = false;
+    },
+    handleReachBottom(){
+      if(this.followingList.length < this.user.myFollowing) {
+        return new Promise(() => {
+          console.log(this.followingList.length);
+          console.log(this.user.myFollowing);
+          this.getMyFollowing(10*this.followingPage, 10);
+          this.followingPage = this.followingPage + 1;
+        })
+      } else {
+        console.log('已到达底部');
+        this.followingLoading = "没有更多关注啦"
+      }
+    },
+    followUser(operation, id){
+      const csrfToken = cookie.get("csrfToken");
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+                'class': 'search-spin-icon-load',
+                props: {
+                    type: 'ios-loading',
+                    size: 18
+                }
+            }),
+            h('div', {
+              'style': 'color: rgb(100, 119, 113);'
+            },'Loading...')
+          ])
+        },
+      });
+      const data = {};
+      if(operation === 'follow') {data.followedId = id}
+      else if(operation === 'unfollow') {data.unfollowedId = id}
+      else return;
+      console.log(operation);
+      this.$axios.post(
+        `/api/user/${this.$store.state.user.id}/follow/user`, data,
+        {
+          'headers': { "x-csrf-token": csrfToken },
+          'withCredentials': true,
+        }
+      ).then(res=>{
+        this.$Spin.hide();
+        if(res.status == 204){
+          console.log('success')
+          if(operation === 'follow'){this.$Message.success('关注成功')}
+          if(operation === 'unfollow'){this.$Message.success('取关成功')}
+          if(this.followingModal){
+            this.getMyFollowing(0,10);
+            this.followingPage = 1;
+          } else {
+            this.getUserInfo();
+          }
+        }
+      }).catch(error => {
+        if(error.response.status == 500){
+          console.log('500 Internal Server Error')
+          this.$Spin.hide();
+          this.$Message.warning({
+              content: '服务器出现了一些错误。',
+              duration: 10,
+              closable: true
+          });
+        } else if(error.response.status == 401){
+          this.$Spin.hide();
+          this.jumpLogin();
+        } else if(error.response.status == 400){
+          this.$Spin.hide();
+          this.$Message.warning({
+            content: `${error.response.data}`,
+            duration: 10,
+            closable: true
+          });
+        }else {
+          this.$Spin.hide();
+          this.$Message.warning({
+              content: '服务器出错啦，请重试',
+              duration: 10,
+              closable: true
+          });
+        }
+      });
+    },
   },
   watch:{
     '$route'(to, from) {
       console.log('change')
       if(to.params.uid != from.params.uid){
+        this.closeFollowingModal()
+        this.closeFollowedModal()
         this.getUserInfo();
       }
     }
@@ -698,6 +1016,13 @@ export default {
   padding:1rem;
   margin-bottom: 0.3rem;
 }
+.username{
+  display: flex;
+  display: -webkit-flex; /* Safari */
+  flex-direction: row;
+  -webkit-flex-direction: row; /* Safari 6.1+ */
+  justify-content: space-between;
+}
 .avater-wrapper img{
   width:100%;
   border-radius: 200px;
@@ -718,6 +1043,39 @@ export default {
 }
 .info-row{
   font-size: 1rem;
+}
+.following-header{
+  display: flex;
+  display: -webkit-flex; /* Safari */
+  flex-direction: row;
+  -webkit-flex-direction: row; /* Safari 6.1+ */
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  align-items:center;
+}
+.following-wrapper{
+  display: flex;
+  display: -webkit-flex; /* Safari */
+  -webkit-flex-direction: row; /* Safari 6.1+ */
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.following-card{
+  width: 100%;
+  height: 4rem;
+  border-radius: 10px;
+  background: rgba(180, 180, 180, 0.212);
+  padding: 0px 1rem 0px 1rem;
+  margin-bottom: 3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+  }
 }
 </style>
 

@@ -30,7 +30,7 @@
           <Tag v-else-if="article.article_rating == 'R' " color="#ea534f">R</Tag>
           <Tag v-else color="#ea534f">NC-17</Tag>
           <span id="title" @click="jumpArticle(article.id)">{{article.article_title}}</span>
-          &nbsp;&nbsp;<Icon v-if="articles.isMyself" type="ios-create-outline" size="20"/>
+          &nbsp;&nbsp;<Icon v-if="articles.isMyself" @click="jumpEditArticle(article.id)" type="ios-create-outline" size="20"/>
           <p id="summary" v-if="article.article_summary!=''">{{article.article_summary}}</p>
           <p id="summary" v-else>无内容简介</p>
           <Divider style="margin:0.8rem 0 0.5rem 0" />
@@ -184,6 +184,11 @@ export default {
       this.$router.push({
         path: "/login",
         query: { from: this.$route.fullPath }
+      });
+    },
+    jumpEditArticle(id){
+      this.$router.push({
+        path: `/article/edit/${id}`,
       });
     }
   }

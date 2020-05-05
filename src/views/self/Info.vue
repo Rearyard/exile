@@ -24,6 +24,12 @@
         >
           <Button v-show="user.isMyself" type="success" size="large" shape="circle">更改头像</Button>
         </Upload>
+        <Button v-show="!user.isMyself && user.isFollowed" type="success" size="large" shape="circle" @click="followUser('unfollow', user.id)">
+          取消关注
+        </Button>
+        <Button v-show="!user.isMyself && !user.isFollowed" type="success" size="large" shape="circle" @click="followUser('follow', user.id)">
+          添加关注
+              </Button>
         <Modal title="设置头像" v-model="avatarCropper" :mask-closable="false" fullscreen>
           <div id="avatar-cropper">
             <vueCropper
@@ -570,6 +576,77 @@ export default {
           });
         }
         return true;
+      });
+    },
+    followUser(operation, id){
+      const csrfToken = cookie.get("csrfToken");
+      this.$Spin.show({
+        render: (h) => {
+          return h('div', [
+            h('Icon', {
+                'class': 'search-spin-icon-load',
+                props: {
+                    type: 'ios-loading',
+                    size: 18
+                }
+            }),
+            h('div', {
+              'style': 'color: rgb(100, 119, 113);'
+            },'Loading...')
+          ])
+        },
+      });
+      const data = {};
+      if(operation === 'follow') {data.followedId = id}
+      else if(operation === 'unfollow') {data.unfollowedId = id}
+      else return;
+      console.log(operation);
+      this.$axios.post(
+        `/api/user/${this.$store.state.user.id}/follow/user`, data,
+        {
+          'headers': { "x-csrf-token": csrfToken },
+          'withCredentials': true,
+        }
+      ).then(res=>{
+        this.$Spin.hide();
+        if(res.status == 204){
+          console.log('success')
+          if(operation === 'follow'){this.$Message.success('关注成功')}
+          if(operation === 'unfollow'){this.$Message.success('取关成功')}
+          if(this.followingModal){
+            this.getMyFollowing(0,10);
+            this.followingPage = 1;
+          } else {
+            this.getUserInfo();
+          }
+        }
+      }).catch(error => {
+        if(error.response.status == 500){
+          console.log('500 Internal Server Error')
+          this.$Spin.hide();
+          this.$Message.warning({
+              content: '服务器出现了一些错误。',
+              duration: 10,
+              closable: true
+          });
+        } else if(error.response.status == 401){
+          this.$Spin.hide();
+          this.jumpLogin();
+        } else if(error.response.status == 400){
+          this.$Spin.hide();
+          this.$Message.warning({
+            content: `${error.response.data}`,
+            duration: 10,
+            closable: true
+          });
+        }else {
+          this.$Spin.hide();
+          this.$Message.warning({
+              content: '服务器出错啦，请重试',
+              duration: 10,
+              closable: true
+          });
+        }
       });
     },
   },
