@@ -353,16 +353,11 @@ export default {
   },
   methods: {
     async getData() {
-      const data = await Promise.all([
-        this.$axios.get("/api/statistics/user"),
-        this.$axios.get("/api/statistics/article"),
-        this.$axios.get("/api/statistics/cp"),
-        this.$axios.get("/api/statistics/fandom")
-      ]);
-      this.userList = data[0].data;
-      this.articleList = data[1].data.slice(0, 4);
-      this.cpList = data[2].data;
-      this.fandomList = data[3].data.slice(0, 8);
+      const res = await this.$axios.get("/api/statistics/full");
+      this.userList = res.data.user;
+      this.articleList = res.data.article.slice(0, 4);
+      this.cpList = res.data.cp;
+      this.fandomList = res.data.fandom.slice(0, 8);
     },
     filterText(text) {
       const preg = /<("[^"]*"|'[^']*'|[^'">])*>/gm;
@@ -382,27 +377,30 @@ export default {
     async followUser(uid) {
       const res = await this.$axios.post(
         "/api/follow/user",
-        { id: uid },
+        { uid: Number(uid) },
         { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
       ).catch(err => {
         this.$Message.error("关注/取关失败");
       });
-      if (res.status == 204) {
+      if (res.data.result) {
         this.$Message.success("关注/取关成功！");
+      }else{
+        this.$Message.error("关注/取关失败");
       }
       this.getData();
     },
     async followFandom(fandom_id) {
       const res = await this.$axios.post(
-        `/api/follow/fandom/${fandom_id}`,
-        {},
-        { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
+        '/api/follow/fandom',
+        {fandomId:fandom_id}
       ).catch(err => {
         this.$Message.error("关注/取关失败");
       });
-      if (res.status == 204) {
+      if (res.data.result) {
         this.$Message.success("关注/取关成功！");
-      } 
+      } else{
+        this.$Message.error("关注/取关失败");
+      }
       this.getData();
     }
   },

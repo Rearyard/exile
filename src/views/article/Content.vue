@@ -166,7 +166,7 @@
             >{{ judgement.articleLike ? "取消" : "喜欢" }}</i-button>
           </iCol>
           <iCol span="8" style="text-align: center">
-            <i-button class="cute-button" icon="logo-yen" type="warning">赞助</i-button>
+            <i-button disabled class="cute-button" icon="logo-yen" type="warning">赞助</i-button>
           </iCol>
         </Row>
         <div>
@@ -423,9 +423,9 @@ export default class ArticleContent extends Vue {
   }
 
   async fav() {
-    let { id } = this.article;
-    post("/follow/article", { id })
-      .then(() => post("/follow/article/judgement", { id }))
+    let aid  = this.article.id;
+    post("/follow/article", { aid })
+      .then(() => post("/follow/article/judgement", { aid }))
       .then(value => (this.judgement.articleFav = value));
   }
 

@@ -11,8 +11,8 @@
             <Upload
               :headers="{'x-csrf-token':csrfToken}"
               :with-credentials="true"
-              accept=".xml"
-              :format="['xml']"
+              accept=".xml,.do"
+              :format="['xml','do']"
               type="drag"
               action="/api/file/xml"
               :show-upload-list="false"
@@ -42,7 +42,7 @@
             </Row>
             <br />
             <Table border :columns="columns" :data="result" @on-selection-change="changeCheck">
-              <template slot-scope="{ row }" slot="tag">{{row.tag.join(',')}}</template>
+              <template slot-scope="{ row }" slot="tag">{{row.tag?row.tag.join(','):'无tag'}}</template>
             </Table>
           </iCol>
         </Row>
