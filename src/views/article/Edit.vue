@@ -50,7 +50,7 @@
             v-if="step==0&&cid==0"
           >
             <form-item label="标题：" prop="title">
-              <Input v-model="form.title" placeholder="不可留空，请填写" />
+              <Input v-model="form.title" maxlength="40"  show-word-limit  placeholder="不可留空，请填写" />
             </form-item>
             <form-item label="分级：" prop="rating">
               <Select v-model="form.rating">
@@ -138,10 +138,10 @@
               </Select>
             </form-item>
             <form-item label="摘要：" prop="summary">
-              <i-input v-model="form.summary" placeholder="文章摘要" />
+              <i-input v-model="form.summary" maxlength="200"  show-word-limit  placeholder="文章摘要" />
             </form-item>
             <form-item label="注释：" prop="note">
-              <i-input v-model="form.note" placeholder="文章注释" />
+              <i-input v-model="form.note" maxlength="200"  show-word-limit  placeholder="文章注释" />
             </form-item>
             <form-item label="多章节：">
               <i-switch v-model="multiChapter" true-color="#a2d6cd" />
@@ -179,13 +179,13 @@
                 </div>
                 <Form ref="formChapter" :model="chapter" :rules="chapterRules">
                   <form-item label="标题：" prop="title">
-                    <i-input :disabled="!multiChapter" v-model="chapter.title" placeholder="章节标题" />
+                    <i-input :disabled="!multiChapter" maxlength="40"  show-word-limit  v-model="chapter.title" placeholder="章节标题" />
                   </form-item>
                   <form-item label="摘要：" prop="summary" style="flex-basis: 15em">
-                    <i-input v-model="chapter.summary" placeholder="可留空" />
+                    <i-input v-model="chapter.summary" maxlength="200"  show-word-limit  placeholder="可留空" />
                   </form-item>
                   <form-item label="注释：" prop="note" style="flex-basis: 15em">
-                    <i-input v-model="chapter.note" placeholder="可留空" />
+                    <i-input v-model="chapter.note" maxlength="200"  show-word-limit  placeholder="可留空" />
                   </form-item>
                 </Form>
                 <quill-editor

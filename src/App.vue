@@ -32,8 +32,6 @@
                     @on-enter="jumpSearchResult"
                     v-model="searchQuery"
                     placeholder="搜索"
-                    @on-click="jumpSearchResult"
-                    @on-enter="jumpSearchResult"
                     icon="md-search"
                     class="header-search"
                   ></iInput>

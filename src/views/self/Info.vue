@@ -9,27 +9,42 @@
         </Badge>
       </iCol>
       <iCol span="10" offset="2">
-        <Upload
-          v-show="user.isMyself"
-          ref="upload"
-          :show-upload-list="false"
-          :on-success="handleSuccess"
-          :format="['jpg','jpeg','png']"
-          :max-size="2048"
-          :on-format-error="handleFormatError"
-          :on-exceeded-size="handleMaxSize"
-          :before-upload="handeleBeforeUpload"
-          accept="image/*"
-          action=" "
-        >
-          <Button v-show="user.isMyself" type="success" size="large" shape="circle">更改头像</Button>
-        </Upload>
-        <Button v-show="!user.isMyself && user.isFollowed" type="success" size="large" shape="circle" @click="followUser('unfollow', user.id)">
-          取消关注
-        </Button>
-        <Button v-show="!user.isMyself && !user.isFollowed" type="success" size="large" shape="circle" @click="followUser('follow', user.id)">
-          添加关注
-              </Button>
+        <Row>
+          <iCol span="16">
+            <h1>{{user.user_nickname}}</h1>
+          </iCol>
+          <iCol span="4">
+            <Upload
+              v-show="user.isMyself"
+              ref="upload"
+              :show-upload-list="false"
+              :on-success="handleSuccess"
+              :format="['jpg','jpeg','png']"
+              :max-size="2048"
+              :on-format-error="handleFormatError"
+              :on-exceeded-size="handleMaxSize"
+              :before-upload="handeleBeforeUpload"
+              accept="image/*"
+              action=" "
+            >
+              <Button v-show="user.isMyself" type="success" size="large" shape="circle">更改头像</Button>
+            </Upload>
+            <Button
+              v-show="!user.isMyself && user.isFollowed"
+              type="success"
+              size="large"
+              shape="circle"
+              @click="followUser('unfollow', user.id)"
+            >取消关注</Button>
+            <Button
+              v-show="!user.isMyself && !user.isFollowed"
+              type="success"
+              size="large"
+              shape="circle"
+              @click="followUser('follow', user.id)"
+            >添加关注</Button>
+          </iCol>
+        </Row>
         <Modal title="设置头像" v-model="avatarCropper" :mask-closable="false" fullscreen>
           <div id="avatar-cropper">
             <vueCropper
@@ -199,20 +214,20 @@
 </template>
 
 <script>
-import cookie from 'js-cookie'
-import { VueCropper }  from 'vue-cropper'
-import moment from 'moment'
+import cookie from "js-cookie";
+import { VueCropper } from "vue-cropper";
+import moment from "moment";
 
 export default {
-  data(){
+  data() {
     return {
-      user:{},
+      user: {},
       avatarCropper: false,
       cropperOption: {
-        img: '', // 裁剪图片的地址
+        img: "", // 裁剪图片的地址
         info: true, // 裁剪框的大小信息
         outputSize: 0.8, // 裁剪生成图片的质量
-        outputType: 'png', // 裁剪生成图片的格式
+        outputType: "png", // 裁剪生成图片的格式
         canScale: false, // 图片是否允许滚轮缩放
         autoCrop: true, // 是否默认生成截图框
         autoCropWidth: 200, // 默认生成截图框宽度
@@ -230,29 +245,29 @@ export default {
       editname: false,
       editsignature: false,
       inputLoading: false,
-      nickname: '',
-      signature: '',
+      nickname: "",
+      signature: "",
       pswModal: false,
-      pswStep:0,
-      oldpsw: '',
-      newpsw: '',
-      newpswConfirm:'',
-      pswLoading: false,
-    }
+      pswStep: 0,
+      oldpsw: "",
+      newpsw: "",
+      newpswConfirm: "",
+      pswLoading: false
+    };
   },
-  components: { 
-    VueCropper 
-  }, 
+  components: {
+    VueCropper
+  },
   computed: {
-    formatedData(){
-      return moment(this.user.user_registered).format('YYYY-MM-DD')
+    formatedData() {
+      return moment(this.user.user_registered).format("YYYY-MM-DD");
     }
   },
   mounted() {
     this.getUserInfo();
   },
   methods: {
-    jumpLogin(){
+    jumpLogin() {
       this.$router.push({
         path: "/login",
         query: { from: this.$route.fullPath }
@@ -260,258 +275,264 @@ export default {
     },
     getUserInfo() {
       this.$Spin.show({
-        render: (h) => {
-          return h('div', [
-            h('Icon', {
-                'class': 'search-spin-icon-load',
-                props: {
-                    type: 'ios-loading',
-                    size: 18
-                }
+        render: h => {
+          return h("div", [
+            h("Icon", {
+              class: "search-spin-icon-load",
+              props: {
+                type: "ios-loading",
+                size: 18
+              }
             }),
-            h('div', {
-              'style': 'color: rgb(100, 119, 113);'
-            },'Loading...')
-          ])
-        },
-      });
-      this.$axios.get(`/api/user/${this.$route.params.uid}`).then(res => {
-        // console.log(res);
-        if(!res){
-          this.$Spin.hide();
-          this.$Message.warning({
-              content: '网络出现了一些问题，请刷新重试',
-              duration: 10,
-              closable: true
-          });
-        } else {
-          if(res.status == 200){
-            this.user = res.data;
-            this.$Spin.hide();
-          }
-        }
-      }).catch(error => {
-        if(error.response.status == 500){
-          console.log('500 Internal Server Error')
-          this.$Spin.hide();
-          this.$Message.warning({
-            content: '网络出现了一些问题，请刷新重试',
-            duration: 10,
-            closable: true
-          });
-        } else if(error.response.status == 403){
-          this.$Spin.hide();
-          this.jumpLogin();
-        } else {
-          this.$Spin.hide();
-          this.$Message.warning({
-              content: '网络出现了一些问题，请刷新重试',
-              duration: 10,
-              closable: true
-          });
+            h(
+              "div",
+              {
+                style: "color: rgb(100, 119, 113);"
+              },
+              "Loading..."
+            )
+          ]);
         }
       });
-    },
-    handeleBeforeUpload(file){
-      if(this.user.isMyself){
-        this.fileInfo =file;
-        const data = window.URL.createObjectURL(new Blob([file]));
-        this.cropperOption.img = data;
-        this.avatarCropper=true;
-        return false;//取消自动上传
-      }
-    },
-    handleSuccess(){
-      console.log('upload success')
-    },
-    handleFormatError(){
-      console.log('upload format error')
-      this.$Message.warning({
-        content: '仅支持jpg, jepg, png格式的图片',
-        duration: 10,
-        closable: true
-      });
-    },
-    handleMaxSize(){
-      console.log('upload max size');
-      this.$Message.warning({
-        content: '图片的最大尺寸不能超过2M',
-        duration: 10,
-        closable: true
-      });
-    },
-    closeModal(){
-      this.avatarCropper=false;
-      console.log(this.avatarCropper);
-    },
-    uploadFile(){
-      const csrfToken = cookie.get("csrfToken");
-      console.log(`fileinfo${this.fileInfo.name}`);
-      this.$refs.cropper.getCropBlob((data) => {
-        // console.log(data);
-        this.avatarLoading = true
-        this.$refs.upload.clearFiles() 
-        const formData=new FormData();
-        const files = new window.File(
-          [data],
-          this.fileInfo.name,
-          {type: this.fileInfo.type}
-        )
-        formData.append('files',files);
-        this.$axios.post(
-          '/api/file/avatar', formData,
-          {
-            'headers': { "x-csrf-token": csrfToken },
-            'withCredentials': true,
-            'Content-Type':'multipart/form-data'
-          }
-        ).then(res=>{
-          this.avatarLoading = false
-          if(res.status == 200){
-              console.log('success')
-              this.$Message.success('设置成功');
-              this.closeModal();
-              this.$router.go(0);
-          }
-        }).catch(error => {
-          if(error.response.status == 500){
-            console.log('500 Internal Server Error')
+      this.$axios
+        .get(`/api/user/${this.$route.params.uid}`)
+        .then(res => {
+          // console.log(res);
+          if (!res) {
             this.$Spin.hide();
             this.$Message.warning({
-                content: '服务器出现了一些错误。',
-                duration: 10,
-                closable: true
+              content: "网络出现了一些问题，请刷新重试",
+              duration: 10,
+              closable: true
             });
-          } else if(error.response.status == 403){
+          } else {
+            if (res.status == 200) {
+              this.user = res.data;
+              this.$Spin.hide();
+            }
+          }
+        })
+        .catch(error => {
+          if (error.response.status == 500) {
+            console.log("500 Internal Server Error");
+            this.$Spin.hide();
+            this.$Message.warning({
+              content: "网络出现了一些问题，请刷新重试",
+              duration: 10,
+              closable: true
+            });
+          } else if (error.response.status == 403) {
             this.$Spin.hide();
             this.jumpLogin();
           } else {
             this.$Spin.hide();
             this.$Message.warning({
-                content: '上传的图片格式不正确',
-                duration: 10,
-                closable: true
+              content: "网络出现了一些问题，请刷新重试",
+              duration: 10,
+              closable: true
             });
           }
-        })
-      })
+        });
     },
-    editNickname(){
-      this.editname=true;
+    handeleBeforeUpload(file) {
+      if (this.user.isMyself) {
+        this.fileInfo = file;
+        const data = window.URL.createObjectURL(new Blob([file]));
+        this.cropperOption.img = data;
+        this.avatarCropper = true;
+        return false; //取消自动上传
+      }
     },
-    editSignature(){
+    handleSuccess() {
+      console.log("upload success");
+    },
+    handleFormatError() {
+      console.log("upload format error");
+      this.$Message.warning({
+        content: "仅支持jpg, jepg, png格式的图片",
+        duration: 10,
+        closable: true
+      });
+    },
+    handleMaxSize() {
+      console.log("upload max size");
+      this.$Message.warning({
+        content: "图片的最大尺寸不能超过2M",
+        duration: 10,
+        closable: true
+      });
+    },
+    closeModal() {
+      this.avatarCropper = false;
+      console.log(this.avatarCropper);
+    },
+    uploadFile() {
+      const csrfToken = cookie.get("csrfToken");
+      console.log(`fileinfo${this.fileInfo.name}`);
+      this.$refs.cropper.getCropBlob(data => {
+        // console.log(data);
+        this.avatarLoading = true;
+        this.$refs.upload.clearFiles();
+        const formData = new FormData();
+        const files = new window.File([data], this.fileInfo.name, {
+          type: this.fileInfo.type
+        });
+        formData.append("files", files);
+        this.$axios
+          .post("/api/file/avatar", formData, {
+            headers: { "x-csrf-token": csrfToken },
+            withCredentials: true,
+            "Content-Type": "multipart/form-data"
+          })
+          .then(res => {
+            this.avatarLoading = false;
+            if (res.status == 200) {
+              console.log("success");
+              this.$Message.success("设置成功");
+              this.closeModal();
+              this.$router.go(0);
+            }
+          })
+          .catch(error => {
+            if (error.response.status == 500) {
+              console.log("500 Internal Server Error");
+              this.$Spin.hide();
+              this.$Message.warning({
+                content: "服务器出现了一些错误。",
+                duration: 10,
+                closable: true
+              });
+            } else if (error.response.status == 403) {
+              this.$Spin.hide();
+              this.jumpLogin();
+            } else {
+              this.$Spin.hide();
+              this.$Message.warning({
+                content: "上传的图片格式不正确",
+                duration: 10,
+                closable: true
+              });
+            }
+          });
+      });
+    },
+    editNickname() {
+      this.editname = true;
+    },
+    editSignature() {
       this.editsignature = true;
     },
-    cancelChangeName(){
+    cancelChangeName() {
       this.editname = false;
     },
-    cancelChangeSignature(){
+    cancelChangeSignature() {
       this.editsignature = false;
     },
-    changeUserInfo(){
+    changeUserInfo() {
       const csrfToken = cookie.get("csrfToken");
       const data = {
         nickname: this.nickname,
-        signature: this.signature,
-      }
-      if(this.nickname === ''&&this.signature === ''){
+        signature: this.signature
+      };
+      if (this.nickname === "" && this.signature === "") {
         this.$Message.warning({
-          content: '请勿输入空数据',
+          content: "请勿输入空数据",
           duration: 10,
           closable: true
         });
         return;
       }
       this.inputLoading = true;
-      this.$axios.put(`/api/user/${this.$route.params.uid}`, data,
-        {
+      this.$axios
+        .put(`/api/user/${this.$route.params.uid}`, data, {
           headers: { "x-csrf-token": csrfToken },
           withCredentials: true
-        }
-      ).then(res => {
-        if(res.status == 204) {
-          this.$Message.success({
-            content: '修改成功',
-            duration: 10,
-            closable: true
-          });
-          this.editname=false;
-          this.editsignature=false;
-          this.inputLoading = false;
-          this.nickname = '';
-          this.signature = '';
-          this.getUserInfo();
-        }
-      }).catch(error => {
-        this.inputLoading = false;
-        if(error.response.status == 500){
-          console.log('500 Internal Server Error')
-          this.$Message.error({
-            content: '服务器出现了一些问题，请确保输入正确格式的数据',
-            duration: 10,
-            closable: true
-          });
-        } else if(error.response.status == 403){
-          this.$Spin.hide();
-          this.jumpLogin();
-        } else if(error.response.status == 405){
-          this.$Message.error({
-            content: '您没有权限进行此操作',
-            duration: 10,
-            closable: true
-          });
-        } else if(error.response.status == 412){
-          this.$Message.error({
-            content: '请输入合法的字符串',
-            duration: 10,
-            closable: true
-          });
-        } else {
-          this.$Message.warning({
-              content: '网络出现了一些问题，请刷新重试',
+        })
+        .then(res => {
+          if (res.status == 204) {
+            this.$Message.success({
+              content: "修改成功",
               duration: 10,
               closable: true
-          });
-        }
-      });
+            });
+            this.editname = false;
+            this.editsignature = false;
+            this.inputLoading = false;
+            this.nickname = "";
+            this.signature = "";
+            this.getUserInfo();
+          }
+        })
+        .catch(error => {
+          this.inputLoading = false;
+          if (error.response.status == 500) {
+            console.log("500 Internal Server Error");
+            this.$Message.error({
+              content: "服务器出现了一些问题，请确保输入正确格式的数据",
+              duration: 10,
+              closable: true
+            });
+          } else if (error.response.status == 403) {
+            this.$Spin.hide();
+            this.jumpLogin();
+          } else if (error.response.status == 405) {
+            this.$Message.error({
+              content: "您没有权限进行此操作",
+              duration: 10,
+              closable: true
+            });
+          } else if (error.response.status == 412) {
+            this.$Message.error({
+              content: "请输入合法的字符串",
+              duration: 10,
+              closable: true
+            });
+          } else {
+            this.$Message.warning({
+              content: "网络出现了一些问题，请刷新重试",
+              duration: 10,
+              closable: true
+            });
+          }
+        });
     },
-    openPswModal(){
+    openPswModal() {
       // console.log('change password');
       this.pswModal = true;
     },
-    closePswModal(){
+    closePswModal() {
       this.pswModal = false;
     },
-    pswNextStep(){
+    pswNextStep() {
       console.log(`psw step: ${this.pswStep}`);
       let data = {};
-      if(this.pswStep == 0){
-        if(this.oldpsw === ''){
+      if (this.pswStep == 0) {
+        if (this.oldpsw === "") {
           this.$Message.warning({
-            content: '请勿输入空字符串',
+            content: "请勿输入空字符串",
             duration: 10,
             closable: true
           });
         } else {
           data = {
-            oldpsw: this.oldpsw,
-          }
+            oldpsw: this.oldpsw
+          };
           this.submitPassword(data);
         }
-      } else if(this.pswStep == 1){
-        if(this.oldpsw!=this.newpsw){
+      } else if (this.pswStep == 1) {
+        if (this.oldpsw != this.newpsw) {
           this.pswStep++;
-        }else{
+        } else {
           this.$Message.warning({
-            content: '新密码不能和旧密码一样',
+            content: "新密码不能和旧密码一样",
             duration: 10,
             closable: true
           });
         }
-      } else if(this.pswStep == 2){
-        if(this.newpsw != this.newpswConfirm){
+      } else if (this.pswStep == 2) {
+        if (this.newpsw != this.newpswConfirm) {
           this.$Message.warning({
-            content: '两次输入的密码不一致',
+            content: "两次输入的密码不一致",
             duration: 10,
             closable: true
           });
@@ -524,136 +545,147 @@ export default {
         }
       }
     },
-    submitPassword(data){
+    submitPassword(data) {
       this.pswLoading = true;
       const csrfToken = cookie.get("csrfToken");
-      this.$axios.put(`/api/user/${this.$route.params.uid}/password`, data,
-        {
+      this.$axios
+        .put(`/api/user/${this.$route.params.uid}/password`, data, {
           headers: { "x-csrf-token": csrfToken },
           withCredentials: true
-        }
-      ).then(res => {
-        this.pswLoading = false;
-        if(res.status == 204) {
-          if(this.pswStep == 0){
-            this.$Message.success({
-              content: '密码正确',
-              duration: 10,
-              closable: true
-            });
-            this.pswStep++;
-          } else if(this.pswStep == 2){
-            this.$Message.success({
-              content: '修改成功',
-              duration: 10,
-              closable: true
-            });
-            this.pswStep = 0;
-            this.closePswModal()
+        })
+        .then(res => {
+          this.pswLoading = false;
+          if (res.status == 204) {
+            if (this.pswStep == 0) {
+              this.$Message.success({
+                content: "密码正确",
+                duration: 10,
+                closable: true
+              });
+              this.pswStep++;
+            } else if (this.pswStep == 2) {
+              this.$Message.success({
+                content: "修改成功",
+                duration: 10,
+                closable: true
+              });
+              this.pswStep = 0;
+              this.closePswModal();
+            }
           }
-        }
-      }).catch(error => {
-        this.pswLoading = false;
-        if(error.response.status == 403){
-          this.jumpLogin();
-        } else if(error.response.status == 405){
-          this.$Message.error({
-            content: '您没有权限进行此操作',
-            duration: 10,
-            closable: true
-          });
-        } else if(error.response.status == 412){
-          this.$Message.error({
-            content: '输入的密码不正确',
-            duration: 10,
-            closable: true
-          });
-        } else {
-          this.$Message.warning({
-              content: '网络出现了一些问题，请刷新重试',
+        })
+        .catch(error => {
+          this.pswLoading = false;
+          if (error.response.status == 403) {
+            this.jumpLogin();
+          } else if (error.response.status == 405) {
+            this.$Message.error({
+              content: "您没有权限进行此操作",
               duration: 10,
               closable: true
-          });
-        }
-        return true;
-      });
+            });
+          } else if (error.response.status == 412) {
+            this.$Message.error({
+              content: "输入的密码不正确",
+              duration: 10,
+              closable: true
+            });
+          } else {
+            this.$Message.warning({
+              content: "网络出现了一些问题，请刷新重试",
+              duration: 10,
+              closable: true
+            });
+          }
+          return true;
+        });
     },
-    followUser(operation, id){
+    followUser(operation, id) {
       const csrfToken = cookie.get("csrfToken");
       this.$Spin.show({
-        render: (h) => {
-          return h('div', [
-            h('Icon', {
-                'class': 'search-spin-icon-load',
-                props: {
-                    type: 'ios-loading',
-                    size: 18
-                }
+        render: h => {
+          return h("div", [
+            h("Icon", {
+              class: "search-spin-icon-load",
+              props: {
+                type: "ios-loading",
+                size: 18
+              }
             }),
-            h('div', {
-              'style': 'color: rgb(100, 119, 113);'
-            },'Loading...')
-          ])
-        },
+            h(
+              "div",
+              {
+                style: "color: rgb(100, 119, 113);"
+              },
+              "Loading..."
+            )
+          ]);
+        }
       });
       const data = {};
-      if(operation === 'follow') {data.followedId = id}
-      else if(operation === 'unfollow') {data.unfollowedId = id}
-      else return;
+      if (operation === "follow") {
+        data.followedId = id;
+      } else if (operation === "unfollow") {
+        data.unfollowedId = id;
+      } else return;
       console.log(operation);
-      this.$axios.post(
-        `/api/user/${this.$store.state.user.id}/follow/user`, data,
-        {
-          'headers': { "x-csrf-token": csrfToken },
-          'withCredentials': true,
-        }
-      ).then(res=>{
-        this.$Spin.hide();
-        if(res.status == 204){
-          console.log('success')
-          if(operation === 'follow'){this.$Message.success('关注成功')}
-          if(operation === 'unfollow'){this.$Message.success('取关成功')}
-          if(this.followingModal){
-            this.getMyFollowing(0,10);
-            this.followingPage = 1;
-          } else {
-            this.getUserInfo();
+      this.$axios
+        .post(`/api/user/${this.$store.state.user.id}/follow/user`, data, {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        })
+        .then(res => {
+          this.$Spin.hide();
+          if (res.status == 204) {
+            console.log("success");
+            if (operation === "follow") {
+              this.$Message.success("关注成功");
+            }
+            if (operation === "unfollow") {
+              this.$Message.success("取关成功");
+            }
+            if (this.followingModal) {
+              this.getMyFollowing(0, 10);
+              this.followingPage = 1;
+            } else {
+              this.getUserInfo();
+            }
           }
-        }
-      }).catch(error => {
-        if(error.response.status == 500){
-          console.log('500 Internal Server Error')
-          this.$Spin.hide();
-          this.$Message.warning({
-              content: '服务器出现了一些错误。',
+        })
+        .catch(error => {
+          if (error.response.status == 500) {
+            console.log("500 Internal Server Error");
+            this.$Spin.hide();
+            this.$Message.warning({
+              content: "服务器出现了一些错误。",
               duration: 10,
               closable: true
-          });
-        } else if(error.response.status == 401){
-          this.$Spin.hide();
-          this.jumpLogin();
-        } else if(error.response.status == 400){
-          this.$Spin.hide();
-          this.$Message.warning({
-            content: `${error.response.data}`,
-            duration: 10,
-            closable: true
-          });
-        }else {
-          this.$Spin.hide();
-          this.$Message.warning({
-              content: '服务器出错啦，请重试',
+            });
+          } else if (error.response.status == 401) {
+            this.$Spin.hide();
+            this.jumpLogin();
+          } else if (error.response.status == 400) {
+            this.$Spin.hide();
+            this.$Message.warning({
+              content: `${error.response.data}`,
               duration: 10,
               closable: true
-          });
-        }
-      });
-    },
+            });
+          } else {
+            this.$Spin.hide();
+            this.$Message.warning({
+              content: "服务器出错啦，请重试",
+              duration: 10,
+              closable: true
+            });
+          }
+        });
+    }
   },
-  watch:{
-    '$route'(to, from) {
+  watch: {
+    $route(to, from) {
       // console.log('change')
-      if(to.params.uid != from.params.uid){
+      if (to.params.uid != from.params.uid) {
         this.getUserInfo();
       }
     }

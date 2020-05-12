@@ -106,10 +106,10 @@
                     <Card>
                       <Row slot="title">
                         <iCol span="3">
-                          <Avatar shape="square" icon="ios-person" />
+                          <Avatar :src='topUser.user_avatar_url' shape="square" icon="ios-person" />
                         </iCol>
                         <iCol span="20" class="wrapper-popular-user-card">
-                          <p class="popular-user-card-title">
+                          <p class="popular-user-card-title" @click="$router.push({name:'SelfInfo',params:{uid:topUser.uid}})">
                             {{topUser.user_nickname}}
                             <Badge text="Lv.1" type="info" style="margin-left:8px;z-index:1" />
                             <span></span>
@@ -355,7 +355,7 @@ export default {
   methods: {
     async getData() {
       const res = await this.$axios.get("/api/statistics/full");
-      this.userList = res.data.user;
+      this.userList = res.data.user.slice(0, 4);
       this.articleList = res.data.article.slice(0, 4);
       this.cpList = res.data.cp;
       this.fandomList = res.data.fandom.slice(0, 8);
