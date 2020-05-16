@@ -1,7 +1,7 @@
 <template>
   <div>
     <Row style="margin-top:1rem">
-      <Page :total=count :current.sync=pageCount size="small" show-elevator simple @on-change="changePage" style="float:left"/>
+      <Page v-if="count>10" :total=count :current.sync=pageCount size="small" show-elevator simple @on-change="changePage" style="float:left"/>
     </Row>
     <Row style="margin-top:1rem">
       <iCol>
@@ -11,26 +11,54 @@
           class = "search-result-article-card"
           style = ""
         >
-          <span v-if= "article.article_fandom ==''">
-            <Tag color="#9dd1a9">
-              原创
-          </Tag>
-          </span>
-          <span v-else>
-            <Tag
-              color="#9dd1a9"
-              v-for= "str in article.article_fandom.split(',')"
-              :key="str"
+          <Row>
+            <i-col span="21">
+              <span v-if= "article.article_fandom ==''">
+                <Tag color="#9dd1a9">
+                  原创
+              </Tag>
+              </span>
+              <span v-else>
+                <Tag
+                  color="#9dd1a9"
+                  v-for= "str in article.article_fandom.split(',')"
+                  :key="str"
+                >
+                  {{str}}
+                </Tag>
+              </span>
+              <Tag v-if="article.article_rating == 'G' " color="#f7bb8e">G</Tag>
+              <Tag v-else-if="article.article_rating == 'PG13' " color="#f7bb8e">PG-13</Tag>
+              <Tag v-else-if="article.article_rating == 'R' " color="#ea534f">R</Tag>
+              <Tag v-else color="#ea534f">NC-17</Tag>
+              <span id="title" @click="jumpArticle(article.id)">{{article.article_title}}</span>
+              &nbsp;&nbsp;<Icon v-if="articles.isMyself" @click="jumpEditArticle(article.id)" type="ios-create-outline" size="20"/>
+            </i-col>
+            <i-col span="3">
+              <Button
+                shape="circle"
+                size="small"
+                ghost
+                type="error"
+                icon="ios-trash-outline"
+                @click="openDeleteModal()"
+              ></Button>
+            </i-col>
+            <Modal
+              v-model="deleteModal"
+              :loading=true
             >
-              {{str}}
-            </Tag>
-          </span>
-          <Tag v-if="article.article_rating == 'G' " color="#f7bb8e">G</Tag>
-          <Tag v-else-if="article.article_rating == 'PG13' " color="#f7bb8e">PG-13</Tag>
-          <Tag v-else-if="article.article_rating == 'R' " color="#ea534f">R</Tag>
-          <Tag v-else color="#ea534f">NC-17</Tag>
-          <span id="title" @click="jumpArticle(article.id)">{{article.article_title}}</span>
-          &nbsp;&nbsp;<Icon v-if="articles.isMyself" @click="jumpEditArticle(article.id)" type="ios-create-outline" size="20"/>
+              <div slot = "header">
+                <p>删除文章</p>
+              </div>
+              <p>您确认要删除《{{article.article_title}}》吗？
+              <p>数据一经删除将无法恢复，请慎重选择。</p>
+              <div slot="footer">
+                <Button type="info" @click="deleteArticle(article.id)">确认</Button>
+                <Button type="default" @click="closeDeleteModal()">取消</Button>
+              </div>
+            </Modal>
+          </Row>
           <p id="summary" v-if="article.article_summary!=''">{{article.article_summary}}</p>
           <p id="summary" v-else>无内容简介</p>
           <Divider style="margin:0.8rem 0 0.5rem 0" />
@@ -90,12 +118,14 @@
 </template>
 
 <script>
+import cookie from 'js-cookie'
 export default {
   data(){
     return{
       articles:{},
       count:0,
-      pageCount:1
+      pageCount:1,
+      deleteModal: false
     }
   },
   mounted(){
@@ -189,6 +219,50 @@ export default {
     jumpEditArticle(id){
       this.$router.push({
         path: `/article/edit/${id}`,
+      });
+    },
+    openDeleteModal(){
+      this.deleteModal = true;
+    },
+    closeDeleteModal(){
+      this.deleteModal=false;
+    },
+    deleteArticle(id){
+      const csrfToken = cookie.get("csrfToken");
+      console.log(csrfToken);
+      this.$axios.delete(`/api/article/${id}`,
+        {
+          headers: { "x-csrf-token": csrfToken }
+        },
+      ).then(res => {
+        if(res.status == 200){
+          this.$Message.info('删除成功！')
+          this.closeDeleteModal()
+          this.getMyFamdom(0,10);
+        }
+      }).catch(error => {
+        this.closeDeleteModal()
+        if(error.response.status == 400){
+          this.$Message.warning({
+            content: '删除失败',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 401){
+          this.jumpLogin();
+        } else if(error.response.status == 403){
+          this.$Message.warning({
+            content: '无权限删除他人的文章',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        }
       });
     }
   }

@@ -8,7 +8,7 @@
         v-show="articles.count > 10"
         :total="articles.count"
         :page-size = "10"
-        :current="pageCount" size="small"
+        :current.sync="pageCount" size="small"
         @on-change="changePage"
         show-elevator simple
         style="float:left; margin-bottom: 1rem;"
@@ -19,7 +19,7 @@
       >
         <Divider />
         <Row>
-          <iCol span="20">
+          <iCol span="18">
             <span v-if= "article.article_fandom ==''">
               <Tag color="#9dd1a9">
                   原创
@@ -40,10 +40,32 @@
           <Tag v-else color="#ea534f">NC-17</Tag>
           <span class="title"  @click="jumpArticle(article.id)">{{article.article_title}}</span>
           </iCol>
-          <iCol span="4">
-            <Button v-if="articles.isMyself" type="info" @click="jumpEditArticle(article.id)">编辑</Button>
-            <Button v-else type="info" @click="jumpArticle(article.id)">查看</Button>
+          <iCol span="6">
+            <ButtonGroup v-if="articles.isMyself" shape="circle">
+              <Button type="info" @click="jumpEditArticle(article.id)">
+                <Icon type="ios-create-outline" />
+                编辑
+              </Button>
+              <Button type="info" @click="openDeleteModal()">
+                删除
+                <Icon type="ios-trash-outline" />
+              </Button>
+            </ButtonGroup>
           </iCol>
+          <Modal
+            v-model="deleteModal"
+            :loading=true
+          >
+            <div slot = "header">
+              <p>删除文章</p>
+            </div>
+            <p>您确认要删除《{{article.article_title}}》吗？
+            <p>数据一经删除将无法恢复，请慎重选择。</p>
+            <div slot="footer">
+              <Button type="info" @click="deleteArticle(article.id)">确认</Button>
+              <Button type="default" @click="closeDeleteModal()">取消</Button>
+            </div>
+          </Modal>
         </Row>
         <Row class="list-content">
           <iCol>
@@ -98,6 +120,7 @@
             <p>创建时间：{{dateFormat(article.article_created)}}</p>
           </iCol>
         </Row>
+        <Divider />
       </div>
     </Row>
   </div>
@@ -105,12 +128,15 @@
 
 <script>
 import moment from 'moment'
+import cookie from 'js-cookie'
 export default {
   data() {
     return {
       articles: {},
       data: {},
-      noArticle: true
+      noArticle: true,
+      deleteModal: false,
+      pageCount: 1
     };
   },
   mounted(){
@@ -207,6 +233,50 @@ export default {
     jumpEditArticle(id){
       this.$router.push({
         path: `/article/edit/${id}`,
+      });
+    },
+    openDeleteModal(){
+      this.deleteModal = true;
+    },
+    closeDeleteModal(){
+      this.deleteModal=false;
+    },
+    deleteArticle(id){
+      const csrfToken = cookie.get("csrfToken");
+      console.log(csrfToken);
+      this.$axios.delete(`/api/article/${id}`,
+        {
+          headers: { "x-csrf-token": csrfToken }
+        },
+      ).then(res => {
+        if(res.status == 200){
+          this.$Message.info('删除成功！')
+          this.closeDeleteModal()
+          this.getMyFamdom(0,10);
+        }
+      }).catch(error => {
+        this.closeDeleteModal()
+        if(error.response.status == 400){
+          this.$Message.warning({
+            content: '删除失败',
+            duration: 10,
+            closable: true
+          });
+        } else if(error.response.status == 401){
+          this.jumpLogin();
+        } else if(error.response.status == 403){
+          this.$Message.warning({
+            content: '无权限删除他人的文章',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+        }
       });
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <strong style="font-size:1rem;">我的关注（{{followed.count}}）：</strong>
+    <strong style="font-size:1rem;">我的粉丝（{{followed.count}}）：</strong>
     <div v-if="followed.count!=0" class="followed-wrapper">
       <div
         v-for="user in followed.author"
@@ -99,7 +99,7 @@ export default {
       });
     },
     changeFollowedPage(){
-      this.getMyFollowing(10*(this.followedPage-1), 10);
+      this.getMyFollowed(10*(this.followedPage-1), 10);
     },
     jumpLogin(){
       this.$router.push({

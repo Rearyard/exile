@@ -128,6 +128,7 @@
             <span>{{article.article_view}}次阅读</span>
           </div>
         </div>
+        <Divider style="margin-top: 0px;"/>
       </div>
     </Row>
   </div>

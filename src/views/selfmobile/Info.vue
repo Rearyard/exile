@@ -840,7 +840,7 @@ export default {
       this.getMyFollowing(10*(this.followingPage-1), 10);
     },
     changeFollowedPage(){
-      this.getMyFollowing(10*(this.followedPage-1), 10);
+      this.getMyFollowed(10*(this.followedPage-1), 10);
     },
     openFollowedModal(){
       this.followedModal = true;

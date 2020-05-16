@@ -4,6 +4,7 @@
     <div v-if="fandomCount!=0">
       <Row style="margin-top:1rem; margin-bottom:1rem">
         <Page
+          v-if="fandomCount>5"
           :total=fandomCount
           :current.sync=fandomPageCount
           size="small"
@@ -39,6 +40,7 @@
       <div v-if="articleCount != 0">
         <Row style="margin-top:1rem">
           <Page
+            v-if="articleCount>10"
             :total=articleCount
             :current.sync=articlePageCount
             size="small"
