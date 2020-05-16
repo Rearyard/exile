@@ -2,16 +2,19 @@
 
 import Vue from 'vue';
 import axios from "axios";
-
+import router from '../router/index'
+import ViewUI from 'view-design'
+import cookie from "js-cookie";
+const csrfToken = cookie.get("csrfToken");
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post['x-csrf-token'] = csrfToken;
 
 const config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
   // timeout: 60 * 1000, // Timeout
-  // withCredentials: true, // Check cross-site Access-Control
+  withCredentials: true, // Check cross-site Access-Control
 };
 
 const _axios = axios.create(config);
@@ -22,7 +25,6 @@ _axios.interceptors.request.use(
     return config;
   },
   function(error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
@@ -35,6 +37,12 @@ _axios.interceptors.response.use(
   },
   function(error) {
     // Do something with response error
+    if (error.response.status==401) {
+      if(error.request.responseURL.indexOf('/api/auth/login')==-1){
+        ViewUI.Notice.warning({title:'登录过期，请重新登陆',duration:1})
+        router.push({path:'/login',query: { from: router.currentRoute.fullPath }})
+      }
+    }
     return Promise.reject(error);
   }
 );

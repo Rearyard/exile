@@ -82,17 +82,17 @@
             </div>
           </iCol>
         </Row>
-        <Row :gutter="16" style="padding-top: 1rem;">
-          <iCol span="12">
-            <iInput v-model="name" placeholder="称呼"></iInput>
-          </iCol>
-          <iCol span="12">
-            <iInput v-model="email" placeholder="邮箱"></iInput>
-          </iCol>
-        </Row>
-        <Row style="margin-top:5px;">
-          <iCol span="24">
-            <iInput type="textarea" v-model="message" placeholder="留言" :rows="6"></iInput>
+        <Row>
+          <iCol>
+            <div class="card-content-text">
+                <br>
+                <p>珍珠斛：</p>
+                <p>邮箱：cloudlx0@gmail.com</p>
+                <p>LOFTER:hh2333</p>
+                <p>陌谦：</p>
+                <p>邮箱：kirino@cafuchino.cn</p>
+                <p>LOFTER:cafu-chino</p>
+              </div>
           </iCol>
         </Row>
       </Row>

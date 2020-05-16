@@ -106,10 +106,10 @@
                     <Card>
                       <Row slot="title">
                         <iCol span="3">
-                          <Avatar shape="square" icon="ios-person" />
+                          <Avatar :src='topUser.user_avatar_url' shape="square" icon="ios-person" />
                         </iCol>
                         <iCol span="20" class="wrapper-popular-user-card">
-                          <p class="popular-user-card-title">
+                          <p class="popular-user-card-title" @click="$router.push({name:'SelfInfo',params:{uid:topUser.uid}})">
                             {{topUser.user_nickname}}
                             <Badge text="Lv.1" type="info" style="margin-left:8px;z-index:1" />
                             <span></span>
@@ -354,17 +354,11 @@ export default {
   },
   methods: {
     async getData() {
-      const data = await Promise.all([
-        this.$axios.get("/api/statistics/user"),
-        this.$axios.get("/api/statistics/article"),
-        this.$axios.get("/api/statistics/cp"),
-        this.$axios.get("/api/statistics/fandom")
-      ]);
-      this.userList = data[0].data;
-      this.articleList = data[1].data.slice(0, 4);
-      this.cpList = data[2].data;
-      this.fandomList = data[3].data.slice(0, 8);
-      this.addFandomLoading = false;
+      const res = await this.$axios.get("/api/statistics/full");
+      this.userList = res.data.user.slice(0, 4);
+      this.articleList = res.data.article.slice(0, 4);
+      this.cpList = res.data.cp;
+      this.fandomList = res.data.fandom.slice(0, 8);
     },
     filterText(text) {
       const preg = /<("[^"]*"|'[^']*'|[^'">])*>/gm;
@@ -384,29 +378,32 @@ export default {
     async followUser(uid) {
       const res = await this.$axios.post(
         "/api/follow/user",
-        { id: uid },
+        { uid: Number(uid) },
         { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
       ).catch(err => {
         this.$Message.error("关注/取关失败");
       });
-      if (res.status == 204) {
+      if (res.data.result) {
         this.$Message.success("关注/取关成功！");
+      }else{
+        this.$Message.error("关注/取关失败");
       }
       this.getData();
     },
     async followFandom(fandom_id) {
       this.addFandomLoading = true
       const res = await this.$axios.post(
-        `/api/follow/fandom`,
-        { fandomId: fandom_id },
-        { headers: { "x-csrf-token": this.csrfToken }, withCredentials: true }
+        '/api/follow/fandom',
+        {fandomId:fandom_id}
       ).catch(err => {
         this.addFandomLoading = false;
         this.$Message.error("关注/取关失败");
       });
-      if (res.status == 204) {
+      if (res.data.result) {
         this.$Message.success("关注/取关成功！");
-      } 
+      } else{
+        this.$Message.error("关注/取关失败");
+      }
       this.getData();
     }
   },

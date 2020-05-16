@@ -166,7 +166,7 @@
             >{{ judgement.articleLike ? "取消" : "喜欢" }}</i-button>
           </iCol>
           <iCol span="8" style="text-align: center">
-            <i-button class="cute-button" icon="logo-yen" type="warning">赞助</i-button>
+            <i-button disabled class="cute-button" icon="logo-yen" type="warning">赞助</i-button>
           </iCol>
         </Row>
         <div>
@@ -304,6 +304,7 @@ export default class ArticleContent extends Vue {
   //生命周期钩子照常写
   async mounted() {
     this.refresh();
+    this.addView();
   }
 
   //computed改为getter，直接写在类里面
@@ -386,7 +387,7 @@ export default class ArticleContent extends Vue {
     else this.selectedChapter = null;
     let j = await Promise.all([
       post("/like/article/judgement", { id: aid }),
-      post("/follow/article/judgement", { id: aid }),
+      post("/follow/article/judgement", { aid: Number(aid) }),
       this.loadComment()
     ]);
     this.judgement.articleLike = j[0];
@@ -423,9 +424,9 @@ export default class ArticleContent extends Vue {
   }
 
   async fav() {
-    let { id } = this.article;
-    post("/follow/article", { id })
-      .then(() => post("/follow/article/judgement", { id }))
+    let aid  = this.article.id;
+    post("/follow/article", { aid })
+      .then(() => post("/follow/article/judgement", { aid }))
       .then(value => (this.judgement.articleFav = value));
   }
 
@@ -446,7 +447,10 @@ export default class ArticleContent extends Vue {
     let { aid, cid } = this.$route.params;
     deleteComment(aid, cid, mid).then(value => this.loadComment());
   }
-
+  addView(){
+    let {aid} = this.$route.params;
+    post(`/article/addread/${aid}`)
+  }
   @Watch("$route")
   async $routeChange(to: Route, from: Route) {
     this.refresh();

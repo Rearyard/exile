@@ -71,20 +71,12 @@
           </iCol>
           <iCol span="16">
             <div class="card-content">
-              <p class="card-content-title" style="margin:0;">如有意向请留言：</p>
-              <Row :gutter="16">
-                <iCol span="12">
-                  <iInput v-model="name" placeholder="称呼"></iInput>
-                </iCol>
-                <iCol span="12">
-                  <iInput v-model="email" placeholder="邮箱"></iInput>
-                </iCol>
-              </Row>
-              <Row style="margin-top:5px;">
-                <iCol span="24">
-                  <iInput type="textarea" v-model="message" placeholder="留言" :rows="6"></iInput>
-                </iCol>
-              </Row>
+              <p class="card-content-title" style="margin:0;">如有意向请私信或邮件：</p>
+              <div class="card-content-text">
+                <br>
+                <p>珍珠斛：cloudlx0@gmail.com/hh2333(LOFTER)</p>
+                <p>陌谦：kirino@cafuchino.cn/cafu-chino(LOFTER)</p>
+              </div>
             </div>
           </iCol>
         </Row>

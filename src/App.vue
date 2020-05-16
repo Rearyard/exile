@@ -7,7 +7,13 @@
           :class="{'layout-header-bar-portable':portable}"
           v-if="!hideHeader"
         >
-          <Menu mode="horizontal" id="menu" theme="dark" :active-name="activeTab" @on-select='storeTab'>
+          <Menu
+            mode="horizontal"
+            id="menu"
+            theme="dark"
+            :active-name="activeTab"
+            @on-select="storeTab"
+          >
             <div class="wrapper-nav" v-if="!portable">
               <div class="wrapper-logo">
                 <img id="logo" src="./assets/logo.png" alt />
@@ -22,10 +28,10 @@
               <div class="wrapper-func-right">
                 <div class="wrapper-search">
                   <iInput
-                    v-model="searchQuery"
-                    placeholder="搜索"
                     @on-click="jumpSearchResult"
                     @on-enter="jumpSearchResult"
+                    v-model="searchQuery"
+                    placeholder="搜索"
                     icon="md-search"
                     class="header-search"
                   ></iInput>
@@ -79,7 +85,7 @@
       <Footer style="text-align:center">@后花园2020</Footer>
       <Affix :offset-bottom="0" v-if="portable&&!hideHeader">
         <div class="wrapper-bottom-nav">
-          <Menu mode="horizontal" :active-name="activeTab" @on-select='storeTab'>
+          <Menu mode="horizontal" :active-name="activeTab" @on-select="storeTab">
             <Row type="flex" justify="space-around" align="middle">
               <iCol span="5" class="bottom-nav">
                 <MenuItem name="p0" to="/">
@@ -162,12 +168,12 @@ export default {
     $route() {
       // console.log(this.$store)
       if (this.$store.state.user.user_status == 0) {
-        this.$router.push('/active')
+        this.$router.push("/active");
       }
-    },
+    }
   },
   methods: {
-    storeTab(name){
+    storeTab(name) {
       sessionStorage.activeTab = name;
     },
     addPassage() {
@@ -181,9 +187,11 @@ export default {
         query: { from: this.$route.fullPath }
       });
     },
-    _isMobile(){
-      const flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
-      console.log(flag)
+    _isMobile() {
+      const flag = navigator.userAgent.match(
+        /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+      );
+      console.log(flag);
       return flag ? 1 : 0;
     },
     postLogout() {
@@ -206,37 +214,37 @@ export default {
       // console.log(`user id is ${this.user.id}`);
       // this.$router.push(`/self/${this.user.id}/info`)
       this.$router.push({
-        name: 'SelfInfo',
+        name: "SelfInfo",
         params: {
           uid: this.user.id
         }
-      })
+      });
     },
     jumpMobileCenter() {
       this.$router.push({
-        name: 'SelfMobile',
+        name: "SelfMobile",
         params: {
           uid: this.user.id
         }
-      })
+      });
     },
-    jumpSearchResult(){
-      if(this.searchQuery === ''){
+    jumpSearchResult() {
+      if (this.searchQuery === "") {
         console.log("please enter something");
       } else {
         this.$router.push({
-          path:'/article/searchresult',
-          query:{
-            query : this.searchQuery
+          path: "/article/searchresult",
+          query: {
+            query: this.searchQuery
           }
-        })
+        });
       }
     }
   },
   mounted() {
     const isMobile = this._isMobile();
     if (sessionStorage.activeTab) {
-      this.activeTab = sessionStorage.activeTab
+      this.activeTab = sessionStorage.activeTab;
     }
     this.$store.commit("setIsMobile", isMobile);
     // console.log(isMobile);

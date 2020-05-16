@@ -37,7 +37,7 @@
                   </div>
                 </FormItem>
                 <FormItem>
-                  <Button type="success" long @click="handleSubmit">登录</Button>
+                  <Button type="success" :loading='loading' long @click="handleSubmit">登录</Button>
                 </FormItem>
               </Form>
             </iCol>
@@ -58,7 +58,7 @@ export default {
       icon: require("@/assets/favicon_green.png"),
       captcha: true,
       captchaSrc:'/api/auth/captcha',
-      loading: true,
+      loading: false,
       form: {
         username: "",
         password: "",
@@ -133,11 +133,13 @@ export default {
       }
       this.$refs["loginForm"].validate(async valid => {
         if (valid) {
+          this.loading= true;
           const user = await this.postLogin();
           if (!user) {
             return;
           }
           if (user.data.user_canceled) {
+            this.loading=false;
             return this.$Message.error("用户已被注销");
           }
           this.$store.commit("setUserInfo", user.data);
