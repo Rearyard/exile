@@ -62,19 +62,17 @@
               </div>
             </div>
             <div class="wrapper-nav-portable" v-if="portable">
-              <div class="wrapper-logo">
-                <img id="logo" src="./assets/logo.png" alt />
-              </div>
-              <div class="wrapper-search wrapper-search-portable" v-if="portable">
-                <iInput
+              <Row :gutter="16">
+                <iCol span="8"><img id="logo" src="./assets/logo.png" alt /></iCol>
+                  <iCol span="16">  <iInput
                   @on-click="jumpSearchResult"
                   @on-enter="jumpSearchResult"
                   v-model="searchQuery"
                   placeholder="搜索"
                   icon="md-search"
                   class="header-search"
-                ></iInput>
-              </div>
+                ></iInput></iCol>
+              </Row>
             </div>
           </Menu>
         </Header>
@@ -315,7 +313,7 @@ export default {
 }
 .wrapper-search {
   display: inline-block;
-  margin: 0 18px 0 0;
+  margin: 0 8px 0 0;
 }
 .wrapper-search-portable {
   float: right;
