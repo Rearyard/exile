@@ -449,7 +449,7 @@ export default class ArticleContent extends Vue {
   }
   addView(){
     let {aid} = this.$route.params;
-    post(`/article/addread/${aid}`)
+    post(`/article/addread/${aid}`,{})
   }
   @Watch("$route")
   async $routeChange(to: Route, from: Route) {

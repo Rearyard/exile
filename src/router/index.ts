@@ -1,28 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Index from '../views/Index.vue'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
-import Active from '../views/Active.vue'
-import Article from '../views/article/Index.vue'
-import Draft from '../views/article/Draft.vue'
-import Join from '../views/Join.vue'
-import JoinMobile from '../views/JoinMobile.vue'
-import SelfWrapper from '../views/self/Index.vue'
-import SelfInfo from '../views/self/Info.vue'
-import SelfWorks from '../views/self/Works.vue'
-import SelfFavorite from '../views/self/Favorite.vue'
-import Following from '../views/self/Following.vue'
-import Followed from '../views/self/Followed.vue'
-import SelfMobile from '../views/selfmobile/Index.vue'
-import SelfMobileInfo from '../views/selfmobile/Info.vue'
-import SelfMobileWorks from '../views/selfmobile/Works.vue'
-import SelfMobileFavorite from '../views/selfmobile/Favorite.vue'
-import NewArticle from '../views/article/New.vue'
-import EditArticle from '../views/article/Edit.vue'
-import ImportArticle from '../views/article/Load.vue'
-import ArticleContent from '../views/article/Content.vue'
-import ArticleSearchResult from '../views/article/SearchResult.vue'
+const Index= () => import( '../views/Index.vue')
+const Login= () => import( '../views/Login.vue')
+const Register= () => import( '../views/Register.vue')
+const Active= () => import( '../views/Active.vue')
+const Article= () => import( '../views/article/Index.vue')
+const Draft= () => import( '../views/article/Draft.vue')
+const Join= () => import( '../views/Join.vue')
+const JoinMobile= () => import( '../views/JoinMobile.vue')
+const SelfWrapper= () => import( '../views/self/Index.vue')
+const SelfInfo= () => import( '../views/self/Info.vue')
+const SelfWorks= () => import( '../views/self/Works.vue')
+const SelfFavorite= () => import( '../views/self/Favorite.vue')
+const Following= () => import( '../views/self/Following.vue')
+const Followed= () => import( '../views/self/Followed.vue')
+const SelfMobile= () => import( '../views/selfmobile/Index.vue')
+const SelfMobileInfo= () => import( '../views/selfmobile/Info.vue')
+const SelfMobileWorks= () => import( '../views/selfmobile/Works.vue')
+const SelfMobileFavorite= () => import( '../views/selfmobile/Favorite.vue')
+const NewArticle= () => import( '../views/article/New.vue')
+const EditArticle= () => import( '../views/article/Edit.vue')
+const ImportArticle= () => import( '../views/article/Load.vue')
+const ArticleContent= () => import( '../views/article/Content.vue')
+const ArticleSearchResult= () => import( '../views/article/SearchResult.vue')
 
 Vue.use(VueRouter)
 
