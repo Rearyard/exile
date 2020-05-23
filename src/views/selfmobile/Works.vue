@@ -269,10 +269,70 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 #warning{
   margin-top: 0px;
 }
-
+#search-result-tag-card {
+  width: 100%;
+  line-height: 3rem;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 5px 0px rgba(208, 208, 208, 0.3) inset,
+    0px 10px 15px 12px rgba(208, 208, 208, 0.5);
+  border-radius: 18px;
+}
+.search-result-article-card {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 1rem 1rem 3rem 1rem;
+  line-height: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 5px 0px rgba(208, 208, 208, 0.3) inset,
+    0px 10px 15px 12px rgba(208, 208, 208, 0.5);
+  border-radius: 18px;
+}
+.search-result-article-card #title{
+  font-size: 1rem;
+  color: rgba(83, 81, 81, 0.8);
+  text-shadow: 0px 1px 1px rgba(71, 68, 66, 0.2);
+  font-family: "Arvo", "Myriad Pro", "Trebuchet MS", sans-serif;
+  cursor: pointer;
+}
+.search-result-article-card #summary{
+  display: block;
+  margin-top:1rem;
+}
+.search-result-article-card #wordcount{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.search-result-article-card #others{
+  float:right;
+  height:1rem;
+  padding-top: 0.8rem;
+  strong{
+    cursor: pointer;
+  }
+}
+.search-result-article-card #warning{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.search-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+    color: rgb(100, 119, 113);
+}
+#search-result-input-wrapper {
+  width: 12rem;
+}
+#search-result-input-wrapper input{
+  border-radius:1rem;
+}
+#search-result-tag-wrapper {
+  width: 5.5rem;
+}
+#search-result-tag-wrapper input{
+  border-radius:1rem;
+}
 </style>
 

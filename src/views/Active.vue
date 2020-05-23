@@ -10,7 +10,7 @@
         </iCol>
       </Row>
       <div slot="footer">
-        <Button type="success" size="large" long>我已激活，返回主页</Button>
+        <Button type="success" @click="back" size="large" long>我已激活，重新登陆</Button>
       </div>
     </Modal>
   </div>
@@ -78,6 +78,11 @@ export default {
         this.$Message.info('请重新登陆');
         this.$router.push('/login')
       })
+    },
+    back(){
+      this.$store.commit("clearUserInfo");
+        this.$Message.info('请重新登陆');
+        this.$router.push('/login')
     }
   },
   mounted() {
