@@ -166,7 +166,7 @@ export default {
     return {
       icon: require("@/assets/favicon_green.png"),
       step: 1,
-      panel: "2",
+      panel: ["1","2","3"],
       ageConfirm: false,
       loading: true,
       cardLoading:false,
