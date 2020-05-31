@@ -24,7 +24,9 @@
           <!--头部-->
           <div class="article-header" :class="{ 'article-header-portable': portable }">
             <Row>
-              <iCol span="24"><h1>{{ article.title }}</h1></iCol>
+              <iCol span="24">
+                <h1>{{ article.title }}</h1>
+              </iCol>
             </Row>
             <span style="color: #666">{{ article.summary }}</span>
             <div style="display: grid;grid-template-columns: 36px auto;align-items: center;">
@@ -69,7 +71,11 @@
             <Row type="flex" justify="space-between" class="article-stats">
               <iCol>
                 <ButtonGroup v-if="author.uid==$store.state.user.id">
-                  <Button type="info" @click="$router.push('/article/'+article.id)" v-if="selectedChapter">目录</Button>
+                  <Button
+                    type="info"
+                    @click="$router.push('/article/'+article.id)"
+                    v-if="selectedChapter"
+                  >目录</Button>
                   <Button type="info" @click="jumpEdit">编辑{{selectedChapter?"章节":"文章"}}</Button>
                   <Button type="info" @click="jumpNewChapter">写新章节</Button>
                 </ButtonGroup>
@@ -120,19 +126,30 @@
                 </ListItem>
               </List>
             </div>
-            <div v-else>
+            <div v-else style="width:100%">
               <h2>{{ selectedChapter.title }}</h2>
               <div v-if="selectedChapter.summary">摘要: {{ selectedChapter.summary }}</div>
               <div v-if="selectedChapter.note">注释: {{ selectedChapter.note }}</div>
               <hr />
               <div
-                style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0;white-space: break-spaces;"
+                style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0;white-space: break-spaces;word-break: break-all;"
                 v-for="(p, idx) in (selectedChapter.content || '<空>').split(
                   '\n'
                 )"
                 :key="idx"
                 v-html="p"
               ></div>
+              <Row type="flex" justify="center" style="text-align: center">
+                <iCol :span="4">
+                  <Button :disabled="!preCid" @click="preChar" icon="md-arrow-back" type="text"></Button>
+                </iCol>
+                <iCol :span="4">
+                  <Button @click="jumpIndex" icon="md-list" type="text"></Button>
+                </iCol>
+                <iCol :span="4">
+                  <Button :disabled="!nextCid" @click="nextChar" icon="md-arrow-forward" type="text"></Button>
+                </iCol>
+              </Row>
             </div>
           </div>
           <Divider class="my-divider divider-footer" />
@@ -347,7 +364,33 @@ export default class ArticleContent extends Vue {
     const relationship = String(this.article.relationship).split(",");
     return array.compact(relationship);
   }
-
+  get preCid() {
+    const chapterArray = this.article.chapters.split(",");
+    const nowIndex = chapterArray.indexOf(this.$route.params.cid);
+    if (nowIndex == 0) {
+      return null;
+    } else {
+      return chapterArray[nowIndex - 1];
+    }
+  }
+  get nextCid() {
+    const chapterArray = this.article.chapters.split(",");
+    const nowIndex = chapterArray.indexOf(this.$route.params.cid);
+    if (nowIndex == chapterArray.length - 1) {
+      return null;
+    } else {
+      return chapterArray[nowIndex + 1];
+    }
+  }
+  preChar(){
+    this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid,cid:this.preCid}})
+  }
+  nextChar(){
+    this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid,cid:this.nextCid}})
+  }
+  jumpIndex(){
+    this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid}})
+  }
   getDateDescribeString(c: ChapterSimplified) {
     let n1 = new Date(c.published).getTime(),
       n2 = new Date(c.last_edit).getTime();
@@ -415,7 +458,6 @@ export default class ArticleContent extends Vue {
       }
     });
   }
-
   async like() {
     let { id } = this.article;
     post("/like/article", { id })
@@ -424,7 +466,7 @@ export default class ArticleContent extends Vue {
   }
 
   async fav() {
-    let aid  = this.article.id;
+    let aid = this.article.id;
     post("/follow/article", { aid })
       .then(() => post("/follow/article/judgement", { aid }))
       .then(value => (this.judgement.articleFav = value));
@@ -447,9 +489,9 @@ export default class ArticleContent extends Vue {
     let { aid, cid } = this.$route.params;
     deleteComment(aid, cid, mid).then(value => this.loadComment());
   }
-  addView(){
-    let {aid} = this.$route.params;
-    post(`/article/addread/${aid}`,{})
+  addView() {
+    let { aid } = this.$route.params;
+    post(`/article/addread/${aid}`, {});
   }
   @Watch("$route")
   async $routeChange(to: Route, from: Route) {

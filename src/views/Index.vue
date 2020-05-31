@@ -273,7 +273,7 @@
               </Row>
             </div>
             <Row :gutter="16">
-              <iCol v-for="fandom in fandomList" :key="fandom.id" span="3">
+              <iCol v-for="(fandom,index) in fandomList" :key="fandom.id" span="3">
                 <Card class="fandom-card">
                   <Row justify="center">
                     <iCol span="20">
@@ -286,7 +286,7 @@
                   <div class="fandom-card-content">
                     <span>{{fandom.fandom_name}}</span>
                     <span class="fandom-card-popularity">人气{{fandom.fandom_article_amount}}</span>
-                    <Button :loading=addFandomLoading type="info" @click="followFandom(fandom.id)">{{fandom.followed?'取消关注':'关注圈子'}}</Button>
+                    <Button :loading="fandom.loading" type="info" @click="followFandom(fandom.id,index)">{{fandom.followed?'取消关注':'关注圈子'}}</Button>
                   </div>
                 </Card>
               </iCol>
@@ -390,18 +390,20 @@ export default {
       }
       this.getData();
     },
-    async followFandom(fandom_id) {
-      this.addFandomLoading = true
+    async followFandom(fandom_id,index) {
+      this.$set(this.fandomList[index],"loading",true);
       const res = await this.$axios.post(
         '/api/follow/fandom',
         {fandomId:fandom_id}
       ).catch(err => {
-        this.addFandomLoading = false;
+        this.fandomList[index].loading = false;
         this.$Message.error("关注/取关失败");
       });
       if (res.data.result) {
+        this.fandomList[index].loading = false;
         this.$Message.success("关注/取关成功！");
       } else{
+        this.fandomList[index].loading = false;
         this.$Message.error("关注/取关失败");
       }
       this.getData();
