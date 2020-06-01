@@ -303,7 +303,7 @@
             <div class="card-quote card-quote-top">“</div>
             <div class="card-article">
               <div class="card-article-title"><router-link :to="'/article/'+article.aid" style="color:#515a6e">{{article.article_title}}</router-link></div>
-              <div class="card-article-content">
+              <div class="card-article-content" @click="$router.push('/article/'+article.aid)">
                 <p>{{filterText(article.chapter_content)}}</p>
               </div>
             </div>

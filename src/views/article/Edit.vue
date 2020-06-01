@@ -15,7 +15,7 @@
         </Breadcrumb>
         <Row type="flex" justify="center" class="wrap-card" v-if="!edit">
           <iCol span="22">
-            <Steps :current="step">
+            <Steps :direction="portable?'vertical':''"  :current="step">
               <Step  content="确定文章的基本信息">
                 <template slot="title"><a @click="jumpStep(0)">基本信息</a></template>
               </Step>
@@ -30,12 +30,12 @@
         </Row>
         <Row class="wrap-card" style="margin:18px 0 18px 0;" v-if="!edit">
           <Row type="flex" justify="center">
-            <iCol span="4">
+            <iCol :xs="{ span: 8 }" :lg="{ span: 4 }">
               <div class="title-topic-icon">
                 <img src="../../assets/icons/emoticon.svg" />
               </div>
             </iCol>
-            <iCol span="20">
+            <iCol :xs="{ span: 22 }" :lg="{ span: 20 }">
               <span class="ins-title">{{instructions[step].title}}</span>
               <p>{{instructions[step].content}}<a @click="modalRate=true">点此查看分级标准</a></p>
             </iCol>
@@ -425,6 +425,9 @@ export default {
   computed: {
     csrfToken() {
       return cookie.get("csrfToken");
+    },
+    portable() {
+      return window.screen.width < 1024;
     },
     warningTextArray() {
       const result = [];

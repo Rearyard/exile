@@ -260,6 +260,7 @@
         </div>
       </iCol>
     </Row>
+    <BackTop :bottom="portable?50:30" :right="portable?10:30"></BackTop>
   </div>
 </template>
 
@@ -296,7 +297,9 @@ export default{
     }
   },
   computed: {
-
+    portable() {
+      return window.screen.width < 1024;
+    },
   },
   mounted(){
     if('query'in this.$route.query){
