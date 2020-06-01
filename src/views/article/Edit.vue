@@ -37,7 +37,7 @@
             </iCol>
             <iCol span="20">
               <span class="ins-title">{{instructions[step].title}}</span>
-              <p>{{instructions[step].content}}</p>
+              <p>{{instructions[step].content}}<a @click="modalRate=true">点此查看分级标准</a></p>
             </iCol>
           </Row>
         </Row>
@@ -279,6 +279,13 @@
       <p>您的新文章不会被创建，已经做出的任何未提交的更改也不会被保存</p>
       <p>(注意这包括您已经编辑但未发布的文章内容)</p>
     </Modal>
+    <Modal
+        v-model="modalRate"
+        title="分级规则">
+        <span v-for="(value,name) in rateDescription" :key="name">
+          <b>{{name}}:</b><span>{{value}}</span><br>
+        </span>
+    </Modal>
   </div>
 </template>
 <script>
@@ -304,6 +311,7 @@ export default {
       action: "",
       multiChapter: true,
       confirmBox: false,
+      modalRate:false,
       modalClear: false,
       editorOption: {
         modules: {
@@ -339,6 +347,7 @@ export default {
         tag: [],
         fandom: []
       },
+      rateDescription:[],
       articleRules: {
         rating: [
           {
@@ -393,7 +402,7 @@ export default {
         {
           title: "创建新文章",
           content:
-            "您正在创建一篇全新的文章，在后花园中文章是一个或多个章节的合集，所以稍后您将开始创建文章的正文部分。在此之前，您应该先设置文章的基本属性和信息。请注意，文章的基础信息很重要，它将直接影响到您的文章可以被哪些人阅读，请认真填写。"
+            "您正创建一篇全新的文章，在后花园中文章是一个或多个章节的合集，所以稍后您将开始创建文章的正文部分。在此之前，您应该先设置文章的基本属性和信息。请注意，文章的基础信息很重要，它将直接影响到您的文章可以被哪些人阅读，请认真填写。"
         },
         {
           title:"编辑第一章",
@@ -460,6 +469,9 @@ export default {
       }
       return this.step = step
     },
+    showRateRules(){
+
+    },
     articleInfoCheck() {
       this.$refs["formArticle"].validate(valid => {
         if (valid) {
@@ -490,7 +502,7 @@ export default {
             }
           )
           .then(res => {
-            this.options.cpOptions = res.data;
+            this.options.cpOptions = {...this.options.cpOptions,...res.data};
             this.loading.cp = false;
           });
       }
@@ -511,7 +523,7 @@ export default {
             }
           )
           .then(res => {
-            this.options.tagOptions = res.data;
+            this.options.tagOptions = {...this.options.tagOptions,...res.data};
             this.loading.tag = false;
           });
       }
@@ -529,7 +541,7 @@ export default {
             }
           )
           .then(res => {
-            this.options.fandomOptions = res.data;
+            this.options.fandomOptions = {...this.options.fandomOptions,...res.data};
             this.loading.fandom = false;
           });
       }
@@ -682,6 +694,9 @@ export default {
       ".ql-editor{min-height: 300px !important}",
       0
     );
+      this.$axios.get('/api/auth/register/info').then((res)=>{
+        this.rateDescription = res.data.rateDescription
+      })
     if (this.$route.query.draft) {
       //草稿编辑模式
       const draft = this.$store.state.draftTempData;

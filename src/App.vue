@@ -165,7 +165,7 @@ export default {
   watch: {
     $route() {
       // console.log(this.$store)
-      if (this.$store.state.user.user_status == 0) {
+      if (this.$store.state.user.user_status == 0&&this.$route.name!="Active") {
         this.$router.push("/active");
       }
     }

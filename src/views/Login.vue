@@ -114,6 +114,8 @@ export default {
           )
           .catch(err => {
             this.$Message.error("用户名或密码错误，请检查");
+            this.captchaRefresh();
+            this.loading = false;
             return false;
           })
           .then(res => {
