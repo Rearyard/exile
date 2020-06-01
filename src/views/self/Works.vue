@@ -46,7 +46,7 @@
                 <Icon type="ios-create-outline" />
                 编辑
               </Button>
-              <Button type="info" @click="openDeleteModal()">
+              <Button type="info" @click="openDeleteModal(article.id,article.article_title)">
                 删除
                 <Icon type="ios-trash-outline" />
               </Button>
@@ -55,11 +55,12 @@
           <Modal
             v-model="deleteModal"
             :loading=true
+            :closable=false
           >
             <div slot = "header">
               <p>删除文章</p>
             </div>
-            <p>您确认要删除《{{article.article_title}}》吗？
+            <p>您确认要删除《{{deleteArticleTitle}}》吗？
             <p>数据一经删除将无法恢复，请慎重选择。</p>
             <div slot="footer">
               <Button type="info" @click="deleteArticle(article.id)">确认</Button>
@@ -136,7 +137,9 @@ export default {
       data: {},
       noArticle: true,
       deleteModal: false,
-      pageCount: 1
+      pageCount: 1,
+      deleteAid: 0,
+      deleteArticleTitle: ''
     };
   },
   mounted(){
@@ -235,15 +238,20 @@ export default {
         path: `/article/edit/${id}`,
       });
     },
-    openDeleteModal(){
+    openDeleteModal(id, title) {
       this.deleteModal = true;
+      this.deleteAid = id;
+      this.deleteArticleTitle = title;
     },
-    closeDeleteModal(){
-      this.deleteModal=false;
+    closeDeleteModal() {
+      this.deleteModal = false;
+      this.deleteAid = 0;
+      this.deleteArticleTitle = '';
     },
-    deleteArticle(id){
+    deleteArticle(){
       const csrfToken = cookie.get("csrfToken");
       console.log(csrfToken);
+      const id = this.deleteAid;
       this.$axios.delete(`/api/article/${id}`,
         {
           headers: { "x-csrf-token": csrfToken }

@@ -153,13 +153,13 @@
                 </iCol>
               </Row>
             </div>
-            <Card v-for="user in userList" :key="user.uid">
+            <Card v-for="user in userList" :key="user.uid" style="cursor: pointer">
               <Row type="flex" align="middle">
                 <iCol span="4">
                   <Avatar shape="square" icon="ios-person" />
                 </iCol>
                 <iCol span="13">
-                  <span>{{user.user_nickname}}</span>
+                  <span @click="jumpUser(user.uid)">{{user.user_nickname}}</span>
                 </iCol>
                 <iCol span="5">
                   <Button type="info" ghost @click="followUser(user.uid)">{{user.followed?'已关注':'关 注'}}</Button>
@@ -280,11 +280,11 @@
                       <Avatar
                         size="100"
                         style="color: #EAE0D0;background-color: #151F2F;font-weight: bold;"
-                      >{{fandom.fandom_name}}</Avatar>
+                      ><span style="cursor: pointer;" @click="jumpSearchFandom(fandom.fandom_name)">{{fandom.fandom_name}}</span></Avatar>
                     </iCol>
                   </Row>
                   <div class="fandom-card-content">
-                    <span>{{fandom.fandom_name}}</span>
+                    <span style="cursor: pointer" @click="jumpSearchFandom(fandom.fandom_name)">{{fandom.fandom_name}}</span>
                     <span class="fandom-card-popularity">人气{{fandom.fandom_article_amount}}</span>
                     <Button :loading="fandom.loading" type="info" @click="followFandom(fandom.id,index)">{{fandom.followed?'取消关注':'关注圈子'}}</Button>
                   </div>
@@ -407,7 +407,27 @@ export default {
         this.$Message.error("关注/取关失败");
       }
       this.getData();
-    }
+    },
+    async jumpUser(id){
+      console.log('jumpuser')
+      const isMobile=this.$store.state.isMobile;
+      if(isMobile){
+        this.$router.push(`/selfmobile/${id}/info`)
+      }else{
+        this.$router.push(`/self/${id}/info`)
+      }
+    },
+    async jumpSearchFandom(fandomName){
+      this.$router.push({
+        path:'/article/searchresult',
+        query:{
+          fandom:fandomName,
+          relationship:'',
+          title:'',
+          author:'',
+        }
+      });
+    },
   },
   mounted() {
     this.getData();
@@ -502,6 +522,9 @@ export default {
   width: 100%;
   background-size: cover;
   background-position: center;
+}
+.popular-user-card-title {
+  cursor: pointer;
 }
 .popular-user-card-footer {
   height: 40px;
