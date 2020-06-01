@@ -260,7 +260,7 @@
         </div>
       </iCol>
     </Row>
-    <BackTop :bottom="portable?50:30" :right="portable?10:30"></BackTop>
+    <BackTop :bottom="portable?70:30" :right="portable?10:30"></BackTop>
   </div>
 </template>
 

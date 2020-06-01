@@ -383,12 +383,15 @@ export default class ArticleContent extends Vue {
     }
   }
   preChar(){
+    window.scrollTo(0,0);
     this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid,cid:this.preCid}})
   }
   nextChar(){
+    window.scrollTo(0,0);
     this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid,cid:this.nextCid}})
   }
   jumpIndex(){
+    window.scrollTo(0,0);
     this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid}})
   }
   getDateDescribeString(c: ChapterSimplified) {
