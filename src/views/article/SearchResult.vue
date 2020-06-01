@@ -212,6 +212,7 @@
               <span v-if="str == 'MainDeath'">主要角色死亡</span>
               <span v-if="str == 'Rape'">涉及强奸内容</span>
               <span v-if="str == 'Teen'">含有未成年角色</span>
+              <span v-if="str == 'Unknown'">无警告内容</span>
               <span v-if="i!=item.article.article_warning.split(',').length-1">，</span>
               <span v-else>。</span>
             </span>

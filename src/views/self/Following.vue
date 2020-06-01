@@ -11,7 +11,7 @@
         <img v-show="user.user_avatar_url===null" src="https://chinocdn.cafuchino.cn/pic/202003091129722.png"/>
         <span style="line-height: 4rem; cursor: pointer;" @click="jumpUser(user.id)">{{user.user_nickname}}</span>
         <Button type = "info" v-if="isMyself" @click="followUser('unfollow', user.id)">取关</Button>
-        <Button type = "info" v-else @click="followUser('unfollow', user.id)">查看</Button>
+        <Button type = "info" v-else @click="jumpUser(user.id)">查看</Button>
       </div>
     </div>
     <div v-else>
