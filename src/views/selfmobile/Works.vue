@@ -36,6 +36,7 @@
             </i-col>
             <i-col span="3">
               <Button
+                v-if="articles.isMyself"
                 shape="circle"
                 size="small"
                 ghost

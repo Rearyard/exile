@@ -120,13 +120,13 @@
                 </ListItem>
               </List>
             </div>
-            <div v-else>
+            <div v-else style="width: 100%">
               <h2>{{ selectedChapter.title }}</h2>
               <div v-if="selectedChapter.summary">摘要: {{ selectedChapter.summary }}</div>
               <div v-if="selectedChapter.note">注释: {{ selectedChapter.note }}</div>
               <hr />
               <div
-                style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0;white-space: break-spaces;"
+                style="letter-spacing: 1px; text-align: justify;line-height: 2em;margin: 1em 0;white-space: break-spaces; word-wrap:break-word;"
                 v-for="(p, idx) in (selectedChapter.content || '<空>').split(
                   '\n'
                 )"
