@@ -243,7 +243,6 @@ export default {
     }
   },
   mounted() {
-     Watermark.set("水印内容")
     const isMobile = this._isMobile();
     if (sessionStorage.activeTab) {
       this.activeTab = sessionStorage.activeTab;
