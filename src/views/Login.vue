@@ -113,7 +113,15 @@ export default {
             }
           )
           .catch(err => {
-            this.$Message.error("用户名或密码错误，请检查");
+            const errCode = err.response.status
+            switch (errCode) {
+              case 401:
+                 this.$Message.error("用户名或密码错误，请检查");
+                break;
+              default:
+                this.$Message.error("网络不畅或服务器故障");
+                break;
+            }
             this.captchaRefresh();
             this.loading = false;
             return false;
