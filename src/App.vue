@@ -15,7 +15,7 @@
             @on-select="storeTab"
           >
             <div class="wrapper-nav" v-if="!portable">
-              <div class="wrapper-logo">
+              <div class="wrapper-logo" @click="toIndex">
                 <img id="logo" src="./assets/logo.png" alt />
               </div>
               <div class="nav-func">
@@ -171,6 +171,9 @@ export default {
     }
   },
   methods: {
+    toIndex(){
+      this.$router.push("/")
+    },
     storeTab(name) {
       sessionStorage.activeTab = name;
     },
@@ -240,6 +243,7 @@ export default {
     }
   },
   mounted() {
+     Watermark.set("水印内容")
     const isMobile = this._isMobile();
     if (sessionStorage.activeTab) {
       this.activeTab = sessionStorage.activeTab;

@@ -147,7 +147,12 @@
                   <Button @click="jumpIndex" icon="md-list" type="text"></Button>
                 </iCol>
                 <iCol :span="4">
-                  <Button :disabled="!nextCid" @click="nextChar" icon="md-arrow-forward" type="text"></Button>
+                  <Button
+                    :disabled="!nextCid"
+                    @click="nextChar"
+                    icon="md-arrow-forward"
+                    type="text"
+                  ></Button>
                 </iCol>
               </Row>
             </div>
@@ -382,17 +387,26 @@ export default class ArticleContent extends Vue {
       return chapterArray[nowIndex + 1];
     }
   }
-  preChar(){
-    window.scrollTo(0,0);
-    this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid,cid:this.preCid}})
+  preChar() {
+    window.scrollTo(0, 0);
+    this.$router.push({
+      name: "ArticleContent",
+      params: { aid: this.$route.params.aid, cid: this.preCid }
+    });
   }
-  nextChar(){
-    window.scrollTo(0,0);
-    this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid,cid:this.nextCid}})
+  nextChar() {
+    window.scrollTo(0, 0);
+    this.$router.push({
+      name: "ArticleContent",
+      params: { aid: this.$route.params.aid, cid: this.nextCid }
+    });
   }
-  jumpIndex(){
-    window.scrollTo(0,0);
-    this.$router.push({name:"ArticleContent",params:{aid:this.$route.params.aid}})
+  jumpIndex() {
+    window.scrollTo(0, 0);
+    this.$router.push({
+      name: "ArticleContent",
+      params: { aid: this.$route.params.aid }
+    });
   }
   getDateDescribeString(c: ChapterSimplified) {
     let n1 = new Date(c.published).getTime(),
@@ -417,7 +431,20 @@ export default class ArticleContent extends Vue {
   async refresh() {
     let { aid, cid } = this.$route.params;
     (this as any).$Spin.show();
-    Object.assign(this, await getDetail(aid));
+    Object.assign(
+      this,
+      await getDetail(aid).catch(err => {
+        if (err.response.status == 403) {
+          return (this as any).$Modal.error({
+            title: "回去吧",
+            content: "您当前的年龄不允许阅读此文章",
+            onOk: () => {
+              this.$router.back();
+            }
+          });
+        }
+      })
+    );
     (this as any).$Spin.hide();
     if (!this.article.id) {
       return (this as any).$Modal.error({

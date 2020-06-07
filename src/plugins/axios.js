@@ -43,6 +43,15 @@ _axios.interceptors.response.use(
         router.push({path:'/login',query: { from: router.currentRoute.fullPath }})
       }
     }
+    if (error.response.status==403){
+      ViewUI.Modal.error({
+        title: "抱歉",
+        content: "您无权做此操作",
+        onOk: () => {
+          router.back();
+        }
+      })
+    }
     return Promise.reject(error);
   }
 );
