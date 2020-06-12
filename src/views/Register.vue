@@ -51,6 +51,7 @@
               <Row style="text-align: center;margin:18px 0 18px 0">
                 <iCol span="12">
                   <DatePicker
+                  :editable="false"
                     type="date"
                     placeholder="请选择"
                     style="width: 200px"
@@ -125,8 +126,9 @@
               >
                 <div v-html="userAgreement"></div>
               </Scroll>
+              <!-- 此处因为兼容性问题暂时取消强制阅读 -->
               <Checkbox
-                :disabled="!userAgreementRead"
+                :disabled="false"
                 v-model="userAgreementAgreed" 
               >我已经阅读并接受《后花园用户协议》</Checkbox>
             </iCol>

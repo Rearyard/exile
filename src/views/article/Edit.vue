@@ -179,7 +179,7 @@
                 </div>
                 <Form ref="formChapter" :model="chapter" :rules="chapterRules">
                   <form-item label="标题：" prop="title">
-                    <i-input :disabled="!multiChapter" maxlength="40"  show-word-limit  v-model="chapter.title" placeholder="章节标题" />
+                    <i-input  maxlength="40"  show-word-limit  v-model="chapter.title" placeholder="章节标题" />
                   </form-item>
                   <form-item label="摘要：" prop="summary" style="flex-basis: 15em">
                     <i-input v-model="chapter.summary" maxlength="200"  show-word-limit  placeholder="可留空" />

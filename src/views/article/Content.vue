@@ -77,6 +77,7 @@
                     v-if="selectedChapter"
                   >目录</Button>
                   <Button type="info" @click="jumpEdit">编辑{{selectedChapter?"章节":"文章"}}</Button>
+                  <Button type="info" v-if="!selectedChapter" @click="modifyChapter">{{chapterModify?"退出管理":"管理章节"}}</Button>
                   <Button type="info" @click="jumpNewChapter">写新章节</Button>
                 </ButtonGroup>
               </iCol>
@@ -112,6 +113,7 @@
                     </iCol>
                     <iCol>
                       <Time :time="chapter.published" />
+                      <Button type="error" icon="ios-trash" v-if="chapterModify" @click="showDeleteModal(chapter.id,chapter.title,index)"></Button>
                     </iCol>
                   </Row>
                   <Row type="flex" justify="space-between">
@@ -313,6 +315,7 @@ export default class ArticleContent extends Vue {
   author: UserStructSimplified = null;
   comments: Comment[] = [];
   selectedChapter: Chapter = null;
+  chapterModify:Boolean = false;
   chapters: ChapterSimplified[] = [];
   commentInput = "";
   chapterListPage = 1;
@@ -476,7 +479,33 @@ export default class ArticleContent extends Vue {
       }
     });
   }
-
+  modifyChapter(){
+    this.chapterModify = !this.chapterModify
+  }
+  showDeleteModal(cid,title,index){
+    if (this.chapters.length==1) {
+      return this.$Modal.warning({
+        title: "不可删除唯一章节",
+        content: "此章节为文章的唯一章节，若要删除请跳转个人中心删除文章"
+      })
+    }
+    this.$Modal.confirm({
+      title: "确认要删除章节吗",
+      content:`确认要删除章节${title}吗，章节删除后不可恢复！`,
+      onOk:()=>{
+        (this as any).$axios.delete(`/api/article/${this.article.id}/${cid}`).then(res=>{
+          if (!res.data.result) {
+            return this.$Message.error("删除失败")
+          }
+          this.chapters.splice(index, 1)
+          return this.$Message.success("删除成功")
+        })
+      },
+      onCancel:()=>{
+        this.$Modal.remove()
+      }
+    })
+  }
   jumpNewChapter() {
     this.$router.push({
       name: "EditArticle",

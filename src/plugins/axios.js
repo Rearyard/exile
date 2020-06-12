@@ -10,6 +10,7 @@ const csrfToken = cookie.get("csrfToken");
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.headers.post['x-csrf-token'] = csrfToken;
+axios.defaults.headers.delete['x-csrf-token'] = csrfToken;
 
 const config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
