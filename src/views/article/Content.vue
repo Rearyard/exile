@@ -38,10 +38,7 @@
               />
               <Icon v-else type="md-contact" size="24" />
               <div>
-                <a
-                  style="color:#222;text-decoration: underline"
-                  href="javascript:;"
-                >{{ author.nickname }}</a>
+                <router-link :to="isMobile?'/selfmobile/':'/self/'+author.uid+'/info'" style="color:#222;text-decoration: underline">{{ author.nickname }}</router-link>
               </div>
               <Icon type="md-funnel" size="24" />
               <div>
@@ -333,6 +330,10 @@ export default class ArticleContent extends Vue {
   }
 
   //computed改为getter，直接写在类里面
+  get isMobile() {
+    return this.$store.state.isMobile
+  }
+
   get ratingString() {
     return Rating[this.article.rating];
   }
@@ -484,25 +485,25 @@ export default class ArticleContent extends Vue {
   }
   showDeleteModal(cid,title,index){
     if (this.chapters.length==1) {
-      return this.$Modal.warning({
+      return (this as any).$Modal.warning({
         title: "不可删除唯一章节",
         content: "此章节为文章的唯一章节，若要删除请跳转个人中心删除文章"
       })
     }
-    this.$Modal.confirm({
+    (this as any).$Modal.confirm({
       title: "确认要删除章节吗",
       content:`确认要删除章节${title}吗，章节删除后不可恢复！`,
       onOk:()=>{
         (this as any).$axios.delete(`/api/article/${this.article.id}/${cid}`).then(res=>{
           if (!res.data.result) {
-            return this.$Message.error("删除失败")
+            return (this as any).$Message.error("删除失败")
           }
           this.chapters.splice(index, 1)
-          return this.$Message.success("删除成功")
+          return (this as any).$Message.success("删除成功")
         })
       },
       onCancel:()=>{
-        this.$Modal.remove()
+        (this as any).$Modal.remove()
       }
     })
   }

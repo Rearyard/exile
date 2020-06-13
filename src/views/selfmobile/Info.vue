@@ -295,7 +295,7 @@
         </Row>
       </Row>
       <Row v-show="user.isMyself" style = "padding: 0px 2px; margin-top: 5px;">
-        <Button type="error" @click="postLogout" style="border-radius:10px" long>注销</Button>
+        <Button type="error" @click="postLogout" style="border-radius:10px" long>登出</Button>
       </Row>
     </div>
 </template>
