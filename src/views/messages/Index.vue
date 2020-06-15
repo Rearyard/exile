@@ -80,4 +80,9 @@
     color: white;
     font-weight: bold;
   }
+
+  .ul-row a {
+    color: #222222;
+    text-decoration: underline;
+  }
 </style>

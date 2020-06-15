@@ -121,14 +121,14 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="4" class="bottom-nav">
-                <MenuItem name="p5" to="/message">
+              <iCol span="4" class="bottom-nav" >
+                <MenuItem name="p5" disabled to="#">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
-                      <Icon type="md-mail" :size="30" />
+                      <Icon style="color:#aaa !important;" type="md-mail" :size="30" />
                     </iCol>
                     <iCol class="bottom-nav-text">
-                      <span>消息中心</span>
+                      <span style="color:#aaa !important;">开发中</span>
                     </iCol>
                   </Row>
                 </MenuItem>

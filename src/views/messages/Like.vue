@@ -74,8 +74,4 @@
     }
   }
 
-  a {
-    color: #222 !important;
-    text-decoration: underline !important;
-  }
 </style>
