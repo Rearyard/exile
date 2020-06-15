@@ -3,13 +3,25 @@
 <template>
   <div>
     <List>
-      <ListItem v-for="r in rows"
+      <ListItem v-for="r in rows" :key="r.type"
                 @click.native="$router.push('/message/'+r.type)"
                 style="display: flex;padding:1em;background-color:#fff;cursor: pointer">
         <Icon :type="r.icon" color="white" :size="40"/>
         <span style="margin: 1em">{{r.title}}</span>
-        <span class="cnt-info">{{r.cnt>0?r.cnt:''}}</span>
         <div class="flex-space"/>
+        <span class="cnt-info">{{r.cnt>0?r.cnt:''}}</span>
+        <Icon type="ios-arrow-forward" :size="16"/>
+      </ListItem>
+      <ListItem v-for="r in directMsgs" :key="r.by.id"
+                @click.native="$router.push('/message/directMsg/'+r.by.id)"
+                style="display: flex;padding:1em;background-color:#fff;cursor: pointer">
+        <Avatar :src="r.by.user_avatar_url" style="width: 48px;height: 48px"/>
+        <div style="margin: 0em 1em">
+          <div>{{r.by.user_nickname}}</div>
+          <span style="text-overflow:ellipsis;color: gray">{{r.lastContent}}</span>
+        </div>
+        <div class="flex-space"/>
+        <span class="cnt-info">{{r.cnt>0?r.cnt:''}}</span>
         <Icon type="ios-arrow-forward" :size="16"/>
       </ListItem>
     </List>
@@ -24,10 +36,11 @@
   export default class MessageIndex extends Vue {
     rows = [
       {type: 'notification', cnt: 2147483647, title: '系统通知', icon: 'ios-notifications-outline'},
-      {type: 'directMsg', cnt: 3, title: '私信', icon: 'ios-mail-outline'},
+      // {type: 'directMsg', cnt: 3, title: '私信', icon: 'ios-mail-outline'},
       {type: 'comment', cnt: 0, title: '评论', icon: 'ios-chatboxes-outline'},
       {type: 'like', cnt: 12, title: '赞', icon: 'ios-thumbs-up-outline'},
     ]
+    directMsgs = []
 
     mounted() {
     }

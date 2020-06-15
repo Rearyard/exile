@@ -28,7 +28,8 @@ import MessageWrapper from '@/views/messages/Wrapper.vue'
 import MessageIndex from '@/views/messages/Index.vue'
 import MessageNotification from '@/views/messages/Notification.vue'
 import MessageLike from '@/views/messages/Like.vue'
-
+import MessageComment from '@/views/messages/Comment.vue'
+import MessageDirectMsg from "@/views/messages/DirectMsg.vue";
 Vue.use(VueRouter)
 
 const routes = [
@@ -188,6 +189,14 @@ const routes = [
         name: 'MessageLike',
         component: MessageLike,
         path: 'like',
+      },{
+        name: 'MessageComment',
+        component: MessageComment,
+        path: 'comment',
+      },{
+        name: 'MessageDirectMsg',
+        component: MessageDirectMsg,
+        path: 'DirectMsg',
       },
     ]
   }
