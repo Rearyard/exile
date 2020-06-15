@@ -294,6 +294,32 @@
           </i-col>
         </Row>
       </Row>
+      <Row class="info-card" v-show="user.isMyself">
+        <Row style="padding-left:0.5rem;">
+            <Modal
+              v-if="!currentValiadtionResult"
+              v-model="validationModal"
+              title="自证结果"
+              :mask-closable="false"
+              ok-text="提交"
+              @on-ok="resubmitValidation"
+              fullscreen>
+              <p><strong>审查回复：</strong>{{validationResponse}}</p>
+              <Divider />
+              <p style="margin-bottom: 10px;">请修改您的自证内容并重新提交，以便我们再次审核。</p>
+              <Input v-model="validationText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="validation-input" />
+            </Modal>
+            <i-col span="7">
+              <strong>自证结果：</strong>
+            </i-col>
+            <i-col span="17">
+            <span>
+              {{displayedValidationResult}}
+              <Icon v-if="!currentValiadtionResult" @click="openValidationModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+            </span>
+            </i-col>
+          </Row>
+      </Row>
       <Row v-show="user.isMyself" style = "padding: 0px 2px; margin-top: 5px;">
         <Button type="error" @click="postLogout" style="border-radius:10px" long>登出</Button>
       </Row>
@@ -349,7 +375,11 @@ export default {
       followedModal: false,
       followed: {},
       followedPage: 1,
-      userFollowed: 0
+      userFollowed: 0,
+      currentValiadtionResult: false,
+      validationResponse: '你好，经过审核我们认为之前提交的内容不足以证明您属于您所选择的年龄范围，主要原因为：blablablabla~',
+      validationText: 'Some self-proof text submitted before.',
+      validationModal: false,
     }
   },
   components: { 
@@ -359,7 +389,10 @@ export default {
     registerTimeFormated(){
       moment.locale('zh-cn');
       return moment(this.user.user_registered).toNow(true)
-    }
+    },
+    displayedValidationResult() {
+        return this.currentValiadtionResult? '已通过':'未通过';
+      }
   },
   mounted(){
     this.getUserInfo();
@@ -414,6 +447,12 @@ export default {
     },
     closePswModal(){
       this.pswModal = false;
+    },
+    openValidationModal() {
+      this.validationModal = true;
+    },
+    closeValidationModal() {
+      this.validationModal = false;
     },
     uploadFile(){
       const csrfToken = cookie.get("csrfToken");
@@ -934,6 +973,9 @@ export default {
         }
       });
     },
+    resubmitValidation() {
+      console.log('Re-submit succeeded.');
+    }
   },
   watch:{
     '$route'(to, from) {
@@ -1076,6 +1118,9 @@ export default {
     height: 3rem;
     border-radius: 50%;
   }
+}
+.validation-input {
+  width:100%;
 }
 </style>
 

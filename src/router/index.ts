@@ -14,6 +14,7 @@ const SelfWorks= () => import( '../views/self/Works.vue')
 const SelfFavorite= () => import( '../views/self/Favorite.vue')
 const Following= () => import( '../views/self/Following.vue')
 const Followed= () => import( '../views/self/Followed.vue')
+const Validation= () => import( '../views/self/Validation.vue')
 const SelfMobile= () => import( '../views/selfmobile/Index.vue')
 const SelfMobileInfo= () => import( '../views/selfmobile/Info.vue')
 const SelfMobileWorks= () => import( '../views/selfmobile/Works.vue')
@@ -141,6 +142,11 @@ const routes = [
         path: 'followed',
         component: Followed,
         name: 'Followed'
+      },
+      {
+        path: 'validation',
+        component: Validation,
+        name: 'Validation'
       }
     ]
   },
