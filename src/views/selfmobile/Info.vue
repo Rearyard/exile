@@ -294,28 +294,31 @@
           </i-col>
         </Row>
       </Row>
-      <Row class="info-card" v-show="user.isMyself">
+      <Row class="info-card" v-show="!user.isMyself">
         <Row style="padding-left:0.5rem;">
             <Modal
-              v-if="!currentValiadtionResult"
-              v-model="validationModal"
+              v-if="!currentProvementResult"
+              v-model="provementModal"
               title="自证结果"
               :mask-closable="false"
-              ok-text="提交"
-              @on-ok="resubmitValidation"
+              :loading="provementLoading"
               fullscreen>
-              <p><strong>审查回复：</strong>{{validationResponse}}</p>
+              <p><strong>审查回复：</strong>{{provementResponse}}</p>
               <Divider />
               <p style="margin-bottom: 10px;">请修改您的自证内容并重新提交，以便我们再次审核。</p>
-              <Input v-model="validationText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="validation-input" />
+              <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" />
+              <div slot="footer">
+                <Button class = "button-cancel" @click="closeProvementModal">取消</Button>
+                <Button type="success" @click="addProvement" :loading="provementLoading">提交</Button>
+                </div>
             </Modal>
             <i-col span="7">
               <strong>自证结果：</strong>
             </i-col>
             <i-col span="17">
             <span>
-              {{displayedValidationResult}}
-              <Icon v-if="!currentValiadtionResult" @click="openValidationModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+              {{displayedProvementResult}}
+              <Icon v-if="!currentProvementResult" @click="openProvementModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
             </span>
             </i-col>
           </Row>
@@ -376,10 +379,11 @@ export default {
       followed: {},
       followedPage: 1,
       userFollowed: 0,
-      currentValiadtionResult: false,
-      validationResponse: '你好，经过审核我们认为之前提交的内容不足以证明您属于您所选择的年龄范围，主要原因为：blablablabla~',
-      validationText: 'Some self-proof text submitted before.',
-      validationModal: false,
+      currentProvementResult: false,
+      provementResponse: '你好，经过审核我们认为之前提交的内容不足以证明您属于您所选择的年龄范围，主要原因为：blablablabla~',
+      provementText: 'Some self-proof text submitted before.',
+      provementModal: false,
+      provementLoading: false,
     }
   },
   components: { 
@@ -390,12 +394,14 @@ export default {
       moment.locale('zh-cn');
       return moment(this.user.user_registered).toNow(true)
     },
-    displayedValidationResult() {
-        return this.currentValiadtionResult? '已通过':'未通过';
+    displayedProvementResult() {
+        return this.currentProvementResult? '已通过':'未通过';
       }
   },
   mounted(){
     this.getUserInfo();
+    this.judgeProvement();
+    console.log(this.currentProvementResult)
   },
   methods:{
     postLogout() {
@@ -448,11 +454,12 @@ export default {
     closePswModal(){
       this.pswModal = false;
     },
-    openValidationModal() {
-      this.validationModal = true;
+    openProvementModal() {
+      this.provementModal = true;
     },
-    closeValidationModal() {
-      this.validationModal = false;
+    closeProvementModal() {
+      this.provementLoading = false;
+      this.provementModal = false;
     },
     uploadFile(){
       const csrfToken = cookie.get("csrfToken");
@@ -713,7 +720,7 @@ export default {
         } else {
           if(res.status == 200){
             this.user = res.data;
-            this.$Spin.hide();
+            this.judgeProvement();
           }
         }
       }).catch(error => {
@@ -866,6 +873,61 @@ export default {
         }
       });
     },
+    judgeProvement() {
+      this.$axios.get('/api/auth/provement/judge').then(res=> {
+        console.log(res);
+        this.currentProvementResult = res.data;
+        if (!this.currentProvementResult) {
+          this.getLastProvement();
+        }
+        this.$Spin.hide();
+      }).catch(error => {
+        console.log('Error status code: ' + error.response.status);
+        this.$Message.warning({
+            content: '网络出现了一些问题，请刷新重试',
+            duration: 10,
+            closable: true
+        });
+      });
+    },
+    getLastProvement() {
+      this.$axios.get('/api/auth/provement').then(res=> {
+        console.log(res);
+        const allProvements = res.data.provement;
+        this.provementText = allProvements[allProvements.length-1];
+      }).catch(error => {
+        console.log('Error status code: ' + error.response.status);
+        this.$Spin.hide();
+        this.$Message.warning({
+            content: '网络出现了一些问题，请刷新重试',
+            duration: 10,
+            closable: true
+        });
+      });
+    },
+    addProvement(content) {
+      this.provementLoading = true;
+      const csrfToken = cookie.get("csrfToken");
+      this.$axios.put('/api/auth/provement/edit', {content:content},
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res => {
+        // TODO: check res.status
+        this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+        this.closeProvementModal();
+      }).catch(error=> {
+        console.log('Error status code: ' + error.response.status);
+        // TODO: check status code
+        this.$Message.warning({
+            content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
+            duration: 10,
+            closable: true
+        });
+        this.closeProvementModal();
+      });
+    },
     openFollowingModal(){
       this.followingModal = true;
       this.followingPage = 1;
@@ -972,9 +1034,6 @@ export default {
           });
         }
       });
-    },
-    resubmitValidation() {
-      console.log('Re-submit succeeded.');
     }
   },
   watch:{
@@ -1119,7 +1178,7 @@ export default {
     border-radius: 50%;
   }
 }
-.validation-input {
+.provement-input {
   width:100%;
 }
 </style>
