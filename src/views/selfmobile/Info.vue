@@ -294,7 +294,7 @@
           </i-col>
         </Row>
       </Row>
-      <Row class="info-card" v-show="!user.isMyself">
+      <Row class="info-card" v-show="user.isMyself">
         <Row style="padding-left:0.5rem;">
             <Modal
               v-if="!currentProvementResult"
@@ -400,8 +400,6 @@ export default {
   },
   mounted(){
     this.getUserInfo();
-    this.judgeProvement();
-    console.log(this.currentProvementResult)
   },
   methods:{
     postLogout() {
@@ -710,7 +708,6 @@ export default {
         },
       });
       this.$axios.get(`/api/user/${this.$route.params.uid}`).then(res => {
-        console.log(res);
         if(!res){
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
@@ -875,26 +872,42 @@ export default {
     },
     judgeProvement() {
       this.$axios.get('/api/auth/provement/judge').then(res=> {
-        console.log(res);
-        this.currentProvementResult = res.data;
+        if (res.status == 200) {
+          this.currentProvementResult = res.data;
+        }
         if (!this.currentProvementResult) {
           this.getLastProvement();
+        } else {
+          this.$Spin.hide();
         }
-        this.$Spin.hide();
       }).catch(error => {
         console.log('Error status code: ' + error.response.status);
-        this.$Message.warning({
-            content: '网络出现了一些问题，请刷新重试',
-            duration: 10,
-            closable: true
-        });
+        if (error.response.status === 401) {
+          this.$Spin.hide();
+          this.jumpLogin();
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+          this.$Spin.hide();
+        }
       });
     },
     getLastProvement() {
       this.$axios.get('/api/auth/provement').then(res=> {
-        console.log(res);
-        const allProvements = res.data.provement;
-        this.provementText = allProvements[allProvements.length-1];
+        if (res.status == 200){
+          const allProvements = res.data.provement;
+          if (allProvements.length > 0) {
+            const lastProvement = allProvements[allProvements.length-1];
+            this.provementText = lastProvement.content;
+            this.provementResponse = lastProvement.replied ? lastProvement.reply :'目前暂无对您的自证材料的回复。';
+          } else {
+            this.provementText = '当前未能查询到您之前提交的自证记录。';
+          }
+        }
+        this.$Spin.hide();
       }).catch(error => {
         console.log('Error status code: ' + error.response.status);
         this.$Spin.hide();
@@ -905,26 +918,40 @@ export default {
         });
       });
     },
-    addProvement(content) {
+    addProvement() {
       this.provementLoading = true;
       const csrfToken = cookie.get("csrfToken");
-      this.$axios.put('/api/auth/provement/edit', {content:content},
+      this.$axios.put('/api/auth/provement/edit', {content:this.provementText},
         {
           headers: { "x-csrf-token": csrfToken },
           withCredentials: true
         }
       ).then(res => {
         // TODO: check res.status
-        this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+        if (res.status === 200 && res.data.result) {
+          this.provementSubmitted = res.data.result;
+          this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+        } else {
+          this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
+        }
         this.closeProvementModal();
       }).catch(error=> {
         console.log('Error status code: ' + error.response.status);
-        // TODO: check status code
-        this.$Message.warning({
-            content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
-            duration: 10,
-            closable: true
-        });
+        if (error.response.status === 401) {
+          this.jumpLogin();
+        } else if (error.response.status === 400){
+          this.$Message.warning({
+              content: '您的自证材料提交失败，请刷新重试。',
+              duration: 10,
+              closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
+              duration: 10,
+              closable: true
+          });
+        }
         this.closeProvementModal();
       });
     },
