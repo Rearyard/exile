@@ -89,7 +89,7 @@
         <div class="wrapper-bottom-nav">
           <Menu mode="horizontal" :active-name="activeTab" @on-select="storeTab">
             <Row type="flex" justify="space-around" align="middle">
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p0" to="/">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -101,7 +101,7 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p1" to="/article">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -113,7 +113,7 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p2" to="/joinmobile">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -125,7 +125,19 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav" >
+                <MenuItem name="p5" disabled to="#">
+                  <Row type="flex" justify="center">
+                    <iCol class="bottom-nav-icon">
+                      <Icon style="color:#aaa !important;" type="md-mail" :size="30" />
+                    </iCol>
+                    <iCol class="bottom-nav-text">
+                      <span style="color:#aaa !important;">开发中</span>
+                    </iCol>
+                  </Row>
+                </MenuItem>
+              </iCol>
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p3" :to="{name: 'SelfMobileInfo', params: {uid: this.user.id}}">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">

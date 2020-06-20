@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 const Index= () => import( '../views/Index.vue')
 const Login= () => import( '../views/Login.vue')
 const Register= () => import( '../views/Register.vue')
@@ -42,14 +43,14 @@ const routes = [
   },
   {
     //注册
-    path:'/register',
-    name : 'Register',
+    path: '/register',
+    name: 'Register',
     component: Register,
   },
   {
     //激活
-    path:'/active',
-    name : 'Active',
+    path: '/active',
+    name: 'Active',
     component: Active,
   },
   {
@@ -62,13 +63,13 @@ const routes = [
     //技术交流
     path: '/join',
     name: 'Join',
-    component:Join
+    component: Join
   },
   {
     //技术交流手机端
     path: '/joinmobile',
     name: 'JoinMobile',
-    component:JoinMobile
+    component: JoinMobile
   },
   {
     //文区-新文章
@@ -120,17 +121,17 @@ const routes = [
     children: [
       {
         path: 'info',
-        component:SelfInfo,
+        component: SelfInfo,
         name: 'SelfInfo'
       },
       {
         path: 'favorite',
-        component:SelfFavorite,
+        component: SelfFavorite,
         name: 'SelfFavorite'
       },
       {
-        path:'works',
-        component:SelfWorks,
+        path: 'works',
+        component: SelfWorks,
         name: 'SelfWorks'
       },
       {
@@ -158,19 +159,46 @@ const routes = [
     children: [
       {
         path: 'info',
-        component:SelfMobileInfo,
+        component: SelfMobileInfo,
         name: 'SelfMobileInfo'
       },
       {
-        path:'works',
-        component:SelfMobileWorks,
+        path: 'works',
+        component: SelfMobileWorks,
         name: 'SelfMobileWorks'
       },
       {
         path: 'favorite',
-        component:SelfMobileFavorite,
+        component: SelfMobileFavorite,
         name: 'SelfMobileFavorite'
       }
+    ]
+  },
+  {
+    path: '/message/',
+    component: MessageWrapper,
+    children: [
+      {
+        name: 'MessageIndex',
+        component: MessageIndex,
+        path: '',
+      },{
+        name: 'MessageNotification',
+        component: MessageNotification,
+        path: 'notification',
+      },{
+        name: 'MessageLike',
+        component: MessageLike,
+        path: 'like',
+      },{
+        name: 'MessageComment',
+        component: MessageComment,
+        path: 'comment',
+      },{
+        name: 'MessageDirectMsg',
+        component: MessageDirectMsg,
+        path: 'DirectMsg',
+      },
     ]
   }
 ]
