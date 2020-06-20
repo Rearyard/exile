@@ -63,15 +63,19 @@
             </div>
             <div class="wrapper-nav-portable" v-if="portable">
               <Row :gutter="16">
-                <iCol span="8"><img id="logo" src="./assets/logo.png" alt /></iCol>
-                  <iCol span="16">  <iInput
-                  @on-click="jumpSearchResult"
-                  @on-enter="jumpSearchResult"
-                  v-model="searchQuery"
-                  placeholder="搜索"
-                  icon="md-search"
-                  class="header-search"
-                ></iInput></iCol>
+                <iCol span="8">
+                  <img id="logo" src="./assets/logo.png" alt />
+                </iCol>
+                <iCol span="16">
+                  <iInput
+                    @on-click="jumpSearchResult"
+                    @on-enter="jumpSearchResult"
+                    v-model="searchQuery"
+                    placeholder="搜索"
+                    icon="md-search"
+                    class="header-search"
+                  ></iInput>
+                </iCol>
               </Row>
             </div>
           </Menu>
@@ -177,14 +181,17 @@ export default {
   watch: {
     $route() {
       // console.log(this.$store)
-      if (this.$store.state.user.user_status == 0&&this.$route.name!="Active") {
+      if (
+        this.$store.state.user.user_status == 0 &&
+        this.$route.name != "Active"
+      ) {
         this.$router.push("/active");
       }
     }
   },
   methods: {
-    toIndex(){
-      this.$router.push("/")
+    toIndex() {
+      this.$router.push("/");
     },
     storeTab(name) {
       sessionStorage.activeTab = name;
@@ -267,9 +274,12 @@ export default {
           const user = res.data;
           this.$store.commit("setUserInfo", user);
         } else {
-          if (this.$route.name != "Register" && this.$route.name != "Login") {
-            this.jumpLogin();
-          }
+          // FIX: 修复可能出现的套娃问题
+          setTimeout(() => {
+            if (this.$route.name != "Register" && this.$route.name != "Login") {
+              this.jumpLogin();
+            }
+          }, 500);
         }
       });
     }

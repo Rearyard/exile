@@ -294,6 +294,35 @@
           </i-col>
         </Row>
       </Row>
+      <Row class="info-card" v-show="user.isMyself">
+        <Row style="padding-left:0.5rem;">
+            <Modal
+              v-if="!currentProvementResult"
+              v-model="provementModal"
+              title="自证结果"
+              :mask-closable="false"
+              :loading="provementLoading"
+              fullscreen>
+              <p><strong>审查回复：</strong>{{provementResponse}}</p>
+              <Divider />
+              <p style="margin-bottom: 10px;">请修改您的自证内容并重新提交，以便我们再次审核。</p>
+              <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" />
+              <div slot="footer">
+                <Button class = "button-cancel" @click="closeProvementModal">取消</Button>
+                <Button type="success" @click="addProvement" :loading="provementLoading">提交</Button>
+                </div>
+            </Modal>
+            <i-col span="7">
+              <strong>自证结果：</strong>
+            </i-col>
+            <i-col span="17">
+            <span>
+              {{displayedProvementResult}}
+              <Icon v-if="!currentProvementResult&&provementReplied&&provementItem.length<2" @click="openProvementModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+            </span>
+            </i-col>
+          </Row>
+      </Row>
       <Row v-show="user.isMyself" style = "padding: 0px 2px; margin-top: 5px;">
         <Button type="error" @click="postLogout" style="border-radius:10px" long>登出</Button>
       </Row>
@@ -349,7 +378,14 @@ export default {
       followedModal: false,
       followed: {},
       followedPage: 1,
-      userFollowed: 0
+      userFollowed: 0,
+      currentProvementResult: false,
+      provementItem:[],
+      provementReplied: false,
+      provementResponse: '你好，经过审核我们认为之前提交的内容不足以证明您属于您所选择的年龄范围，主要原因为：blablablabla~',
+      provementText: 'Some self-proof text submitted before.',
+      provementModal: false,
+      provementLoading: false,
     }
   },
   components: { 
@@ -359,7 +395,13 @@ export default {
     registerTimeFormated(){
       moment.locale('zh-cn');
       return moment(this.user.user_registered).toNow(true)
-    }
+    },
+    displayedProvementResult() {
+      if (!this.provementReplied) {
+        return '审核中'
+      }
+        return this.currentProvementResult? '已通过':'未通过';
+      }
   },
   mounted(){
     this.getUserInfo();
@@ -414,6 +456,13 @@ export default {
     },
     closePswModal(){
       this.pswModal = false;
+    },
+    openProvementModal() {
+      this.provementModal = true;
+    },
+    closeProvementModal() {
+      this.provementLoading = false;
+      this.provementModal = false;
     },
     uploadFile(){
       const csrfToken = cookie.get("csrfToken");
@@ -664,7 +713,6 @@ export default {
         },
       });
       this.$axios.get(`/api/user/${this.$route.params.uid}`).then(res => {
-        console.log(res);
         if(!res){
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
@@ -674,7 +722,7 @@ export default {
         } else {
           if(res.status == 200){
             this.user = res.data;
-            this.$Spin.hide();
+            this.judgeProvement();
           }
         }
       }).catch(error => {
@@ -827,6 +875,94 @@ export default {
         }
       });
     },
+    judgeProvement() {
+      this.$axios.get('/api/auth/provement/judge').then(res=> {
+        if (res.status == 200) {
+          this.currentProvementResult = res.data;
+        }
+        if (!this.currentProvementResult) {
+          this.getLastProvement();
+        } else {
+          this.$Spin.hide();
+        }
+      }).catch(error => {
+        console.log('Error status code: ' + error.response.status);
+        if (error.response.status === 401) {
+          this.$Spin.hide();
+          this.jumpLogin();
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，请刷新重试',
+              duration: 10,
+              closable: true
+          });
+          this.$Spin.hide();
+        }
+      });
+    },
+    getLastProvement() {
+      this.$axios.get('/api/auth/provement').then(res=> {
+        if (res.status == 200){
+          const allProvements = res.data.provement;
+          this.provementItem = allProvements;
+          if (allProvements.length > 0) {
+            const lastProvement = allProvements[allProvements.length-1];
+            this.provementReplied = lastProvement.replied
+            this.provementText = lastProvement.content;
+            this.provementResponse = lastProvement.replied ? lastProvement.reply :'目前暂无对您的自证材料的回复。';
+          } else {
+            this.provementText = '当前未能查询到您之前提交的自证记录。';
+          }
+        }
+        this.$Spin.hide();
+      }).catch(error => {
+        console.log('Error status code: ' + error.response.status);
+        this.$Spin.hide();
+        this.$Message.warning({
+            content: '网络出现了一些问题，请刷新重试',
+            duration: 10,
+            closable: true
+        });
+      });
+    },
+    addProvement() {
+      this.provementLoading = true;
+      const csrfToken = cookie.get("csrfToken");
+      this.$axios.put('/api/auth/provement/edit', {content:this.provementText},
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res => {
+        // TODO: check res.status
+        if (res.status === 200 && res.data.result) {
+          this.provementSubmitted = res.data.result;
+          this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+        } else {
+          this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
+        }
+        this.closeProvementModal();
+        this.getLastProvement();
+      }).catch(error=> {
+        console.log('Error status code: ' + error.response.status);
+        if (error.response.status === 401) {
+          this.jumpLogin();
+        } else if (error.response.status === 400){
+          this.$Message.warning({
+              content: '您的自证材料提交失败，请刷新重试。',
+              duration: 10,
+              closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
+              duration: 10,
+              closable: true
+          });
+        }
+        this.closeProvementModal();
+      });
+    },
     openFollowingModal(){
       this.followingModal = true;
       this.followingPage = 1;
@@ -933,7 +1069,7 @@ export default {
           });
         }
       });
-    },
+    }
   },
   watch:{
     '$route'(to, from) {
@@ -1076,6 +1212,9 @@ export default {
     height: 3rem;
     border-radius: 50%;
   }
+}
+.provement-input {
+  width:100%;
 }
 </style>
 
