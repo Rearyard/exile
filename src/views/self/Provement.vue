@@ -9,10 +9,10 @@
         <Divider/>
         <Row>
             <p v-if="!currentProvementResult">{{provementSuggestionText}}</p>
-          <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" :disabled="!!currentProvementResult || provementSubmitted"/>
+          <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" :disabled="!!currentProvementResult || provementSubmitted||!provementReplied"/>
         </Row>
         <Row style="text-align: center;" v-if="!currentProvementResult">
-          <Button type="success" @click="addProvement" :disabled="provementSubmitted">提交</Button>
+          <Button type="success" @click="addProvement" :disabled="provementSubmitted||!provementReplied||provementItem.length>=2">{{provementItem.length>=2?'次数已用尽':'提交'}}</Button>
         </Row>
       </div>
     </Row>
@@ -26,6 +26,8 @@ export default {
   data() {
     return {
         currentProvementResult: false,
+        provementItem:[],
+        provementReplied:false,
         provementResponse: '',
         provementText: '',
         provementSubmitted: false,
@@ -34,6 +36,9 @@ export default {
   },
   computed: {
       displayedResult() {
+        if (!this.provementReplied) {
+          return '审核中'
+        }
         return this.currentProvementResult? '已通过':'未通过';
       }
   },
@@ -72,10 +77,6 @@ export default {
         this.getLastProvement();
       }).catch(error => {
         console.log('Error status code: ' + error.response.status);
-        if (error.response.status === 401) {
-          this.$Spin.hide();
-          this.jumpLogin();
-        } else {
           this.$Message.warning({
               content: '网络出现了一些问题，请刷新重试',
               duration: 10,
@@ -83,15 +84,20 @@ export default {
           });
           this.$Spin.hide();
         }
-      });
+      );
     },
     getLastProvement() {
       this.$axios.get('/api/auth/provement').then(res=> {
         if (res.status == 200){
           const allProvements = res.data.provement;
+          this.provementItem = allProvements
           if (allProvements.length > 0) {
             const lastProvement = allProvements[allProvements.length-1];
             this.provementText = lastProvement.content;
+            this.provementReplied = lastProvement.replied;
+            if (!this.provementReplied) {
+              this.provementSuggestionText = '请耐心等待志愿者审核您的自证材料'
+            }
             this.provementResponse = lastProvement.replied ? lastProvement.reply :'目前暂无对您的自证材料的回复。';
           } else {
             this.provementText = '当前未能查询到您之前提交的自证记录。';
@@ -119,18 +125,13 @@ export default {
       ).then(res => {
         if (res.status === 200) {
           if (res.data.result) {
-            this.provementSubmitted = res.data.result;
-            this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
-            this.provementSuggestionText = '您的自证材料已成功提交，请勿重复提交。';
+            this.getLastProvement()
           }
         }
         this.$Spin.hide();
       }).catch(error=> {
         console.log('Error status code: ' + error.response.status);
-        if (error.response.status === 401) {
-          this.$Spin.hide();
-          this.jumpLogin();
-        } else if (error.response.status === 400){
+        if (error.response.status === 400){
           this.$Message.warning({
               content: '您的自证材料提交失败，请刷新重试。',
               duration: 10,
@@ -146,13 +147,6 @@ export default {
         this.$Spin.hide();
       });
     },
-    jumpLogin() {
-      this.$router.push({
-        path: "/login",
-        query: { from: this.$route.fullPath }
-      });
-    },
-
   }
 };
 </script>

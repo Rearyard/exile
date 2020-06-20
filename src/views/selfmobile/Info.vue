@@ -318,7 +318,7 @@
             <i-col span="17">
             <span>
               {{displayedProvementResult}}
-              <Icon v-if="!currentProvementResult" @click="openProvementModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+              <Icon v-if="!currentProvementResult&&provementReplied&&provementItem.length<2" @click="openProvementModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
             </span>
             </i-col>
           </Row>
@@ -380,6 +380,8 @@ export default {
       followedPage: 1,
       userFollowed: 0,
       currentProvementResult: false,
+      provementItem:[],
+      provementReplied: false,
       provementResponse: '你好，经过审核我们认为之前提交的内容不足以证明您属于您所选择的年龄范围，主要原因为：blablablabla~',
       provementText: 'Some self-proof text submitted before.',
       provementModal: false,
@@ -395,6 +397,9 @@ export default {
       return moment(this.user.user_registered).toNow(true)
     },
     displayedProvementResult() {
+      if (!this.provementReplied) {
+        return '审核中'
+      }
         return this.currentProvementResult? '已通过':'未通过';
       }
   },
@@ -899,8 +904,10 @@ export default {
       this.$axios.get('/api/auth/provement').then(res=> {
         if (res.status == 200){
           const allProvements = res.data.provement;
+          this.provementItem = allProvements;
           if (allProvements.length > 0) {
             const lastProvement = allProvements[allProvements.length-1];
+            this.provementReplied = lastProvement.replied
             this.provementText = lastProvement.content;
             this.provementResponse = lastProvement.replied ? lastProvement.reply :'目前暂无对您的自证材料的回复。';
           } else {
@@ -935,6 +942,7 @@ export default {
           this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
         }
         this.closeProvementModal();
+        this.getLastProvement();
       }).catch(error=> {
         console.log('Error status code: ' + error.response.status);
         if (error.response.status === 401) {
