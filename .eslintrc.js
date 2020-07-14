@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'off' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    '@typescript-eslint/camelcase':'off'
+    '@typescript-eslint/camelcase':'off',
+    'no-undef':'off'
   }
 }
