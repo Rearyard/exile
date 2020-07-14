@@ -174,7 +174,7 @@ export default {
       return window.screen.width < 1024;
     },
     hideHeader() {
-      const situation = ["Login", "Register", "Active"];
+      const situation = ["Login", "Register", "Active","Reset"];
       return situation.indexOf(this.$route.name) != -1;
     }
   },
@@ -276,7 +276,7 @@ export default {
         } else {
           // FIX: 修复可能出现的套娃问题
           setTimeout(() => {
-            if (this.$route.name != "Register" && this.$route.name != "Login") {
+            if (this.$route.name != "Register" && this.$route.name != "Login"&&this.$route.name!="Reset") {
               this.jumpLogin();
             }
           }, 500);

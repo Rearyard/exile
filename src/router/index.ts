@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 const Index= () => import( '../views/Index.vue')
 const Login= () => import( '../views/Login.vue')
 const Register= () => import( '../views/Register.vue')
+import Reset  from '@/views/Reset.vue'
 const Active= () => import( '../views/Active.vue')
 const Article= () => import( '../views/article/Index.vue')
 const Draft= () => import( '../views/article/Draft.vue')
@@ -25,6 +26,12 @@ const EditArticle= () => import( '../views/article/Edit.vue')
 const ImportArticle= () => import( '../views/article/Load.vue')
 const ArticleContent= () => import( '../views/article/Content.vue')
 const ArticleSearchResult= () => import( '../views/article/SearchResult.vue')
+import MessageWrapper from '@/views/messages/Wrapper.vue'
+import MessageIndex from '@/views/messages/Index.vue'
+import MessageNotification from '@/views/messages/Notification.vue'
+import MessageLike from '@/views/messages/Like.vue'
+import MessageComment from '@/views/messages/Comment.vue'
+import MessageDirectMsg from "@/views/messages/DirectMsg.vue";
 
 Vue.use(VueRouter)
 
@@ -52,6 +59,12 @@ const routes = [
     path: '/active',
     name: 'Active',
     component: Active,
+  },
+  {
+    // 密码重置
+    path:'/reset',
+    name:'Reset',
+    component:Reset,
   },
   {
     //文区
