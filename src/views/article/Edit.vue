@@ -860,4 +860,10 @@ div.action-grounp {
   font-size: 1.2em;
   font-weight: bold;
 }
+.article-edit::v-deep .ql-editor {
+    white-space: normal!important;
+}
+.article-edit::v-deep .ql-container {
+    white-space: pre-wrap!important;
+}
 </style>
