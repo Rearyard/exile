@@ -138,7 +138,7 @@
               </Select>
             </form-item>
             <form-item label="摘要：" prop="summary">
-              <i-input v-model="form.summary" maxlength="200"  show-word-limit  placeholder="文章摘要" />
+              <i-input v-model="form.summary" maxlength="200" type="textarea" :autosize="{minRows: 2,maxRows: 5}" show-word-limit  placeholder="文章摘要" />
             </form-item>
             <form-item label="注释：" prop="note">
               <i-input v-model="form.note" maxlength="200"  show-word-limit  placeholder="文章注释" />
