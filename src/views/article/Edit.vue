@@ -472,9 +472,6 @@ export default {
       }
       return this.step = step
     },
-    showRateRules(){
-
-    },
     articleInfoCheck() {
       this.$refs["formArticle"].validate(valid => {
         if (valid) {

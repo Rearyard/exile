@@ -163,8 +163,8 @@
       </iCol>
     </Row>
     <Row class="info-row">
-      <iCol span="12">昵称</iCol>
-      <iCol span="12">
+      <iCol span="10">昵称</iCol>
+      <iCol span="14">
         <span v-if="!editname">
           {{user.user_nickname}}
           <Icon
@@ -193,21 +193,67 @@
     <Divider />
     <div v-show="user.isMyself">
       <Row class="info-row">
-        <iCol span="12">用户名</iCol>
-        <iCol span="12">{{user.user_login}}</iCol>
+        <iCol span="10">生日</iCol>
+        <iCol span="14">
+          <span>
+            {{birthdayFormated}}
+            <Icon
+              @click="provementModal=true"
+              v-show="user.isMyself"
+              type="ios-create-outline"
+              style="cursor: pointer;"
+              size="24"
+            />
+            <a style="font-size:0.8rem; padding-left:1rem" href="/question#what_can_i_see" target="_blank"> &nbsp;&nbsp;>>允许查看的文章分级</a>
+          </span>
+        </iCol>
+      </Row>
+      <Modal
+        @on-cancel="closeProvementModal"
+        v-model="provementModal"
+        :mask-closable="false"
+        title="修改生日"
+        :loading="provementLoading">
+        <div v-if="allProvements.length>1">
+          <p> 抱歉，您只拥有一次重新提交自证的机会。（如果需要修改生日，也需重新提交自证）。</p>
+        </div>
+        <div v-else>
+          <p>您的年龄是: 
+            <DatePicker type="date" placeholder="Select date" size="small" style="width:10rem;" :start-date="new Date(2000, 1, 1)" @on-change="changeBirthday"></DatePicker>
+            {{userAgeUpdated?userAgeUpdated+'岁':'请选择'}}
+          </p>
+          <p>需要提交的相应自证材料是：{{permissionRules[authority].provement_item?permissionRules[authority].provement_item:'无'}}</p>
+          <Divider style="margin-top: 1rem; margin-bottom: 1rem;" />
+          <p style="margin-bottom: 10px"><strong>为了修改生日，您需要重新提交自证。</strong></p>
+          <p style="margin-bottom: 10px">PS：每位用户仅有一次重新提交自证的机会（如果您要修改生日，也会消耗掉这次机会。）</p>
+          <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" />
+          </div>
+          <div slot="footer">
+            <div v-show="allProvements.length<2">
+              <Button class = "button-cancel" @click="closeProvementModal">取消</Button>
+              <Button type="success" @click="addProvement" :loading="provementLoading">提交</Button>
+            </div>
+          </div>
+      </Modal>
+      <Divider />
+    </div>
+    <div v-show="user.isMyself">
+      <Row class="info-row">
+        <iCol span="10">用户名</iCol>
+        <iCol span="14">{{user.user_login}}</iCol>
       </Row>
       <Divider />
     </div>
     <div v-show="user.isMyself">
       <Row class="info-row" v-show="user.isMyself">
-        <iCol span="12">邮箱</iCol>
-        <iCol span="12">{{user.user_email}}</iCol>
+        <iCol span="10">邮箱</iCol>
+        <iCol span="14">{{user.user_email}}</iCol>
       </Row>
       <Divider />
     </div>
     <Row class="info-row">
-      <iCol span="12">注册日期</iCol>
-      <iCol span="12">{{formatedData}}</iCol>
+      <iCol span="10">注册日期</iCol>
+      <iCol span="14">{{formatedData}}</iCol>
     </Row>
     <Divider />
   </div>
@@ -252,7 +298,14 @@ export default {
       oldpsw: "",
       newpsw: "",
       newpswConfirm: "",
-      pswLoading: false
+      pswLoading: false,
+      provementModal: false,
+      birthdayUpdated: new Date(),
+      userAgeUpdated: 0,
+      provementText: "",
+      provementLoading: false,
+      permissionRules: [],
+      allProvements: [],
     };
   },
   components: {
@@ -260,11 +313,26 @@ export default {
   },
   computed: {
     formatedData() {
-      return moment(this.user.user_registered).format("YYYY-MM-DD");
-    }
+      return moment(this.user.user_registered).format("LL");
+    },
+    birthdayFormated(){
+      moment.locale('zh-cn');
+      return moment(this.user.user_birth).format('LL');   // 2020年6月22日
+    },
+    authority() {
+      for (const key in this.permissionRules) {
+          const element = this.permissionRules[key];
+          if (element.min_age<=this.userAgeUpdated&&this.userAgeUpdated<=element.max_age) {
+            return Number(key);
+        }
+      }
+      return 0;
+    },
   },
   mounted() {
     this.getUserInfo();
+    this.getProvementQuestion();
+    this.getAllProvement();
   },
   methods: {
     jumpLogin() {
@@ -273,6 +341,90 @@ export default {
         query: { from: this.$route.fullPath }
       });
     },
+    changeBirthday(birthday, format){
+      this.birthdayUpdated = birthday;
+      this.userAgeUpdated = parseInt(moment(birthday).fromNow());
+    },
+    closeProvementModal() {
+      this.provementLoading = false;
+      this.provementModal = false;
+      this.userAgeUpdated = parseInt(moment(this.user.user_birth).fromNow());
+    },
+    getProvementQuestion(){
+      this.$axios.get('/api/auth/register/info').then((res)=>{
+        this.permissionRules = res.data.permissionRules;
+      })
+    },
+    getAllProvement() {
+      this.$Spin.show()
+      this.$axios.get('/api/auth/provement').then(res=> {
+        if (res.status == 200){
+          this.allProvements = res.data.provement;
+        }
+        this.$Spin.hide();
+      }).catch(error => {
+        console.log('Error status code: ' + error.response.status);
+        this.$Spin.hide();
+        this.$Message.warning({
+            content: '网络出现了一些问题，请刷新重试',
+            duration: 10,
+            closable: true
+        });
+      });
+    },
+    addProvement() {
+      const csrfToken = cookie.get("csrfToken");
+        // console.log('edit birthday');
+        // console.log(typeof(this.birthdayUpdated))
+        // const birthday = new Date(this.birthdayUpdated)
+      if(!this.userAgeUpdated){
+        this.$Message.warning('请选择生日。');
+        return
+      }
+      if(!this.provementText){
+        this.$Message.warning('请填写自证');
+        return
+      }
+      this.provementLoading = true;
+      this.$axios.put('/api/user/edit/birthday', 
+        {
+          birthday: this.birthdayUpdated,
+          content: this.provementText
+        },
+        {
+          headers: { "x-csrf-token": csrfToken },
+          withCredentials: true
+        }
+      ).then(res => {
+        // TODO: check res.status
+        if (res.status === 200 && res.data.result) {
+          this.provementSubmitted = res.data.result;
+          this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+        } else {
+          this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
+        }
+        this.closeProvementModal();
+        this.getUserInfo();
+      }).catch(error=> {
+        console.log('Error status code: ' + error.response.status);
+        if (error.response.status === 401) {
+          this.jumpLogin();
+        } else if (error.response.status === 400){
+          this.$Message.warning({
+              content: '您的自证材料提交失败，请刷新重试。',
+              duration: 10,
+              closable: true
+          });
+        } else {
+          this.$Message.warning({
+              content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
+              duration: 10,
+              closable: true
+          });
+        }
+        this.closeProvementModal();
+      })
+    },    
     getUserInfo() {
       this.$Spin.show({
         render: h => {

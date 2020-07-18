@@ -9,6 +9,8 @@ const Article= () => import( '../views/article/Index.vue')
 const Draft= () => import( '../views/article/Draft.vue')
 const Join= () => import( '../views/Join.vue')
 const JoinMobile= () => import( '../views/JoinMobile.vue')
+const Question= () => import( '../views/Question.vue')
+const QuestionMobile= () => import( '../views/QuestionMobile.vue')
 const SelfWrapper= () => import( '../views/self/Index.vue')
 const SelfInfo= () => import( '../views/self/Info.vue')
 const SelfWorks= () => import( '../views/self/Works.vue')
@@ -25,6 +27,12 @@ const EditArticle= () => import( '../views/article/Edit.vue')
 const ImportArticle= () => import( '../views/article/Load.vue')
 const ArticleContent= () => import( '../views/article/Content.vue')
 const ArticleSearchResult= () => import( '../views/article/SearchResult.vue')
+const MessageWrapper= ()=>import('../views/messages/Wrapper.vue')
+const MessageIndex= ()=>import('../views/messages/Index.vue')
+const MessageNotification= ()=>('../views/messages/Notification.vue')
+const MessageLike= ()=>('../views/messages/Like.vue')
+const MessageComment= ()=>('../views/messages/Comment.vue')
+const MessageDirectMsg= ()=>('../views/messages/DirectMsg.vue')
 
 Vue.use(VueRouter)
 
@@ -70,6 +78,18 @@ const routes = [
     path: '/joinmobile',
     name: 'JoinMobile',
     component: JoinMobile
+  },
+  {
+    //常见问题
+    path: '/question',
+    name: 'Question',
+    component: Question
+  },
+  {
+    //常见问题
+    path: '/questionmobile',
+    name: 'QuestionMobile',
+    component: QuestionMobile
   },
   {
     //文区-新文章
