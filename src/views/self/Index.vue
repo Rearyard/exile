@@ -19,6 +19,7 @@
                     <router-link to="following" active-class="active">我的关注</router-link>
                     <router-link to="followed" active-class="active">我的粉丝</router-link>
                     <router-link to="favorite" active-class="active">我的收藏</router-link>
+                    <router-link to="provement" active-class="active">自证审查</router-link>
                 </i-col>
                 <i-col class="right" span="17" offset="1">
                     <!-- 右边二级路由 -->

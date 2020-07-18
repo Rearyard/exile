@@ -63,15 +63,19 @@
             </div>
             <div class="wrapper-nav-portable" v-if="portable">
               <Row :gutter="16">
-                <iCol span="8"><img id="logo" src="./assets/logo.png" alt /></iCol>
-                  <iCol span="16">  <iInput
-                  @on-click="jumpSearchResult"
-                  @on-enter="jumpSearchResult"
-                  v-model="searchQuery"
-                  placeholder="搜索"
-                  icon="md-search"
-                  class="header-search"
-                ></iInput></iCol>
+                <iCol span="8">
+                  <img id="logo" src="./assets/logo.png" alt />
+                </iCol>
+                <iCol span="16">
+                  <iInput
+                    @on-click="jumpSearchResult"
+                    @on-enter="jumpSearchResult"
+                    v-model="searchQuery"
+                    placeholder="搜索"
+                    icon="md-search"
+                    class="header-search"
+                  ></iInput>
+                </iCol>
               </Row>
             </div>
           </Menu>
@@ -85,7 +89,7 @@
         <div class="wrapper-bottom-nav">
           <Menu mode="horizontal" :active-name="activeTab" @on-select="storeTab">
             <Row type="flex" justify="space-around" align="middle">
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p0" to="/">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -97,7 +101,7 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p1" to="/article">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -109,7 +113,7 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p2" to="/joinmobile">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -121,7 +125,19 @@
                   </Row>
                 </MenuItem>
               </iCol>
-              <iCol span="5" class="bottom-nav">
+              <iCol span="4" class="bottom-nav" >
+                <MenuItem name="p5" disabled to="#">
+                  <Row type="flex" justify="center">
+                    <iCol class="bottom-nav-icon">
+                      <Icon style="color:#aaa !important;" type="md-mail" :size="30" />
+                    </iCol>
+                    <iCol class="bottom-nav-text">
+                      <span style="color:#aaa !important;">开发中</span>
+                    </iCol>
+                  </Row>
+                </MenuItem>
+              </iCol>
+              <iCol span="4" class="bottom-nav">
                 <MenuItem name="p3" :to="{name: 'SelfMobileInfo', params: {uid: this.user.id}}">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
@@ -158,21 +174,24 @@ export default {
       return window.screen.width < 1024;
     },
     hideHeader() {
-      const situation = ["Login", "Register", "Active"];
+      const situation = ["Login", "Register", "Active","Reset"];
       return situation.indexOf(this.$route.name) != -1;
     }
   },
   watch: {
     $route() {
       // console.log(this.$store)
-      if (this.$store.state.user.user_status == 0&&this.$route.name!="Active") {
+      if (
+        this.$store.state.user.user_status == 0 &&
+        this.$route.name != "Active"
+      ) {
         this.$router.push("/active");
       }
     }
   },
   methods: {
-    toIndex(){
-      this.$router.push("/")
+    toIndex() {
+      this.$router.push("/");
     },
     storeTab(name) {
       sessionStorage.activeTab = name;
@@ -255,9 +274,12 @@ export default {
           const user = res.data;
           this.$store.commit("setUserInfo", user);
         } else {
-          if (this.$route.name != "Register" && this.$route.name != "Login") {
-            this.jumpLogin();
-          }
+          // FIX: 修复可能出现的套娃问题
+          setTimeout(() => {
+            if (this.$route.name != "Register" && this.$route.name != "Login"&&this.$route.name!="Reset") {
+              this.jumpLogin();
+            }
+          }, 500);
         }
       });
     }
