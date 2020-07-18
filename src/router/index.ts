@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 const Index= () => import( '../views/Index.vue')
 const Login= () => import( '../views/Login.vue')
 const Register= () => import( '../views/Register.vue')
+import Reset  from '@/views/Reset.vue'
 const Active= () => import( '../views/Active.vue')
 const Article= () => import( '../views/article/Index.vue')
 const Draft= () => import( '../views/article/Draft.vue')
@@ -60,6 +61,12 @@ const routes = [
     path: '/active',
     name: 'Active',
     component: Active,
+  },
+  {
+    // 密码重置
+    path:'/reset',
+    name:'Reset',
+    component:Reset,
   },
   {
     //文区
