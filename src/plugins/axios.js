@@ -3,12 +3,14 @@
 import Vue from 'vue';
 import axios from "axios";
 import router from '../router/index'
+import store from '../store/index'
 import ViewUI from 'view-design'
 import cookie from "js-cookie";
 const csrfToken = cookie.get("csrfToken");
+const AUTH_TOKEN = 'Bearer ' + store.state.user.token
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
-// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.headers.post['x-csrf-token'] = csrfToken;
 axios.defaults.headers.delete['x-csrf-token'] = csrfToken;
 
