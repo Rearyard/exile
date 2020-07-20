@@ -156,7 +156,7 @@
       <Row class = "info-card">
         <Row style = "padding-left:0.5rem;">
           <i-col span="5">
-            <div v-show="user.isMyself"><strong>用户名： </strong></div>
+            <div v-show="user.isMyself"><strong>账号： </strong></div>
             <strong>昵称：</strong>
           </i-col>
           <i-col span="13">
@@ -294,34 +294,73 @@
           </i-col>
         </Row>
       </Row>
-      <Row class="info-card" v-show="user.isMyself">
+      <Row class="info-card" style="padding-bottom: 0.5rem;" v-show="user.isMyself">
         <Row style="padding-left:0.5rem;">
-            <Modal
-              v-if="!currentProvementResult"
-              v-model="provementModal"
-              title="自证结果"
-              :mask-closable="false"
-              :loading="provementLoading"
-              fullscreen>
-              <p><strong>审查回复：</strong>{{provementResponse}}</p>
-              <Divider />
-              <p style="margin-bottom: 10px;">请修改您的自证内容并重新提交，以便我们再次审核。</p>
-              <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" />
-              <div slot="footer">
-                <Button class = "button-cancel" @click="closeProvementModal">取消</Button>
-                <Button type="success" @click="addProvement" :loading="provementLoading">提交</Button>
-                </div>
-            </Modal>
-            <i-col span="7">
-              <strong>自证结果：</strong>
-            </i-col>
-            <i-col span="17">
-            <span>
-              {{displayedProvementResult}}
-              <Icon v-if="!currentProvementResult&&provementReplied&&provementItem.length<2" @click="openProvementModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+          <i-col span="7">
+            <strong>自证结果：</strong>
+          </i-col>
+          <i-col span="17">
+          <span>
+            {{displayedProvementResult}}
+            <Icon v-if="!currentProvementResult&&provementReplied&&provementItem.length<2" @click="openProvementModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+            <span v-if="provementItem.length>=2&&!currentProvementResult">（次数已用尽）</span>
+          </span>
+          </i-col>
+        </Row>
+        <Row style="padding-left:0.5rem;">
+          <i-col span="7">
+            <strong>出生日期：</strong>
+          </i-col>
+          <i-col span="17">
+            <span>{{birthdayFormated}}</span>
+            <Icon v-if="!currentProvementResult&&provementReplied&&provementItem.length<2" @click="openBirthdayModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+          </i-col>
+        </Row>
+        <Modal
+          v-if="!currentProvementResult"
+          @on-cancel="closeProvementModal"
+          v-model="provementModal"
+          :mask-closable="false"
+          :loading="provementLoading"
+          fullscreen>
+          <p slot="header">
+            <span v-if="editBirthday">修改生日</span>
+            <span v-else>修改自证</span>
+          </p>
+          <div v-show="!editBirthday">
+            <p><strong>管理员回复：</strong>{{provementResponse?provementResponse:'无'}}</p>
+            <Divider />  
+          </div>
+          <p>您的年龄是: 
+            <span v-if="!editBirthday">
+              {{userAgeUpdated}}岁
+              <Icon
+                @click="editBirthday=true"
+                v-show="user.isMyself"
+                type="ios-create-outline"
+                size="20"
+              />
             </span>
-            </i-col>
-          </Row>
+            <span v-else>
+              <DatePicker type="date" placeholder="Select date" size="small" style="width:10rem;" :start-date="new Date(2000, 1, 1)" @on-change="changeBirthday"></DatePicker>
+              {{userAgeUpdated?userAgeUpdated+'岁':'请选择'}}
+            </span>
+          </p>
+          <p>需要提交的相应自证材料是：{{permissionRules[authority].provement_item?permissionRules[authority].provement_item:'无'}}</p>
+          <Divider style="margin-top: 1rem; margin-bottom: 1rem;" />
+          <p style="margin-bottom: 10px"><strong>{{editBirthday?'为了修改生日，您需要重新提交自证。':'由于您的自证未通过，您有一次重新提交的机会。'}}</strong></p>
+          <p style="margin-bottom: 10px">PS：每位用户仅有一次重新提交自证的机会（如果您要修改生日，也会消耗掉这次机会。）</p>
+          <Input v-model="provementText" placeholder="建议您在本地编辑完成后再粘贴提交。" type="textarea" :rows="6" class="provement-input" />
+          <div slot="footer">
+            <Button class = "button-cancel" @click="closeProvementModal">取消</Button>
+            <Button type="success" @click="addProvement" :loading="provementLoading">提交</Button>
+            </div>
+        </Modal>
+        <Row style="text-align: center; margin-top: 4px;">
+          <a style="text-decoration: underline; font-size: 0.75rem; color: #515a6e;" href="/questionmobile#what_can_i_see" target="_blank">
+            我在后花园能阅读什么分级的作品？
+          </a>
+        </Row>
       </Row>
       <Row v-show="user.isMyself" style = "padding: 0px 2px; margin-top: 5px;">
         <Button type="error" @click="postLogout" style="border-radius:10px" long>登出</Button>
@@ -386,6 +425,11 @@ export default {
       provementText: 'Some self-proof text submitted before.',
       provementModal: false,
       provementLoading: false,
+      permissionRules: [],
+      // userAge: 0,
+      userAgeUpdated: 0,
+      birthdayUpdated: new Date(),
+      editBirthday: false,
     }
   },
   components: { 
@@ -396,15 +440,34 @@ export default {
       moment.locale('zh-cn');
       return moment(this.user.user_registered).toNow(true)
     },
+    birthdayFormated(){
+      moment.locale('zh-cn');
+      return moment(this.user.user_birth).format('LL');   // 2020年6月22日
+    },
+    userAge(){
+      moment.locale();
+      const str = moment(this.user.user_birth).fromNow();
+      return parseInt(str);
+    },
     displayedProvementResult() {
       if (!this.provementReplied) {
         return '审核中'
       }
-        return this.currentProvementResult? '已通过':'未通过';
+      return this.currentProvementResult? '已通过':'未通过';
+    },
+    authority() {
+      for (const key in this.permissionRules) {
+          const element = this.permissionRules[key];
+          if (element.min_age<=this.userAgeUpdated&&this.userAgeUpdated<=element.max_age) {
+            return Number(key);
+        }
       }
+      return 0;
+    }
   },
   mounted(){
     this.getUserInfo();
+    this.getProvementQuestion();
   },
   methods:{
     postLogout() {
@@ -421,6 +484,18 @@ export default {
         .then(res => {
           this.$router.push('/login')
         });
+    },
+    getProvementQuestion(){
+      this.$axios.get('/api/auth/register/info').then((res)=>{
+        this.permissionRules = res.data.permissionRules;
+        // console.log(this.permissionRules);
+      })
+    },
+    changeBirthday(birthday, format){
+      // console.log(birthday);
+      this.birthdayUpdated = birthday;
+      this.userAgeUpdated = parseInt(moment(birthday).fromNow());
+      // console.log(this.userAgeUpdated);
     },
     handeleBeforeUpload(file){
       if(this.user.isMyself){
@@ -460,9 +535,15 @@ export default {
     openProvementModal() {
       this.provementModal = true;
     },
+    openBirthdayModal(){
+      this.editBirthday = true;
+      this.provementModal = true;
+    },
     closeProvementModal() {
       this.provementLoading = false;
       this.provementModal = false;
+      this.editBirthday = false;
+      this.userAgeUpdated = parseInt(moment(this.user.user_birth).fromNow());
     },
     uploadFile(){
       const csrfToken = cookie.get("csrfToken");
@@ -722,7 +803,9 @@ export default {
         } else {
           if(res.status == 200){
             this.user = res.data;
-            this.judgeProvement();
+            // this.userAge = parseInt(moment(this.user.user_birth).fromNow());
+            this.userAgeUpdated = parseInt(moment(this.user.user_birth).fromNow());
+            this.getLastProvement();
           }
         }
       }).catch(error => {
@@ -875,6 +958,7 @@ export default {
         }
       });
     },
+    /*
     judgeProvement() {
       this.$axios.get('/api/auth/provement/judge').then(res=> {
         if (res.status == 200) {
@@ -899,7 +983,7 @@ export default {
           this.$Spin.hide();
         }
       });
-    },
+    }, */
     getLastProvement() {
       this.$axios.get('/api/auth/provement').then(res=> {
         if (res.status == 200){
@@ -907,8 +991,10 @@ export default {
           this.provementItem = allProvements;
           if (allProvements.length > 0) {
             const lastProvement = allProvements[allProvements.length-1];
-            this.provementReplied = lastProvement.replied
+            this.provementReplied = lastProvement.replied;
+            // console.log(this.provementReplied);
             this.provementText = lastProvement.content;
+            this.currentProvementResult = lastProvement.passed;
             this.provementResponse = lastProvement.replied ? lastProvement.reply :'目前暂无对您的自证材料的回复。';
           } else {
             this.provementText = '当前未能查询到您之前提交的自证记录。';
@@ -928,40 +1014,85 @@ export default {
     addProvement() {
       this.provementLoading = true;
       const csrfToken = cookie.get("csrfToken");
-      this.$axios.put('/api/auth/provement/edit', {content:this.provementText},
-        {
-          headers: { "x-csrf-token": csrfToken },
-          withCredentials: true
-        }
-      ).then(res => {
-        // TODO: check res.status
-        if (res.status === 200 && res.data.result) {
-          this.provementSubmitted = res.data.result;
-          this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
-        } else {
-          this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
-        }
-        this.closeProvementModal();
-        this.getLastProvement();
-      }).catch(error=> {
-        console.log('Error status code: ' + error.response.status);
-        if (error.response.status === 401) {
-          this.jumpLogin();
-        } else if (error.response.status === 400){
-          this.$Message.warning({
-              content: '您的自证材料提交失败，请刷新重试。',
-              duration: 10,
-              closable: true
-          });
-        } else {
-          this.$Message.warning({
-              content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
-              duration: 10,
-              closable: true
-          });
-        }
-        this.closeProvementModal();
-      });
+      if(!this.editBirthday){
+        this.$axios.put('/api/auth/provement/edit', {content:this.provementText},
+          {
+            headers: { "x-csrf-token": csrfToken },
+            withCredentials: true
+          }
+        ).then(res => {
+          // TODO: check res.status
+          if (res.status === 200 && res.data.result) {
+            this.provementSubmitted = res.data.result;
+            this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+          } else {
+            this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
+          }
+          this.closeProvementModal();
+          this.getLastProvement();
+        }).catch(error=> {
+          console.log('Error status code: ' + error.response.status);
+          if (error.response.status === 401) {
+            this.jumpLogin();
+          } else if (error.response.status === 400){
+            this.$Message.warning({
+                content: '您的自证材料提交失败，请刷新重试。',
+                duration: 10,
+                closable: true
+            });
+          } else {
+            this.$Message.warning({
+                content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
+                duration: 10,
+                closable: true
+            });
+          }
+          this.closeProvementModal();
+        })
+      } else {
+        // console.log('edit birthday');
+        // console.log(typeof(this.birthdayUpdated))
+        // const birthday = new Date(this.birthdayUpdated)
+        this.$axios.put('/api/user/edit/birthday', 
+          {
+            birthday: this.birthdayUpdated,
+            content: this.provementText
+          },
+          {
+            headers: { "x-csrf-token": csrfToken },
+            withCredentials: true
+          }
+        ).then(res => {
+          // TODO: check res.status
+          if (res.status === 200 && res.data.result) {
+            this.provementSubmitted = res.data.result;
+            this.$Message.success("您的自证材料已成功提交，请耐心等待我们的管理人员审核。");
+          } else {
+            this.$Message.warning('您的自证材料未提交成功，请刷新后重试。');
+          }
+          this.closeProvementModal();
+          this.getUserInfo();
+          this.getLastProvement();
+        }).catch(error=> {
+          console.log('Error status code: ' + error.response.status);
+          if (error.response.status === 401) {
+            this.jumpLogin();
+          } else if (error.response.status === 400){
+            this.$Message.warning({
+                content: '您的自证材料提交失败，请刷新重试。',
+                duration: 10,
+                closable: true
+            });
+          } else {
+            this.$Message.warning({
+                content: '网络出现了一些问题，您的自证材料未能提交，请刷新重试。',
+                duration: 10,
+                closable: true
+            });
+          }
+          this.closeProvementModal();
+        })
+      }
     },
     openFollowingModal(){
       this.followingModal = true;
