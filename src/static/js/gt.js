@@ -1,3 +1,4 @@
+/* eslint-disable */
 "v0.4.8 Geetest Inc.";
 
 (function (window) {
