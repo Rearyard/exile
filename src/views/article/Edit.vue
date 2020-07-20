@@ -189,6 +189,7 @@
                   </form-item>
                 </Form>
                 <quill-editor
+                  ref="quill"
                   v-model="chapter.content"
                   style="margin-bottom: 1rem"
                   :options="editorOption"
@@ -420,6 +421,14 @@ export default {
       if (!multiple) {
         this.chapter.title = this.form.title;
       }
+    },
+    ['chapter.content'](){
+      const quill=this.$refs['quill'].quill
+      const selection=quill.getSelection()
+      this.chapter.content=this.chapter.content.replace(/ /g,'&nbsp;')
+      this.$nextTick(()=>{
+        quill.setSelection(selection)
+      })
     }
   },
   computed: {
