@@ -14,6 +14,13 @@ module.exports = {
         pathRewrite: {
           "^/api": "" // 去掉接口地址中的api字符串
         }
+      },
+      "/control":{
+        target: "http://localhost:7001",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/control": ""
+        }
       }
     }
   }
