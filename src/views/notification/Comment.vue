@@ -2,7 +2,7 @@
 <!--suppress ALL -->
 <template>
   <List>
-    <ListItem class="ul-row" v-for="r in comments">
+    <ListItem class="ul-row" v-for="r in comments" :key="r">
       <div>
         <div style="display: flex">
           <Avatar :src="r.by.user_avatar_url" size="large"/>

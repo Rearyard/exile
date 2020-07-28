@@ -213,7 +213,7 @@
                   type="password"
                   password 
                   v-model="oldpsw"
-                  placeholder="无需修改则留空"
+                  placeholder="请输入旧密码"
                 />       
               </Row>  
               <Row class="info-row"  v-if="pswStep == 1">
@@ -223,7 +223,7 @@
                   type="password"
                   password 
                   v-model="newpsw"
-                  placeholder="无需修改则留空"
+                  placeholder="请输入新密码"
                 />
               </Row>              
               <Row class="info-row"  v-if="pswStep == 2">
@@ -233,7 +233,7 @@
                   type="password"
                   password 
                   v-model="newpswConfirm"
-                  placeholder="无需修改则留空"
+                  placeholder="请重复输入新密码"
                 />
               </Row>
               <Button
@@ -313,11 +313,10 @@
           </i-col>
           <i-col span="17">
             <span>{{birthdayFormated}}</span>
-            <Icon v-if="!currentProvementResult&&provementReplied&&provementItem.length<2" @click="openBirthdayModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
+            <Icon v-if="provementItem.length<2" @click="openBirthdayModal" size="20" type="ios-create-outline" style="vertical-align: top;"/>
           </i-col>
         </Row>
         <Modal
-          v-if="!currentProvementResult"
           @on-cancel="closeProvementModal"
           v-model="provementModal"
           :mask-closable="false"

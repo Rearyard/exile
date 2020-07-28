@@ -126,15 +126,18 @@
                 </MenuItem>
               </iCol>
               <iCol span="4" class="bottom-nav" >
-                <MenuItem name="p5" disabled to="#">
+                <MenuItem name="p5" to="/notification">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
-                      <Icon style="color:#aaa !important;" type="md-mail" :size="30" />
+                      <Badge :count="message.number" :overflow-count="99" :offset=[10,-2]>
+                      <Icon type="md-mail" :size="30" />
+                      </Badge>
                     </iCol>
                     <iCol class="bottom-nav-text">
-                      <span style="color:#aaa !important;">开发中</span>
+                      <span>消息</span>
                     </iCol>
                   </Row>
+                
                 </MenuItem>
               </iCol>
               <iCol span="4" class="bottom-nav">
@@ -165,7 +168,8 @@ export default {
   data() {
     return {
       activeTab: "0",
-      searchQuery: ""
+      searchQuery: "",
+      message: {}
     };
   },
   computed: {
@@ -211,7 +215,7 @@ export default {
       const flag = navigator.userAgent.match(
         /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
       );
-      console.log(flag);
+      // console.log(flag);
       return flag ? 1 : 0;
     },
     postLogout() {
@@ -229,6 +233,19 @@ export default {
           this.$store.commit("clearUserInfo");
           this.$router.push("/login");
         });
+    },
+    getMessage() {
+      this.$Spin.show();
+      this.$axios.get("/message/all").then( res => {
+        if(res.status == 200){
+          this.message = res.data;
+          this.message.number = res.data.likes + res.data.comments + res.data.posts;
+          // console.log('message:', this.message.number)
+        }
+        this.$Spin.hide();
+      }).catch(error=>{
+        this.$Spin.hide();
+      });
     },
     jumpUserCenter() {
       // console.log(`user id is ${this.user.id}`);
@@ -282,6 +299,8 @@ export default {
           }, 500);
         }
       });
+    } else {
+      this.getMessage();
     }
   }
 };

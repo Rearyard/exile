@@ -38,7 +38,7 @@
               />
               <Icon v-else type="md-contact" size="24" />
               <div>
-                <router-link :to="isMobile?'/selfmobile/':'/self/'+author.uid+'/info'" style="color:#222;text-decoration: underline">{{ author.nickname }}</router-link>
+                <span @click="jumpUserCenter(author.uid)" style="text-decoration: underline; cursor: pointer">{{author.nickname}}</span>
               </div>
               <Icon type="md-funnel" size="24" />
               <div>
@@ -199,7 +199,7 @@
               show-elevator
               style="margin-bottom: 1em"
             />
-            <Card v-for="c in comments">
+            <Card v-for="c in comments" :key="c.author.id">
               <div
                 slot="title"
                 style="display: flex;justify-content: space-between;align-items: center"
@@ -480,6 +480,16 @@ export default class ArticleContent extends Vue {
       }
     });
   }
+
+  jumpUserCenter(id) {
+    const isMobile = this.$store.state.isMobile;
+    if (isMobile) {
+      this.$router.push(`/selfmobile/${id}/info`);
+    } else {
+      this.$router.push(`/self/${id}/info`);
+    }
+  }
+
   modifyChapter(){
     this.chapterModify = !this.chapterModify
   }

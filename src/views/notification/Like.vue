@@ -2,7 +2,7 @@
 <!--suppress ALL -->
 <template>
   <List>
-    <ListItem class="ul-row" v-for="r in likes">
+    <ListItem class="ul-row" v-for="r in likes" :key="r.type">
       <div style="display: flex">
         <Avatar :src="r.by.user_avatar_url" size="large"/>
         <div class="content">
@@ -54,6 +54,9 @@
       },
       time: "2020-06-03T12:32:54.000Z"
     })
+    async mounted(){
+      console.log('mounted')
+    }
   }
 </script>
 
