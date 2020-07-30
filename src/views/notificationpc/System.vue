@@ -2,13 +2,10 @@
 <!--suppress ALL -->
 <template>
   <div>
-    <div style="padding-bottom:0.5rem; margin-top:0.5rem">
-      <Icon type="md-arrow-back"/>
-      <span @click="jumpNotification()">全部消息</span>
-    </div>
     <List>
       <ListItem class="ul-row" v-for="r in notification" :key="r._id">
-        <div class="content">{{r.payload.msg}}
+        <Icon type="ios-notifications-outline" size="40"></Icon>
+        <div style="margin:.5em;padding: 1em; width: 100%">{{r.payload.msg}}
         </div>
         <div class="times-ago">{{moment(r.timeStamp).fromNow()}}</div>
       </ListItem>
@@ -86,7 +83,7 @@
 
     & > .times-ago {
       display: block;
-      width: 100%;
+      width: 40%;
       font-size: small;
       text-align: right;
     }

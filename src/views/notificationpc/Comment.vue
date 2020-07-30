@@ -2,26 +2,22 @@
 <!--suppress ALL -->
 <template>
   <div>
-    <div style="padding-bottom:0.5rem; margin-top:0.5rem">
-      <Icon type="md-arrow-back"/>
-      <span @click="jumpNotification()">全部消息</span>
-    </div>
     <List id="commentMessageBox">
       <ListItem class="ul-row" v-for="r in commentMessage.message" :key="r._id">
         <div style="width:100%; padding-right:1rem;">
           <div style="display: flex; flex-direction: row; width:100%">
+            <Icon
+              v-if="!r._ACK"
+              type="ios-radio-button-on"
+              style="color:#ed4014; padding-right: 1rem;"
+              size="12"
+            />
             <Avatar :src="r.sender.avatar" size="large"/>
             <div style="margin-left: 1em; width:80%">
               <router-link :to="`/selfmobile/${r.sender.id}/info`">{{r.sender.nickname}}</router-link>
               <span style="color:gray">{{r.target.type=='comment'?'回复':'评论'}}了你的{{r.target.type=='comment'?'回复':'文章'}}</span>
               <router-link :to="`/article/${r.target.id}`">{{r.target.content}}</router-link>
             </div>
-            <Icon
-              v-if="!r._ACK"
-              type="ios-radio-button-on"
-              style="color:#ed4014"
-              size="12"
-            />
           </div>
           <div style="margin:.5em;padding: 1em;background: #eee; width: 100%">
             {{r.payload.message}}
@@ -132,7 +128,7 @@
     padding: 1em !important;
     & > .times-ago {
       display: block;
-      width: 100%;
+      width: 50%;
       font-size: small;
       text-align: right;
     }

@@ -65,7 +65,7 @@
   @Component
   export default class MessageIndex extends Vue {
     rows = [
-      {type: 'system', title: '关注', cnt: 0, icon: 'ios-notifications-outline'},
+      {type: 'system', title: '系统消息', cnt: 0, icon: 'ios-notifications-outline'},
       // {type: 'directMsg', cnt: 3, title: '私信', icon: 'ios-mail-outline'},
       {type: 'comment', title: '评论', cnt:0 ,icon: 'ios-chatboxes-outline'},
       {type: 'like', title: '赞', cnt:0 ,icon: 'ios-thumbs-up-outline'},

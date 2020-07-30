@@ -34,6 +34,10 @@ const NotificationSystem= ()=>import('../views/notification/Notification.vue')
 const NotificationLike= ()=>import('../views/notification/Like.vue')
 const NotificationComment= ()=>import('../views/notification/Comment.vue')
 const NotificationDM= ()=>import('../views/notification/DirectMsg.vue')
+const PCNotificationIndex = ()=>import('../views/notificationpc/Index.vue')
+const PCNotificationSystem = ()=>import('../views/notificationpc/System.vue')
+const PCNotificationComment = ()=>import('../views/notificationpc/Comment.vue')
+const PCNotificationLike = ()=>import('../views/notificationpc/Like.vue')
 
 Vue.use(VueRouter)
 
@@ -226,6 +230,28 @@ const routes = [
         name: 'NotificationDM',
         component: NotificationDM,
         path: 'directmsg'
+      }
+    ]
+  },
+  {
+    path:'/pcnotification',
+    component: PCNotificationIndex,
+    name: 'PCNotificationIndex',
+    children: [
+      {
+        name: 'PCNotificationSystem',
+        component: PCNotificationSystem,
+        path: 'system'
+      },
+      {
+        name: 'PCNotificationComment',
+        component: PCNotificationComment,
+        path: 'comment'
+      },
+      {
+        name: 'PCNotificationLike',
+        component: PCNotificationLike,
+        path: 'like'
       }
     ]
   }

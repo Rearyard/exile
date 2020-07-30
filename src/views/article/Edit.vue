@@ -38,6 +38,10 @@
             <iCol :xs="{ span: 22 }" :lg="{ span: 20 }">
               <span class="ins-title">{{instructions[step].title}}</span>
               <p>{{instructions[step].content}}<a @click="modalRate=true">点此查看分级标准</a></p>
+              <a href="/questionmobile" target="_blank"
+                style="font-size:0.8rem;text-decoration:underline; color: #515a6e;">
+                还有疑问?点这里查看常见问题解答
+              </a>
             </iCol>
           </Row>
         </Row>
@@ -189,13 +193,14 @@
                   </form-item>
                 </Form>
                 <quill-editor
+                  id="editor"
                   v-model="chapter.content"
-                  style="margin-bottom: 1rem"
+                  style="margin-bottom: 1rem;"
                   :options="editorOption"
                 />
               </iCol>
             </Row>
-            <Row>
+            <Row style="margin-top:3rem">
               <iCol>
                 <div class="action-grounp">
                   <Button
@@ -691,9 +696,9 @@ export default {
   },
   mounted() {
     document.styleSheets[0].insertRule(
-      ".ql-editor{min-height: 300px !important}",
+      ".ql-editor{height: 300px !important}",
       0
-    );
+    ); 
       this.$axios.get('/api/auth/register/info').then((res)=>{
         this.rateDescription = res.data.rateDescription
       })
@@ -856,5 +861,8 @@ div.action-grounp {
 .ins-title {
   font-size: 1.2em;
   font-weight: bold;
+}
+.quill-editor{
+    height: 300px !important
 }
 </style>

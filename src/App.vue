@@ -25,7 +25,7 @@
                   <MenuItem name="2" class="link-item" to="/join">技术交流</MenuItem>
                 </div>
               </div>
-              <div class="wrapper-func-right">
+              <div class="wrapper-func-right" style="display:flex; align-items: center; height:64px">
                 <div class="wrapper-search">
                   <iInput
                     @on-click="jumpSearchResult"
@@ -36,18 +36,27 @@
                     class="header-search"
                   ></iInput>
                 </div>
+                <Badge :count="message.number" :overflow-count="99" :offset=[3,10]
+                  style="display:flex; align-items: center; padding: 0px 10px 0px 0px">
+                  <Icon @click="jumpNotificationPC()"
+                    type="ios-notifications-outline" size="40"
+                    style="cursor: pointer"
+                  ></Icon>
+                </Badge>
                 <Avatar
                   :src="user.user_avatar_url"
-                  style="background-color: #87d068"
+                  style="background-color: #87d068;"
                   icon="ios-person"
                 />
-
                 <span style="display:inline-block;margin: 0 20px 0 20px">
                   <Dropdown>
                     <a v-if="user.id" style="color:#fff">{{user.user_nickname}}</a>
                     <DropdownMenu slot="list">
                       <DropdownItem divided>
                         <a @click="jumpUserCenter" style="color:black">个人中心</a>
+                      </DropdownItem>
+                      <DropdownItem divided>
+                        <a @click="jumpNotificationPC" style="color:black">消息中心</a>
                       </DropdownItem>
                       <DropdownItem divided>
                         <a @click="postLogout" style="color:black">登出</a>
@@ -130,7 +139,7 @@
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
                       <Badge :count="message.number" :overflow-count="99" :offset=[10,-2]>
-                      <Icon type="md-mail" :size="30" />
+                        <Icon type="md-mail" :size="30" />
                       </Badge>
                     </iCol>
                     <iCol class="bottom-nav-text">
@@ -239,7 +248,7 @@ export default {
       this.$axios.get("/message/all").then( res => {
         if(res.status == 200){
           this.message = res.data;
-          this.message.number = res.data.likes + res.data.comments + res.data.posts;
+          this.message.number = res.data.likes + res.data.comments;
           // console.log('message:', this.message.number)
         }
         this.$Spin.hide();
@@ -276,6 +285,11 @@ export default {
           }
         });
       }
+    },
+    jumpNotificationPC(){
+      this.$router.push({
+        path: '/pcnotification/system'
+      })
     }
   },
   mounted() {
