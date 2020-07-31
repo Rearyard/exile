@@ -172,6 +172,7 @@
     </Row>
     <Row style="margin-top:2rem">
       <iCol
+        v-if="count != 0"
         :xs="{ span: 20, offset: 2}"
         :sm="{ span: 18, offset:3 }"
         :md="{ span: 16, offset: 4 }"
@@ -255,9 +256,16 @@
             <span>{{item.article.article_view}}次阅读</span>
           </div>
         </div>
+        <Page :total=count
+          :current.sync=pageCount
+          size="small" show-elevator
+          simple
+          @on-change="changePage"
+          style="float:right; padding-top: 5px;"
+        />
       </iCol>
       <iCol
-        v-if="count == 0"
+        v-else
         :xs="{ span: 20, offset: 2}"
         :sm="{ span: 18, offset:3 }"
         :md="{ span: 16, offset: 4 }"
@@ -268,7 +276,7 @@
         </div>
       </iCol>
     </Row>
-    <BackTop :bottom="portable?70:30" :right="portable?10:30"></BackTop>
+    <!-- <BackTop :bottom="portable?70:30" :right="portable?10:30"></BackTop> -->
   </div>
 </template>
 
@@ -409,6 +417,7 @@
       changePage(pageCount) {
         // console.log(`页码${pageCount}`);
         this.fetchSearchResult((pageCount - 1) * 10, 10);
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
       },
       changeTitle() {
         // console.log(this.pageCount,this.title);

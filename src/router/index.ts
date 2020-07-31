@@ -5,6 +5,7 @@ const Index= () => import( '../views/Index.vue')
 const Login= () => import( '../views/Login.vue')
 const Register= () => import( '../views/Register.vue')
 import Reset  from '@/views/Reset.vue'
+import Request from '@/views/Request.vue'
 const Active= () => import( '../views/Active.vue')
 const Article= () => import( '../views/article/Index.vue')
 const Draft= () => import( '../views/article/Draft.vue')
@@ -28,12 +29,16 @@ const EditArticle= () => import( '../views/article/Edit.vue')
 const ImportArticle= () => import( '../views/article/Load.vue')
 const ArticleContent= () => import( '../views/article/Content.vue')
 const ArticleSearchResult= () => import( '../views/article/SearchResult.vue')
-const MessageWrapper= ()=>import('../views/messages/Wrapper.vue')
-const MessageIndex= ()=>import('../views/messages/Index.vue')
-const MessageNotification= ()=>('../views/messages/Notification.vue')
-const MessageLike= ()=>('../views/messages/Like.vue')
-const MessageComment= ()=>('../views/messages/Comment.vue')
-const MessageDirectMsg= ()=>('../views/messages/DirectMsg.vue')
+const NotificationWrapper= ()=>import('../views/notification/Wrapper.vue')
+const NotificationIndex= ()=>import('../views/notification/Index.vue')
+const NotificationSystem= ()=>import('../views/notification/Notification.vue')
+const NotificationLike= ()=>import('../views/notification/Like.vue')
+const NotificationComment= ()=>import('../views/notification/Comment.vue')
+const NotificationDM= ()=>import('../views/notification/DirectMsg.vue')
+const PCNotificationIndex = ()=>import('../views/notificationpc/Index.vue')
+const PCNotificationSystem = ()=>import('../views/notificationpc/System.vue')
+const PCNotificationComment = ()=>import('../views/notificationpc/Comment.vue')
+const PCNotificationLike = ()=>import('../views/notificationpc/Like.vue')
 
 Vue.use(VueRouter)
 
@@ -55,6 +60,12 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register,
+  },
+  {
+    //注册申请
+    path:'/request',
+    name:'Request',
+    component:Request,
   },
   {
     //激活
@@ -202,30 +213,53 @@ const routes = [
     ]
   },
   {
-    path: '/message/',
-    component: MessageWrapper,
+    path: '/notification',
+    component: NotificationWrapper,
+    name: 'NotificationWrapper',
     children: [
       {
-        name: 'MessageIndex',
-        component: MessageIndex,
-        path: '',
+        name: 'NotificationIndex',
+        component: NotificationIndex,
+        path: ''
       },{
-        name: 'MessageNotification',
-        component: MessageNotification,
-        path: 'notification',
+        name: 'NotificationSystem',
+        component: NotificationSystem,
+        path: 'system'
       },{
-        name: 'MessageLike',
-        component: MessageLike,
-        path: 'like',
+        name: 'NotificationLike',
+        component: NotificationLike,
+        path: 'like'
       },{
-        name: 'MessageComment',
-        component: MessageComment,
-        path: 'comment',
+        name: 'NotificationComment',
+        component: NotificationComment,
+        path: 'comment'
       },{
-        name: 'MessageDirectMsg',
-        component: MessageDirectMsg,
-        path: 'DirectMsg',
+        name: 'NotificationDM',
+        component: NotificationDM,
+        path: 'directmsg'
+      }
+    ]
+  },
+  {
+    path:'/pcnotification',
+    component: PCNotificationIndex,
+    name: 'PCNotificationIndex',
+    children: [
+      {
+        name: 'PCNotificationSystem',
+        component: PCNotificationSystem,
+        path: 'system'
       },
+      {
+        name: 'PCNotificationComment',
+        component: PCNotificationComment,
+        path: 'comment'
+      },
+      {
+        name: 'PCNotificationLike',
+        component: PCNotificationLike,
+        path: 'like'
+      }
     ]
   }
 ]
