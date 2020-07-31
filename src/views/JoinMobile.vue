@@ -5,16 +5,41 @@
         <div class="card-content">
           <Row type="flex" justify="center">
             <iCol span="8">
-              <img class="theme-icon" src="../assets/icons/need.svg" />
+              <img class="theme-icon" style="border-radius:50%" src="../assets/icons/donation.svg" />
             </iCol>
             <iCol span="16">
-              <p class="card-content-title">这里需要你</p>
+              <p class="card-content-title">捐赠我们</p>
             </iCol>
           </Row>
           <div class="card-content-text">
-            <p>很高兴认识您！这里是后花园开发组，我们是一群来自五湖四海的学生，志愿开发了这个平台。</p>
-            <p>目前平台所有的费用都有开发者承担，我们暂时不需要捐赠，您的创作热情就是对我们最大的鼓励。</p>
-            <p>我们希望有更多懂得相关技术以及平台运营的人参与进来（事实上因为人手不足，我打下这行字的时候已经通宵了两天），我们也希望能找到更多志同道合的朋友，共同建设我们的后花园。</p>
+            <p>随着注册人数越来越多，我们不得不公开筹款，来募集网站不断上涨的维护费用。</p>
+            <p>目前只开通PayPal渠道，<strong>转帐时请备注backyard，收款人介绍是“Somewhere our there in the outback there is a yard”</strong>，请仔细核对，以免误操作。</p>
+            <p>如果您愿意的话，可以留下您的称呼，我们会在开发app版本的时候将您记录到感谢名单上。</p>
+          </div>
+          <div style="padding: 1rem 2rem 0rem 2rem">
+            <Button
+              style=" height: 3rem; width: 100%; font-size: 1.5rem; border-radius: 1rem;"
+              type="success"
+              @click="openDonation()"
+            >
+              ¥ 捐赠我们
+            </Button>
+          </div>
+        </div>
+      </Row>
+      <Row class="wrapper-card" type="flex" justify="space-around" align="middle">
+        <div class="card-content">
+          <Row type="flex" justify="center">
+            <iCol span="8">
+              <img class="theme-icon" src="../assets/icons/need.svg" />
+            </iCol>
+            <iCol span="16">
+              <p class="card-content-title">志愿者招募</p>
+            </iCol>
+          </Row>
+          <div class="card-content-text">
+            <p>很高兴认识您！这里是后花园开发组，我们是一群来自五湖四海的同人爱好者，志愿开发了这个平台。您的创作热情就是对我们最大的鼓励。</p>
+            <p>我们希望有更多懂得相关技术以及平台运营的人参与进来，我们也希望能找到更多志同道合的朋友，共同建设我们的后花园。</p>
             <p>衷心希望您能在这里获得快乐！</p>
             <p style="text-align: right;">——后花园全体开发组</p>
           </div>
@@ -78,21 +103,20 @@
           </iCol>
           <iCol span="16">
             <div class="card-content">
-              <p class="card-content-title" style="margin:0;">如有意向请留言：</p>
+              <p class="card-content-title" style="margin:0;">如有意向请联系</p>
             </div>
           </iCol>
         </Row>
         <Row>
           <iCol>
             <div class="card-content-text">
-                <br>
-                <p>珍珠斛：</p>
-                <p>邮箱：cloudlx0@gmail.com</p>
-                <p>LOFTER:hh2333</p>
-                <p>陌谦：</p>
-                <p>邮箱：kirino@cafuchino.cn</p>
-                <p>LOFTER:cafu-chino</p>
-              </div>
+              <br>
+              <p><a href="http://weibointl.api.weibo.com/share/163144416.html?weibo_id=4532838919052728" target="_blank"> >> 点击这里申请成为志愿者</a></p>
+              <p>或私信官方微博<strong>@亚特兰蒂斯和平鸽</strong></p>
+              <p>更多技术上的反馈，请发邮件到以下邮箱:</p>
+              <p>cloudlx0@gmail.com(珍珠斛)</p>
+              <p>kirino@cafuchino.cn(陌谦)</p>
+            </div>
           </iCol>
         </Row>
       </Row>
@@ -107,6 +131,11 @@ export default {
       message: '',
       email: '',
       name: ''
+    }
+  },
+  methods:{
+    openDonation(){
+      window.open("https://www.paypal.com/paypalme/crystalytlin", "_blank");
     }
   }
 }
