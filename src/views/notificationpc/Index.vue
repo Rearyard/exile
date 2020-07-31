@@ -7,19 +7,15 @@
                     <Icon type="ios-home-outline"></Icon> 后花园
                 </Breadcrumb-item>
                 <Breadcrumb-item>
-                    <Icon type="pound"></Icon>个人中心
+                    <Icon type="pound"></Icon>消息中心
                 </Breadcrumb-item>
             </Breadcrumb>
-            
             <Row>
                 <!-- 左侧菜单栏 -->
                 <i-col span="5" class="nav-bar">
-                    <router-link to="info" active-class="active">基本信息</router-link>
-                    <router-link to="works" active-class="active">我的作品</router-link>
-                    <router-link to="following" active-class="active">我的关注</router-link>
-                    <router-link to="followed" active-class="active">我的粉丝</router-link>
-                    <router-link to="favorite" active-class="active">我的收藏</router-link>
-                    <router-link to="provement" active-class="active">自证审查</router-link>
+                    <router-link to="system" active-class="active">系统消息</router-link>
+                    <router-link to="like" active-class="active">点赞({{message.likes}})</router-link>
+                    <router-link to="comment" active-class="active">评论({{message.comments}})</router-link>
                 </i-col>
                 <i-col class="right" span="17" offset="1">
                     <!-- 右边二级路由 -->
@@ -33,7 +29,30 @@
 
 <script>
 export default {
-
+    data(){
+        return{
+            message:{}
+        }
+    },
+    methods:{
+        getMessage() {
+        this.$Spin.show();
+        this.$axios.get("/message/all").then( res => {
+            if(res.status == 200){
+            this.message = res.data;
+            // console.log('message:', this.message.number)
+            }
+            this.$Spin.hide();
+        }).catch(error=>{
+            this.$Spin.hide();
+        });
+        },
+    },
+    mounted(){
+        this.message.likes = 0;
+        this.message.comments = 0;
+        this.getMessage();
+    }
 };
 </script>
 
