@@ -5,10 +5,36 @@
         <div class="card-content">
           <Row type="flex" justify="center">
             <iCol span="8">
+              <img class="theme-icon" style="border-radius:50%" src="../assets/icons/donation.svg" />
+            </iCol>
+            <iCol span="16">
+              <p class="card-content-title">捐赠我们</p>
+            </iCol>
+          </Row>
+          <div class="card-content-text">
+            <p>随着注册人数越来越多，我们不得不公开筹款，来募集网站不断上涨的维护费用。</p>
+            <p>目前只开通PayPal渠道，<strong>转帐时请备注backyard，收款人介绍是“Somewhere our there in the outback there is a yard”</strong>，请仔细核对，以免误操作。</p>
+            <p>如果您愿意的话，可以留下您的称呼，我们会在开发app版本的时候将您记录到感谢名单上。</p>
+          </div>
+          <div style="padding: 1rem 2rem 0rem 2rem">
+            <Button
+              style=" height: 3rem; width: 100%; font-size: 1.5rem; border-radius: 1rem;"
+              type="success"
+              @click="openDonation()"
+            >
+              ¥ 捐赠我们
+            </Button>
+          </div>
+        </div>
+      </Row>
+      <Row class="wrapper-card" type="flex" justify="space-around" align="middle">
+        <div class="card-content">
+          <Row type="flex" justify="center">
+            <iCol span="8">
               <img class="theme-icon" src="../assets/icons/need.svg" />
             </iCol>
             <iCol span="16">
-              <p class="card-content-title">这里需要你</p>
+              <p class="card-content-title">志愿者招募</p>
             </iCol>
           </Row>
           <div class="card-content-text">
@@ -78,7 +104,7 @@
           </iCol>
           <iCol span="16">
             <div class="card-content">
-              <p class="card-content-title" style="margin:0;">如有意向请留言：</p>
+              <p class="card-content-title" style="margin:0;">如有意向请留言</p>
             </div>
           </iCol>
         </Row>
@@ -87,6 +113,7 @@
             <div class="card-content-text">
                 <br>
                 <p>珍珠斛：</p>
+                <p>微博：珍珠斛_</p>
                 <p>邮箱：cloudlx0@gmail.com</p>
                 <p>LOFTER:hh2333</p>
                 <p>陌谦：</p>
@@ -107,6 +134,11 @@ export default {
       message: '',
       email: '',
       name: ''
+    }
+  },
+  methods:{
+    openDonation(){
+      window.open("https://www.paypal.com/paypalme/crystalytlin", "_blank");
     }
   }
 }

@@ -22,7 +22,7 @@
                 <div class="wrapper-link">
                   <MenuItem name="0" class="link-item" to="/">首页</MenuItem>
                   <MenuItem name="1" class="link-item" to="/article">同人</MenuItem>
-                  <MenuItem name="2" class="link-item" to="/join">技术交流</MenuItem>
+                  <MenuItem name="2" class="link-item" to="/join">帮助我们</MenuItem>
                 </div>
               </div>
               <div class="wrapper-func-right" style="display:flex; align-items: center; height:64px">
@@ -129,7 +129,7 @@
                       <Icon type="md-git-branch" :size="30" />
                     </iCol>
                     <iCol class="bottom-nav-text">
-                      <span>技术交流</span>
+                      <span>帮助我们</span>
                     </iCol>
                   </Row>
                 </MenuItem>
