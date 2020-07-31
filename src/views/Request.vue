@@ -10,17 +10,14 @@
           </Row>
           <Row>
             <iCol>
-              <Form ref="loginForm" :model="form" :rules="rules" id="login-form">
-                <FormItem label="用户名" prop="username">
-                  <iInput v-model="form.username" size="large" @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
+              <Form ref="requestForm" :model="form" :rules="rules" id="login-form">
+                <FormItem label="邮箱" prop="email">
+                  <iInput v-model="form.email" size="large" @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
                 </FormItem>
-                <FormItem label="密码" prop="password">
-                  <iInput type="password" v-model="form.password" size="large"
+                <FormItem label="请回答以下问题" prop="request">
+                  <iInput type="textarea" v-model="form.request" :autosize="{minRows: 5,maxRows: 8}" size="large"
                           @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
                 </FormItem>
-                <Row type="flex" justify="end">
-                  <iCol><router-link to="/request">申请注册</router-link>|<router-link to="/reset">忘记密码</router-link></iCol>
-                </Row>
                 <FormItem label="验证码">
                   <div type="flex"
                        style="width:100%;display: flex;align-items: center">
@@ -37,7 +34,7 @@
                   </div>
                 </FormItem>
                 <FormItem>
-                  <Button type="success" :loading='loading' long @click="handleSubmit">登录</Button>
+                  <Button type="success" :loading='loading' long @click="handleSubmit">提交申请</Button>
                 </FormItem>
               </Form>
             </iCol>
@@ -57,18 +54,19 @@ export default {
     return {
       icon: require("@/assets/favicon_green.png"),
       captcha: true,
-      captchaSrc:'/api/auth/captcha',
+      captchaSrc:'/control/auth/captcha',
       loading: false,
       form: {
-        username: "",
-        password: "",
+        email: "",
+        request: "【说明】:请尽可能详尽的填写下列问题的回答，回答的越详尽真实越有可能通过申请。您也可以在回答完毕所有问题后加上自己想说的话。同时请不要删除题目以方便志愿者审核。审核通过后，邀请链接将发送到您的邮箱，届时请注意查收。\n\n(1)您想在后花园阅读/创作哪方面的同人？\n(2)您最喜欢的同人作品是哪一本？原因是什么？\n(3)请聊聊您最初是如何接触到了同人文化的\n",
         captcha: ""
       },
       rules: {
-        username: [
-          { required: true, message: "用户名不可为空", trigger: "blur" }
+        email: [
+          { required: true, message: "邮箱不可为空", trigger: "blur" },
+          {type:"email",message:"请输入正确邮箱", trigger: "blur"}
         ],
-        password: [{ required: true, message: "密码不可为空", trigger: "blur" }]
+        request: [{ required: true, message: "回答不可为空", trigger: "blur" }]
       }
     };
   },
@@ -77,7 +75,7 @@ export default {
   },
   methods: {
     captchaRefresh() {
-      this.captchaSrc='/api/auth/captcha?rand='+Math.random();
+      this.captchaSrc='/control/auth/captcha?rand='+Math.random();
       /*(this.captcha = false),
         setTimeout(() => {
           this.captcha = true;
@@ -105,7 +103,7 @@ export default {
         const csrfToken = cookie.get("csrfToken");
         this.$axios
           .post(
-            "/api/auth/login",
+            "/control/user/invreq",
             { ...this.form },
             {
               headers: { "x-csrf-token": csrfToken },
@@ -115,9 +113,6 @@ export default {
           .catch(err => {
             const errCode = err.response.status
             switch (errCode) {
-              case 401:
-                 this.$Message.error("用户名或密码错误，请检查");
-                break;
               default:
                 this.$Message.error("网络不畅或服务器故障");
                 break;
@@ -127,7 +122,7 @@ export default {
             return false;
           })
           .then(res => {
-            resolve(res);
+            resolve(res.data);
           });
       });
     },
@@ -135,31 +130,19 @@ export default {
       if (!this.form.captcha) {
         return this.$Message.error("请输入验证码");
       }
-      const captcha = await this.captchaValidate();
-      console.log(captcha);
-      if (!captcha) {
-        this.captchaRefresh();
-        return this.$Message.error("验证码错误，请重新输入");
-      }
-      this.$refs["loginForm"].validate(async valid => {
+      this.$refs["requestForm"].validate(async valid => {
         if (valid) {
           this.loading= true;
-          const user = await this.postLogin();
-          if (!user) {
-            return;
+          const result = await this.postLogin();
+          if (result.code!=200) {
+              this.$Notice.error({title:result.msg})
+              this.captchaRefresh();
+            this.loading = false;
+          }else{
+              this.$Notice.success({title:"提交成功，请耐心等待志愿者审核"})
+              this.loading = false;
+              this.$router.push('/login')
           }
-          if (user.data.user_canceled) {
-            this.loading=false;
-            return this.$Message.error("用户已被注销");
-          }
-          this.$store.commit("setUserInfo", user.data);
-          this.$Message.success(
-            `欢迎回来，${this.$store.state.user.user_nickname}`
-          );
-          if (this.$route.query.from) {
-            return this.$router.push(this.$route.query.from)
-          }
-          return this.$router.push('/')
         }
       });
     }
