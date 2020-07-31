@@ -26,6 +26,9 @@
                 </div>
               </div>
               <div class="wrapper-func-right" style="display:flex; align-items: center; height:64px">
+                <Icon @click="jumpGithub()"
+                  type="logo-github" size="35"
+                  style="cursor: pointer; padding-right: 1rem;" />
                 <div class="wrapper-search">
                   <iInput
                     @on-click="jumpSearchResult"
@@ -290,6 +293,9 @@ export default {
       this.$router.push({
         path: '/pcnotification/system'
       })
+    },
+    jumpGithub(){
+      window.open("https://rearyard.github.io/", "_blank");
     }
   },
   mounted() {

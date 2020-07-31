@@ -33,8 +33,8 @@
             <div class="card-content">
               <p class="card-content-title">志愿者，这里需要你</p>
               <div class="card-content-text">
-                <p>很高兴认识您！这里是后花园开发组，我们是一群来自五湖四海的学生，志愿开发了这个平台，您的创作热情就是对我们最大的鼓励。</p>
-                <p>我们希望有更多懂得相关技术以及平台运营的人参与进来（事实上因为人手不足，我打下这行字的时候已经通宵了两天），我们也希望能找到更多志同道合的朋友，共同建设我们的后花园。</p>
+                <p>很高兴认识您！这里是后花园开发组，我们是一群来自五湖四海的学生，志愿开发了这个平台。您的创作热情就是对我们最大的鼓励。</p>
+                <p>我们希望有更多懂得相关技术以及平台运营的人参与进来，我们也希望能找到更多志同道合的朋友，共同建设我们的后花园。</p>
                 <p>衷心希望您能在这里获得快乐！</p>
                 <p style="text-align: right;">——后花园全体开发组</p>
               </div>
@@ -94,11 +94,14 @@
           </iCol>
           <iCol span="16">
             <div class="card-content">
-              <p class="card-content-title" style="margin:0;">如有意向请私信或邮件：</p>
+              <p class="card-content-title" style="margin:0;">如有意向请联系：</p>
               <div class="card-content-text">
-                <br>
-                <p>珍珠斛：珍珠斛_(微博)/cloudlx0@gmail.com(邮箱)/hh2333(LOFTER)</p>
-                <p>陌谦：kirino@cafuchino.cn(邮箱)/cafu-chino(LOFTER)</p>
+              <br>
+              <p><a href="http://weibointl.api.weibo.com/share/163144416.html?weibo_id=4532838919052728" target="_blank"> >> 点击这里申请成为志愿者</a></p>
+              <p>或私信官方微博<strong>@亚特兰蒂斯和平鸽</strong></p>
+              <p>更多技术上的反馈，请发邮件到以下邮箱:</p>
+              <p>cloudlx0@gmail.com(珍珠斛)</p>
+              <p>kirino@cafuchino.cn(陌谦)</p>
               </div>
             </div>
           </iCol>
