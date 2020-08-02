@@ -12,17 +12,17 @@
             <iCol>
               <Form ref="requestForm" :model="form" :rules="rules" id="login-form">
                 <FormItem label="邮箱" prop="email">
-                  <iInput v-model="form.email" size="large" @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
+                  <iInput v-model="form.email" size="large" />
                 </FormItem>
                 <FormItem label="请回答以下问题" prop="request">
                   <iInput type="textarea" v-model="form.request" :autosize="{minRows: 5,maxRows: 8}" size="large"
-                          @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
+                         />
                 </FormItem>
                 <FormItem label="验证码">
                   <div type="flex"
                        style="width:100%;display: flex;align-items: center">
                     <div style="flex:3 1 0">
-                      <iInput v-model="form.captcha" size="large" @keypress.native="$event.key==='Enter'&&handleSubmit()"/>
+                      <iInput v-model="form.captcha" size="large" />
                     </div>
                       <img
                         style="flex: 1 1 0"
