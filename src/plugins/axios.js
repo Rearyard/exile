@@ -7,7 +7,7 @@ import store from '../store/index'
 import ViewUI from 'view-design'
 import cookie from "js-cookie";
 const csrfToken = cookie.get("csrfToken");
-const AUTH_TOKEN = 'Bearer ' + store.state.user.token
+let AUTH_TOKEN = 'Bearer ' + store.state.user.token
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -25,6 +25,11 @@ const _axios = axios.create(config);
 _axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
+    if (!AUTH_TOKEN) {
+      config.headers.authorization = 'Bearer ' + store.state.user.token
+      AUTH_TOKEN = 'Bearer ' + store.state.user.token
+      axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+    }
     return config;
   },
   function(error) {

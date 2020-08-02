@@ -295,7 +295,7 @@ export default {
       })
     },
     jumpGithub(){
-      window.open("https://rearyard.github.io/", "_blank");
+      window.open("https://github.com/Rearyard", "_blank");
     }
   },
   mounted() {
