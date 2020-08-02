@@ -22,10 +22,13 @@
                 <div class="wrapper-link">
                   <MenuItem name="0" class="link-item" to="/">首页</MenuItem>
                   <MenuItem name="1" class="link-item" to="/article">同人</MenuItem>
-                  <MenuItem name="2" class="link-item" to="/join">技术交流</MenuItem>
+                  <MenuItem name="2" class="link-item" to="/join">帮助我们</MenuItem>
                 </div>
               </div>
-              <div class="wrapper-func-right">
+              <div class="wrapper-func-right" style="display:flex; align-items: center; height:64px">
+                <Icon @click="jumpGithub()"
+                  type="logo-github" size="35"
+                  style="cursor: pointer; padding-right: 1rem;" />
                 <div class="wrapper-search">
                   <iInput
                     @on-click="jumpSearchResult"
@@ -36,18 +39,27 @@
                     class="header-search"
                   ></iInput>
                 </div>
+                <Badge :count="message.number" :overflow-count="99" :offset=[3,10]
+                  style="display:flex; align-items: center; padding: 0px 10px 0px 0px">
+                  <Icon @click="jumpNotificationPC()"
+                    type="ios-notifications-outline" size="40"
+                    style="cursor: pointer"
+                  ></Icon>
+                </Badge>
                 <Avatar
                   :src="user.user_avatar_url"
-                  style="background-color: #87d068"
+                  style="background-color: #87d068;"
                   icon="ios-person"
                 />
-
                 <span style="display:inline-block;margin: 0 20px 0 20px">
                   <Dropdown>
                     <a v-if="user.id" style="color:#fff">{{user.user_nickname}}</a>
                     <DropdownMenu slot="list">
                       <DropdownItem divided>
                         <a @click="jumpUserCenter" style="color:black">个人中心</a>
+                      </DropdownItem>
+                      <DropdownItem divided>
+                        <a @click="jumpNotificationPC" style="color:black">消息中心</a>
                       </DropdownItem>
                       <DropdownItem divided>
                         <a @click="postLogout" style="color:black">登出</a>
@@ -120,21 +132,24 @@
                       <Icon type="md-git-branch" :size="30" />
                     </iCol>
                     <iCol class="bottom-nav-text">
-                      <span>技术交流</span>
+                      <span>帮助我们</span>
                     </iCol>
                   </Row>
                 </MenuItem>
               </iCol>
               <iCol span="4" class="bottom-nav" >
-                <MenuItem name="p5" disabled to="#">
+                <MenuItem name="p5" to="/notification">
                   <Row type="flex" justify="center">
                     <iCol class="bottom-nav-icon">
-                      <Icon style="color:#aaa !important;" type="md-mail" :size="30" />
+                      <Badge :count="message.number" :overflow-count="99" :offset=[10,-2]>
+                        <Icon type="md-mail" :size="30" />
+                      </Badge>
                     </iCol>
                     <iCol class="bottom-nav-text">
-                      <span style="color:#aaa !important;">开发中</span>
+                      <span>消息</span>
                     </iCol>
                   </Row>
+                
                 </MenuItem>
               </iCol>
               <iCol span="4" class="bottom-nav">
@@ -165,7 +180,8 @@ export default {
   data() {
     return {
       activeTab: "0",
-      searchQuery: ""
+      searchQuery: "",
+      message: {}
     };
   },
   computed: {
@@ -174,7 +190,7 @@ export default {
       return window.screen.width < 1024;
     },
     hideHeader() {
-      const situation = ["Login", "Register", "Active","Reset"];
+      const situation = ["Login", "Register", "Active","Reset","Request"];
       return situation.indexOf(this.$route.name) != -1;
     }
   },
@@ -211,7 +227,7 @@ export default {
       const flag = navigator.userAgent.match(
         /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
       );
-      console.log(flag);
+      // console.log(flag);
       return flag ? 1 : 0;
     },
     postLogout() {
@@ -229,6 +245,19 @@ export default {
           this.$store.commit("clearUserInfo");
           this.$router.push("/login");
         });
+    },
+    getMessage() {
+      this.$Spin.show();
+      this.$axios.get("/message/all").then( res => {
+        if(res.status == 200){
+          this.message = res.data;
+          this.message.number = res.data.likes + res.data.comments;
+          // console.log('message:', this.message.number)
+        }
+        this.$Spin.hide();
+      }).catch(error=>{
+        this.$Spin.hide();
+      });
     },
     jumpUserCenter() {
       // console.log(`user id is ${this.user.id}`);
@@ -259,6 +288,14 @@ export default {
           }
         });
       }
+    },
+    jumpNotificationPC(){
+      this.$router.push({
+        path: '/pcnotification/system'
+      })
+    },
+    jumpGithub(){
+      window.open("https://rearyard.github.io/", "_blank");
     }
   },
   mounted() {
@@ -276,12 +313,14 @@ export default {
         } else {
           // FIX: 修复可能出现的套娃问题
           setTimeout(() => {
-            if (this.$route.name != "Register" && this.$route.name != "Login"&&this.$route.name!="Reset") {
+            if (this.$route.name != "Register" && this.$route.name != "Login"&&this.$route.name!="Reset"&& this.$route.name!="Request") {
               this.jumpLogin();
             }
           }, 500);
         }
       });
+    } else {
+      this.getMessage();
     }
   }
 };

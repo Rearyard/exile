@@ -98,7 +98,7 @@
                 <Input v-model="chapter.note" placeholder="可留空"/>
               </form-item>
               <quill-editor v-model="chapter.content"
-                            style="margin-bottom: 1rem"/>
+                            style="margin-bottom: 1rem;"/>
               <div class="action-grounp">
                 <Button type="warning" style="margin:0 .5rem" size="large"
                         @click="clearContent(()=>(fetchChapter(form.aid,chapter.cid)))">
@@ -371,10 +371,13 @@ export default{
   .quill-editor {
     height: fit-content;
   }
-
+  
   div.action-grounp {
     flex-basis: 100%;
     display: flex;
     justify-content: right;
+  }
+  .ql-editor {
+    height:15rem;
   }
 </style>
