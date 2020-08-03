@@ -291,7 +291,15 @@ export default {
     basicInfoCheck() {
       this.$refs['registerForm'].validate(valid => {
         if (valid) {
-          this.nextStep()
+          this.$axios.post('/api/auth/register/check',this.form).then((res)=>{
+            if (res.data.resultName) {
+              return this.$Message.error('用户名已存在，请更换用户名')
+            }
+            if (res.data.resultEmail) {
+              return this.$Message.error("此邮箱已经注册过")
+            }
+            this.nextStep()
+          })
         } else {
           return;
         }
