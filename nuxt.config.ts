@@ -23,16 +23,7 @@ export default defineNuxtConfig({
      */
     componentDir: './components/ui'
   },
-  vite: {
-    server: {
-      hmr: {
-        protocol: 'wss',
-      }
-    }
-  },
   colorMode: {
     classSuffix: '',
-    preference: 'system', // default value of $colorMode.preference
-    fallback: 'light', // fallback value if not system preference found
   },
 })

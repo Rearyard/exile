@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <Button>Click me</Button>
-  </div>
+  <div class="dark"></div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 <script setup lang="ts">
 
