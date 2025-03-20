@@ -10,7 +10,9 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/icon',
     '@nuxt/image',
-    'shadcn-nuxt'
+    'shadcn-nuxt',
+    '@nuxtjs/i18n',
+    '@nuxtjs/supabase',
   ],
   shadcn: {
     /**

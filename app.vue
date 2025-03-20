@@ -8,4 +8,12 @@
 
 const colorMode = useColorMode()
 console.log(colorMode.value)
+
+useHead({
+  script: [
+    {
+      src: 'https://static.geetest.com/v4/gt4.js',
+    }
+  ]
+})
 </script>

@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "db:init": "supabase init",
+    "db:start": "supabase start",
+    "secret:login": "infisical login",
+    "secret:init": "infisical init",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -14,30 +18,31 @@
     "@nuxt/eslint": "1.2.0",
     "@nuxt/icon": "1.11.0",
     "@nuxt/image": "1.9.0",
+    "@nuxtjs/i18n": "9.3.1",
+    "@nuxtjs/supabase": "^1.5.0",
+    "@vee-validate/zod": "^4.15.0",
+    "@vueuse/core": "^13.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eslint": "^9.0.0",
     "lucide-vue-next": "^0.479.0",
     "nuxt": "^3.16.0",
-    "reka-ui": "^2.0.2",
+    "reka-ui": "^2.1.0",
     "shadcn-nuxt": "1.0.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
+    "vee-validate": "^4.15.0",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.2"
   },
-  "packageManager": "pnpm@10.6.2+sha512.47870716bea1572b53df34ad8647b42962bc790ce2bf4562ba0f643237d7302a3d6a8ecef9e4bdfc01d23af1969aa90485d4cebb0b9638fa5ef1daef656f6c1b",
   "devDependencies": {
+    "@iconify-json/tabler": "^1.2.17",
     "@nuxtjs/color-mode": "^3.5.2",
-    "@nuxtjs/tailwindcss": "^6.13.2"
+    "@nuxtjs/tailwindcss": "^6.13.2",
+    "supabase": "^2.19.7"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "better-sqlite3",
-      "esbuild",
-      "sharp",
-      "vue-demi"
-    ]
+  "resolutions": {
+    "cookie": "1.0.2"
   }
 }
