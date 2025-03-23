@@ -23,6 +23,6 @@ export default defineEventHandler(async (event) => {
             event.context.geetestValidated = true
         }
     } else {
-        console.error('[geetestValidate] Missing required headers')
+        // console.error('[geetestValidate] Missing required headers')
     }
 })

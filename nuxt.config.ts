@@ -28,4 +28,11 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
   },
+  supabase: {
+    redirectOptions: {
+      login: '/login',
+      callback: '/callback',
+      exclude: ['/register']
+    }
+  }
 })

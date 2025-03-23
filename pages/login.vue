@@ -114,9 +114,9 @@ onMounted(() => {
         </form>
         <div class="mt-4 text-center text-sm">
           {{ $t('dontHaveAccount') }}
-          <a href="#" class="underline">
+          <router-link to="/register" class="underline">
             {{ $t('register') }}
-          </a>
+          </router-link>
         </div>
       </div>
     </div>

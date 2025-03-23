@@ -39,10 +39,18 @@
   "devDependencies": {
     "@iconify-json/tabler": "^1.2.17",
     "@nuxtjs/color-mode": "^3.5.2",
-    "@nuxtjs/tailwindcss": "^6.13.2",
-    "supabase": "^2.19.7"
+    "@nuxtjs/tailwindcss": "^6.13.2"
   },
   "resolutions": {
     "cookie": "1.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "better-sqlite3",
+      "esbuild",
+      "sharp",
+      "vue-demi"
+    ]
   }
 }
