@@ -15,9 +15,10 @@ export default defineI18nConfig(() => ({
             captcha: '验证码',
             submit: '提交',
             registerPage: {
+                inviteCode: '邀请码',
                 registerDesc: '申请加入 Rearyard',
                 headsUp: '请注意！',
-                alertContent: '我们目前只接受申请注册。填写以下表格后，如果审核通过，我们将向你的邮箱发送注册邮件。',
+                alertContent: '在注册申请通过前，你可以先行体验部分功能。但如果审核不通过，账号功能将被冻结直到审核通过，所以请认真回答申请问题。',
                 submitRequest: '提交申请',
             }
         }

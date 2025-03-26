@@ -2,34 +2,23 @@
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
-import {Alert, AlertDescription, AlertTitle} from "~/components/ui/alert";
-import {Textarea} from "~/components/ui/textarea";
+import { toast } from 'vue-sonner'
 
 definePageMeta({
   layout: 'plain'
 })
 
-const baseCaptchaUrl = 'https://www.rearyard.com/api/auth/captcha'
-const captchaUrl = ref(baseCaptchaUrl + '?t=' + Date.now())
-
-const refreshCaptcha = () => {
-  captchaUrl.value = baseCaptchaUrl + '?t=' + Date.now()
-}
-
-const questionsText = '请尽可能详尽的填写下列问题的回答,回答的越详尽真实越有可能通过申请。（每一题答案至少超过25字）您也可以在回答完毕所有问题后加上自己想说的话。同时请不要删除题目以方便志愿者审核。审核通过后,邀请链接将发送到您的邮箱，届时请注意查收。\n' +
-    '1. 您想在后花园阅读/创作什么类型或哪方面的同人？请举例。\n' +
-    '2.请谈谈对您来说印象比较深刻的一篇或多篇同人及为何打动你，若遗忘作品名/作者名请务必对作品内容进行详细描述。\n' +
-    '3.请聊聊您最初是如何接触到了同人文化的。'
-
 const formSchema = toTypedSchema(z.object({
-  username: z.string().email(),
-  password: z.string().min(140).max(3000).default(questionsText),
-  captcha: z.string().min(4).max(4),
+  email: z.string().email(),
+  password: z.string().min(6).max(50),
+  inviteCode: z.string().min(6).max(50),
 }))
 
-const { isFieldDirty, errors, handleSubmit, isSubmitting, setFieldValue } = useForm({
+const { errors, handleSubmit, isFieldDirty, isSubmitting} = useForm({
   validationSchema: formSchema,
 })
+
+const { captchaRef, getValidate } = useGeetest('#captcha')
 
 
 const onSubmit = handleSubmit((values) => {
@@ -42,7 +31,17 @@ const onSubmit = handleSubmit((values) => {
 })
 
 onMounted(() => {
-  setFieldValue('password', questionsText)
+  setTimeout(() => {
+    toast.error('This is an error message', {
+      duration: Infinity,
+      action: {
+        label: 'Retry',
+        onClick: () => {
+          console.log('retry')
+        }
+      }
+    })
+  }, 0)
 })
 </script>
 
@@ -58,14 +57,8 @@ onMounted(() => {
             {{ $t('registerPage.registerDesc')}}
           </p>
         </div>
-        <Alert>
-          <AlertTitle class="mb-2">{{ $t('registerPage.headsUp') }}</AlertTitle>
-          <AlertDescription>
-            {{ $t('registerPage.alertContent') }}
-          </AlertDescription>
-        </Alert>
         <form class="grid gap-4" @submit="onSubmit">
-          <FormField v-slot="{ componentField }" name="username" :validate-on-change="!!errors.username" :validate-on-model-update="!!errors.username" :validate-on-input="!!errors.username" :validate-on-blur="isFieldDirty('username')">
+          <FormField v-slot="{ componentField }" name="email" :validate-on-change="!!errors.email" :validate-on-model-update="!!errors.email" :validate-on-input="!!errors.email" :validate-on-blur="isFieldDirty('email')">
             <FormItem>
               <FormLabel>{{ $t('email') }}</FormLabel>
               <FormControl>
@@ -78,23 +71,30 @@ onMounted(() => {
             <FormItem>
               <FormLabel class="flex items-center">
                 {{ $t('password') }}
-                <a href="/" class="ml-auto text-sm underline">
-                  {{ $t('forgotPassword') }}
-                </a>
               </FormLabel>
               <FormControl>
-                <Textarea v-bind="componentField" class="min-h-[280px]"/>
+                <Input type="password" placeholder="shadcn" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="captcha" :validate-on-change="!!errors.captcha" :validate-on-model-update="!!errors.captcha" :validate-on-input="!!errors.captcha" :validate-on-blur="isFieldDirty('captcha')">
+          <FormField v-slot="{ componentField }" name="inviteCode" :validate-on-change="!!errors.inviteCode" :validate-on-model-update="!!errors.inviteCode" :validate-on-input="!!errors.inviteCode" :validate-on-blur="isFieldDirty('inviteCode')">
+            <FormItem>
+              <FormLabel class="flex items-center">
+                {{ $t('registerPage.inviteCode') }}
+              </FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="shadcn" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField name="captcha">
             <FormItem>
               <FormLabel>{{ $t('captcha') }}</FormLabel>
               <FormControl>
-                <div class="flex items-center h-9">
-                  <Input type="text" placeholder="" v-bind="componentField" />
-                  <NuxtImg class="bg-secondary h-full rounded-md ml-2" :src="captchaUrl" alt="Captcha" @click="refreshCaptcha" />
+                <div id="captcha" class="h-[46px] bg-secondary rounded-md text-sm leading-[46px] text-center text-muted-foreground">
+                  <span v-if="!captchaRef">验证码加载中...</span>
                 </div>
               </FormControl>
               <FormMessage />
@@ -105,44 +105,6 @@ onMounted(() => {
             {{ $t('registerPage.submitRequest') }}
           </Button>
         </form>
-<!--        <div class="grid gap-4">-->
-<!--          <div class="grid gap-2">-->
-<!--            <Label for="email">{{ $t('email') }}</Label>-->
-<!--            <Input-->
-<!--                id="email"-->
-<!--                type="email"-->
-<!--                placeholder="m@example.com"-->
-<!--                required-->
-<!--            />-->
-<!--          </div>-->
-<!--          <div class="grid gap-2">-->
-<!--            <div class="flex items-center">-->
-<!--              <Label for="password">{{ $t('password') }}</Label>-->
-<!--              <a-->
-<!--                  href="/forgot-password"-->
-<!--                  class="ml-auto inline-block text-sm underline"-->
-<!--              >-->
-<!--                {{ $t('forgotPassword') }}-->
-<!--              </a>-->
-<!--            </div>-->
-<!--            <Input id="password" type="password" required />-->
-<!--          </div>-->
-<!--          <div class="grid gap-2">-->
-<!--            <div class="flex items-center">-->
-<!--              <Label for="password">{{ $t('captcha') }}</Label>-->
-<!--            </div>-->
-<!--            <div class="flex items-center">-->
-<!--              <Input id="captcha" type="text" required  />-->
-<!--              <NuxtImg class="bg-secondary h-full rounded-md ml-2" :src="captchaUrl" alt="Captcha" @click="refreshCaptcha" />-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <Button type="submit" class="w-full">-->
-<!--            {{ $t('login') }}-->
-<!--          </Button>-->
-<!--          <Button variant="outline" class="w-full">-->
-<!--            Login with Google-->
-<!--          </Button>-->
-<!--        </div>-->
         <div class="mt-4 text-center text-sm">
           {{ $t('alreadyHaveAccount') }}
           <a href="#" class="underline">

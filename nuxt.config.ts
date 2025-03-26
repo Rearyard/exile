@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
@@ -14,6 +13,11 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@nuxtjs/supabase',
   ],
+  nitro: {
+    experimental: {
+      openAPI: true,
+    }
+  },
   shadcn: {
     /**
      * Prefix for all the imported component
