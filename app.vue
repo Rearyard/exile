@@ -8,6 +8,7 @@
   </NuxtLayout>
 </template>
 <script setup lang="ts">
+import '~/assets/css/base.css'
 import { Toaster} from "~/components/ui/sonner";
 
 const colorMode = useColorMode()

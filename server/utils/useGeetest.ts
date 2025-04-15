@@ -1,4 +1,7 @@
-import crypto from 'crypto'
+import crypto from 'crypto';
+import {H3Event} from 'h3';
+import {throwLogicError} from '~/server/utils/throwLogicErr';
+import {ErrCode} from '~/types/enums/ErrCode';
 
 const GEETEST_CAPTCHA_ID = process.env.GEETEST_CAPTCHA_ID
 const GEETEST_CAPTCHA_KEY = process.env.GEETEST_CAPTCHA_KEY
@@ -53,5 +56,15 @@ function validate(params: {
 export const useGeetest = () => {
     return {
         validate,
+    }
+}
+
+export const useGeetestGuard = (event: H3Event) => {
+    const isGeetestValidated = event.context.geetestValidated
+    if (!isGeetestValidated) {
+        throwLogicError({
+            code: ErrCode.CAPTCHA_NEEDED,
+            msg: 'Captcha needed',
+        })
     }
 }

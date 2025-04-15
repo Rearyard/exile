@@ -17,8 +17,12 @@ export const useGeetest = (target: string) => {
         })
     })
 
+    const getValidate = computed(() => {
+        return captchaRef.value?.getValidate
+    })
+
     return {
         captchaRef,
-        getValidate: captchaRef.value?.getValidate
+        getValidate,
     }
 }

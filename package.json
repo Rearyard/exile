@@ -5,6 +5,8 @@
   "scripts": {
     "db:init": "supabase init",
     "db:start": "supabase start",
+    "db:restart": "supabase stop && supabase start",
+    "db:reset": "supabase db reset",
     "secret:login": "infisical login",
     "secret:init": "infisical init",
     "build": "nuxt build",
@@ -26,6 +28,7 @@
     "clsx": "^2.1.1",
     "eslint": "^9.0.0",
     "lucide-vue-next": "^0.479.0",
+    "nanoid": "^5.1.5",
     "nuxt": "^3.16.0",
     "reka-ui": "^2.1.0",
     "shadcn-nuxt": "1.0.3",

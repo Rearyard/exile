@@ -5,6 +5,6 @@ import {serverSupabaseClient, serverSupabaseServiceRole} from "#supabase/server"
 export const useSupabase = async (event: H3Event) => {
     return {
         client: await serverSupabaseClient<Database>(event),
-        serviceRowClient: await serverSupabaseServiceRole<Database>(event)
+        serviceRoleClient: await serverSupabaseServiceRole<Database>(event)
     }
 }

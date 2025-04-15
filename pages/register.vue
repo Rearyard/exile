@@ -4,6 +4,9 @@ import { useForm } from 'vee-validate'
 import * as z from 'zod'
 import { toast } from 'vue-sonner'
 
+
+const router = useRouter();
+
 definePageMeta({
   layout: 'plain'
 })
@@ -11,22 +14,50 @@ definePageMeta({
 const formSchema = toTypedSchema(z.object({
   email: z.string().email(),
   password: z.string().min(6).max(50),
-  inviteCode: z.string().min(6).max(50),
+  inviteCode: z.string().min(6).max(50).optional(),
 }))
 
 const { errors, handleSubmit, isFieldDirty, isSubmitting} = useForm({
   validationSchema: formSchema,
 })
 
-const { captchaRef, getValidate } = useGeetest('#captcha')
+const { captchaRef } = useGeetest('#captcha')
 
 
 const onSubmit = handleSubmit((values) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(values)
-      resolve(0)
-    }, 5000)
+  const captchaResult = captchaRef.value?.getValidate()
+  if (!captchaResult) {
+    return toast.error('请完成验证码验证')
+  }
+  return $fetch('/api/auth/register/submit', {
+    method: 'POST',
+    headers: {
+      ...Object.fromEntries(
+          Object.entries(captchaRef.value?.getValidate?.() || {})
+          .map(([key, value]) => ['x-geetest-' + key, value])
+      )
+    },
+    body: {
+      email: values.email,
+      password: values.password,
+      inviteCode: values.inviteCode,
+    }
+  }).then(res => {
+    const { user } = res.data;
+    if (!user) {
+      // TODO: why?
+      toast.error('注册失败，请稍后再试')
+      return
+    }
+    // For email verification enabled, session will not be returned
+    const { id } = user;
+    // Go to email verification page
+    router.push({
+      path: '/auth/emailVerification',
+      query: {
+        uid: id,
+      }
+    })
   })
 })
 
