@@ -16,6 +16,13 @@ create table public.register_request (
     finished_by uuid references auth.users(id)
 );
 
+-- create index for foreign key
+create index register_request_finished_by_idx on public.register_request (finished_by);
+-- create index for email: for fast search by email
+create index register_request_email_idx on public.register_request (email);
+-- create index for status: for fast search by status
+create index register_request_status_idx on public.register_request (status);
+
 -- enable row level security
 alter table register_request enable row level security;
 

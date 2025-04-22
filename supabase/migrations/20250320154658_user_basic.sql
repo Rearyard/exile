@@ -11,6 +11,9 @@ create table public.user_basic (
     updated_at timestamp with time zone default now()
 );
 
+-- create index for foreign key
+create index user_basic_user_id_idx on public.user_basic (user_id);
+
 -- field comments
 comment on table user_basic is 'user`s basic information';
 comment on column user_basic.id is 'serial primary key, auto increment';

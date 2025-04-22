@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
-    '@nuxt/content',
+    // '@nuxt/content',
     '@nuxt/eslint',
     '@nuxt/icon',
     '@nuxt/image',
@@ -16,6 +16,20 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt'
   ],
+  vite: {
+    // hmr via https
+    server: {
+      hmr: {
+        protocol: 'wss'
+      }
+    }
+  },
+  // content: {
+  //   watch: {
+  //     baseURL: '/',
+  //     https: true,
+  //   }
+  // },
   nitro: {
     experimental: {
       openAPI: true,

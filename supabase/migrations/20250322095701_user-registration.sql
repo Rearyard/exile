@@ -16,9 +16,15 @@ CREATE TABLE public.invitation_code
     used_by    uuid references auth.users (id),
     used_at    TIMESTAMP WITH TIME ZONE
 );
+-- create index for foreign key
+CREATE INDEX invitation_code_created_by_idx ON public.invitation_code (created_by);
+CREATE INDEX invitation_code_used_by_idx ON public.invitation_code (used_by);
+-- create index for code: for fast search by code
+CREATE INDEX invitation_code_code_idx ON public.invitation_code (code);
+
 
 -- enable row level security
-alter table platform_kv enable row level security;
+alter table public.invitation_code enable row level security;
 CREATE POLICY "Enable select for service_role only" on "public"."invitation_code"
     for SELECT TO service_role USING (true);
 CREATE POLICY "Enable insert for service_role only" on "public"."invitation_code"

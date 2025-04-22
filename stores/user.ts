@@ -4,7 +4,7 @@ import type { User } from '@supabase/supabase-js'
 export const useUserStore = defineStore('UserStore', () => {
   const supabase = useSupabaseClient();
 
-  const _user = ref<User | null>(null);
+  const _user = useSupabaseUser();
 
   const user = computed(() => _user.value);
 
