@@ -12,11 +12,17 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     '@nuxtjs/i18n',
     '@nuxtjs/supabase',
+    'nuxt-zod-i18n',
+    '@vueuse/nuxt',
+    '@pinia/nuxt'
   ],
   nitro: {
     experimental: {
       openAPI: true,
     }
+  },
+  pinia: {
+    storesDirs: ['./stores/**'],
   },
   shadcn: {
     /**
@@ -36,7 +42,18 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/callback',
-      exclude: ['/register', '/auth/*']
+      exclude: ['/auth/*']
     }
+  },
+  i18n: {
+    defaultLocale: 'zh-CN',
+    locales: [
+      {
+        code: 'zh-CN',
+        name: '简体中文',
+        iso: 'zh-CN',
+        file: 'zh.ts'
+      }
+    ]
   }
 })

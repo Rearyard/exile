@@ -2,6 +2,7 @@
   <div class="dark"></div>
   <ClientOnly>
     <Toaster />
+    <ConfirmProvider />
   </ClientOnly>
   <NuxtLayout>
     <NuxtPage />
@@ -9,11 +10,13 @@
 </template>
 <script setup lang="ts">
 import '~/assets/css/base.css'
-import { Toaster} from "~/components/ui/sonner";
+import { Toaster } from "~/components/ui/sonner";
 
 const colorMode = useColorMode()
+const userStore = useUserStore();
+await userStore.syncUser();
 console.log(colorMode.value)
-
+console.log(userStore.user)
 useHead({
   script: [
     {

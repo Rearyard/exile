@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import * as z from 'zod'
 import { toast } from 'vue-sonner'
-
-
-const router = useRouter();
+// @ts-ignore
+import { vAutoAnimate } from '@formkit/auto-animate/vue'
 
 definePageMeta({
   layout: 'plain'
 })
+
+const { t } = useI18n();
+const confirm = usePortableConfirm();
+
+const router = useRouter();
 
 const formSchema = toTypedSchema(z.object({
   email: z.string().email(),
@@ -43,10 +47,34 @@ const onSubmit = handleSubmit((values) => {
       inviteCode: values.inviteCode,
     }
   }).then(res => {
+    const { error } = res;
+    if (error) {
+      // some special process
+      if (error.code === 'user_already_exists') {
+        // TODO: show login dialog
+        confirm.show({
+          title: t('userAlreadyExists.title'),
+          description: t('userAlreadyExists.description'),
+          cancelText: t('userAlreadyExists.cancelText'),
+          confirmText: t('userAlreadyExists.confirmText'),
+          onConfirm: () => {
+            router.push('/login')
+          }
+        })
+        return;
+      }
+      
+      const errMsg = t(`SupabaseAuthErrorCode.${error.code}`)
+      toast.error(errMsg)
+      captchaRef.value?.reset()
+      return
+    }
     const { user } = res.data;
     if (!user) {
+      console.log(res.data);
       // TODO: why?
       toast.error('注册失败，请稍后再试')
+      captchaRef.value?.reset()
       return
     }
     // For email verification enabled, session will not be returned
@@ -62,17 +90,6 @@ const onSubmit = handleSubmit((values) => {
 })
 
 onMounted(() => {
-  setTimeout(() => {
-    toast.error('This is an error message', {
-      duration: Infinity,
-      action: {
-        label: 'Retry',
-        onClick: () => {
-          console.log('retry')
-        }
-      }
-    })
-  }, 0)
 })
 </script>
 
@@ -89,8 +106,10 @@ onMounted(() => {
           </p>
         </div>
         <form class="grid gap-4" @submit="onSubmit">
-          <FormField v-slot="{ componentField }" name="email" :validate-on-change="!!errors.email" :validate-on-model-update="!!errors.email" :validate-on-input="!!errors.email" :validate-on-blur="isFieldDirty('email')">
-            <FormItem>
+          <FormField v-slot="{ componentField }" name="email" :validate-on-change="!!errors.email"
+            :validate-on-model-update="!!errors.email" :validate-on-input="!!errors.email"
+            :validate-on-blur="isFieldDirty('email')">
+            <FormItem v-auto-animate data-cy="email-form-item">
               <FormLabel>{{ $t('email') }}</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="shadcn" v-bind="componentField" />
@@ -98,8 +117,10 @@ onMounted(() => {
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="password" :validate-on-change="!!errors.password" :validate-on-model-update="!!errors.password" :validate-on-input="!!errors.password" :validate-on-blur="isFieldDirty('password')">
-            <FormItem>
+          <FormField v-slot="{ componentField }" name="password" :validate-on-change="!!errors.password"
+            :validate-on-model-update="!!errors.password" :validate-on-input="!!errors.password"
+            :validate-on-blur="isFieldDirty('password')">
+            <FormItem v-auto-animate data-cy="password-form-item">
               <FormLabel class="flex items-center">
                 {{ $t('password') }}
               </FormLabel>
@@ -109,8 +130,10 @@ onMounted(() => {
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="inviteCode" :validate-on-change="!!errors.inviteCode" :validate-on-model-update="!!errors.inviteCode" :validate-on-input="!!errors.inviteCode" :validate-on-blur="isFieldDirty('inviteCode')">
-            <FormItem>
+          <FormField v-slot="{ componentField }" name="inviteCode" :validate-on-change="!!errors.inviteCode"
+            :validate-on-model-update="!!errors.inviteCode" :validate-on-input="!!errors.inviteCode"
+            :validate-on-blur="isFieldDirty('inviteCode')">
+            <FormItem v-auto-animate data-cy="inviteCode-form-item">
               <FormLabel class="flex items-center">
                 {{ $t('registerPage.inviteCode') }}
               </FormLabel>
@@ -121,10 +144,11 @@ onMounted(() => {
             </FormItem>
           </FormField>
           <FormField name="captcha">
-            <FormItem>
+            <FormItem data-cy="captcha-form-item">
               <FormLabel>{{ $t('captcha') }}</FormLabel>
               <FormControl>
-                <div id="captcha" class="h-[46px] bg-secondary rounded-md text-sm leading-[46px] text-center text-muted-foreground">
+                <div id="captcha"
+                  class="h-[46px] bg-secondary rounded-md text-sm leading-[46px] text-center text-muted-foreground">
                   <span v-if="!captchaRef">验证码加载中...</span>
                 </div>
               </FormControl>
@@ -145,13 +169,8 @@ onMounted(() => {
       </div>
     </div>
     <div class="hidden bg-muted lg:block">
-      <img
-          src="https://source.unsplash.com/1920x1080/?nature"
-          alt="Image"
-          width="1920"
-          height="1080"
-          class="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-      >
+      <img src="https://source.unsplash.com/1920x1080/?nature" alt="Image" width="1920" height="1080"
+        class="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale">
     </div>
   </div>
 </template>

@@ -16,7 +16,7 @@ const refreshCaptcha = () => {
 }
 
 const formSchema = toTypedSchema(z.object({
-  username: z.string().email(),
+  email: z.string().email(),
   password: z.string().min(6).max(50),
 }))
 
@@ -73,11 +73,11 @@ onMounted(() => {
           </p>
         </div>
         <form class="grid gap-4" @submit="onSubmit">
-          <FormField v-slot="{ componentField }" name="username" :validate-on-change="!!errors.username" :validate-on-model-update="!!errors.username" :validate-on-input="!!errors.username" :validate-on-blur="isFieldDirty('username')">
+          <FormField v-slot="{ componentField }" name="email" :validate-on-change="!!errors.email" :validate-on-model-update="!!errors.email" :validate-on-input="!!errors.email" :validate-on-blur="isFieldDirty('email')">
             <FormItem>
               <FormLabel>{{ $t('email') }}</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="shadcn" v-bind="componentField" />
+                <Input type="text" placeholder="" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,7 +114,7 @@ onMounted(() => {
         </form>
         <div class="mt-4 text-center text-sm">
           {{ $t('dontHaveAccount') }}
-          <router-link to="/register" class="underline">
+          <router-link to="/auth/register" class="underline">
             {{ $t('register') }}
           </router-link>
         </div>
