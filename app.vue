@@ -5,7 +5,9 @@
     <ConfirmProvider />
   </ClientOnly>
   <NuxtLayout>
-    <NuxtPage />
+    <HcaptchaProvider>
+      <NuxtPage />
+    </HcaptchaProvider>
   </NuxtLayout>
 </template>
 <script setup lang="ts">
@@ -14,7 +16,7 @@ import { Toaster } from "~/components/ui/sonner";
 
 const colorMode = useColorMode()
 const userStore = useUserStore();
-await userStore.syncUser();
+
 console.log(colorMode.value)
 console.log(userStore.user)
 useHead({

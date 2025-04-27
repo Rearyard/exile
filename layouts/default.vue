@@ -1,4 +1,12 @@
 <script setup lang="ts">
+const userStore = useUserStore();
+
+const supabase = useSupabaseClient();
+
+const signOut = async () => {
+  await supabase.auth.signOut()
+  navigateTo('/login')
+}
 </script>
 
 <template>
@@ -17,7 +25,7 @@
               <AvatarImage src="https://github.com/unovue.png" alt="@unovue" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <Button variant="ghost">Sign Out</Button>
+            <Button variant="ghost" @click="signOut">Sign Out</Button>
           </div>
         </div>
       </div>

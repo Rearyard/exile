@@ -8,18 +8,11 @@ export const useUserStore = defineStore('UserStore', () => {
 
   const user = computed(() => _user.value);
 
-  function syncUser() {
-    return supabase.auth.getUser().then(({ data, error }) => {
-      if (error) {
-        console.error(error);
-      } else {
-        _user.value = data.user;
-      }
-    })
-  }
+  supabase.auth.onAuthStateChange((event, session) => {
+    console.log(event, session);
+  })
 
   return {
     user,
-    syncUser,
   }
 })

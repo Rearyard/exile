@@ -13,13 +13,14 @@
     "secret:login": "infisical login",
     "secret:init": "infisical init",
     "build": "nuxt build",
-    "dev": "infisical run --env=dev -- nuxt dev",
+    "dev": "infisical run --env=dev -- nuxt dev --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
+    "@hcaptcha/vue3-hcaptcha": "^1.3.0",
     "@nuxt/content": "3.3.0",
     "@nuxt/eslint": "1.2.0",
     "@nuxt/icon": "1.11.0",
