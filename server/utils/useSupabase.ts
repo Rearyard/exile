@@ -2,9 +2,9 @@ import { Database } from '~/types/database.types'
 import {H3Event} from "h3";
 import {serverSupabaseClient, serverSupabaseServiceRole} from "#supabase/server";
 
-export const useSupabase = async (event: H3Event) => {
+export const useSupabase = async () => {
     return {
-        client: await serverSupabaseClient<Database>(event),
-        serviceRoleClient: await serverSupabaseServiceRole<Database>(event)
+        client: await serverSupabaseClient<Database>(useEvent()),
+        serviceRoleClient: serverSupabaseServiceRole<Database>(useEvent())
     }
 }

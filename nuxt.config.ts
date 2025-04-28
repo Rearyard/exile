@@ -29,6 +29,7 @@ export default defineNuxtConfig({
   nitro: {
     experimental: {
       openAPI: true,
+      asyncContext: true
     }
   },
   pinia: {
