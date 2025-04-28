@@ -6,7 +6,7 @@
     "db:init": "pnpm dlx supabase init",
     "db:start": "pnpm dlx supabase start",
     "db:restart": "pnpm dlx supabase stop && pnpm dlx  supabase start",
-    "db:reset": "pnpm dlx supabase db reset",
+    "db:reset": "pnpm dlx supabase db reset && pnpm dlx supabase gen types typescript --local > types/database.types.ts",
     "db:status": "pnpm dlx supabase status",
     "cy:install": "cypress install",
     "cy:open": "cypress open",
