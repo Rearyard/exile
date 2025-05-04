@@ -4,7 +4,7 @@ import {serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser} fro
 
 export const useSupabase = async () => {
     return {
-        user: await serverSupabaseUser(useEvent()).then(user => {
+        optionalUser: await serverSupabaseUser(useEvent()).then(user => {
             return {
                 user,
                 error: null,
@@ -15,6 +15,7 @@ export const useSupabase = async () => {
                 error: e,
             }
         }),
+        requiredUser: await serverSupabaseUser(useEvent()),
         client: await serverSupabaseClient<Database>(useEvent()),
         serviceRoleClient: serverSupabaseServiceRole<Database>(useEvent())
     }

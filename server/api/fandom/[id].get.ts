@@ -12,7 +12,84 @@
  * @throws {Error} - If the fandom is not found or the user is not allowed to access the fandom
 */
 
-
+defineRouteMeta({
+  openAPI: {
+    tags: ['Fandom'],
+    summary: 'Get fandom data by id',
+    description: 'Get fandom data by id, including the fandom meta data. with visibility check',
+    parameters: [
+      {
+        in: 'path',
+        name: 'id',
+        required: true,
+        description: 'The id of the fandom',
+        schema: {
+          type: 'number',
+        },
+      },
+    ],
+    responses: {
+      success: {
+        description: 'Fandom data',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Fandom',
+            },
+          },
+        },
+      },
+    },
+    $global: {
+      components: {
+        schemas: {
+          Fandom: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'number',
+              },
+              name: {
+                type: 'string',
+              },
+              created_by: {
+                type: 'number',
+              },
+              visibility: {
+                type: 'number',
+              },
+              tag_visibility: {
+                type: 'number',
+              },
+              works_creation_level: {
+                type: 'number',
+              },
+              is_rps: {
+                type: 'boolean',
+              },
+              is_user_original: {
+                type: 'boolean',
+              },
+              is_official_managed: {
+                type: 'boolean',
+              },
+              is_nsfw: {
+                type: 'boolean',
+              },
+              created_at: {
+                type: 'string',
+              },
+              updated_at: {
+                type: 'string',
+              },
+            },
+            required: ['id', 'name', 'created_by', 'visibility', 'tag_visibility', 'works_creation_level', 'is_rps', 'is_user_original', 'is_official_managed', 'is_nsfw', 'created_at', 'updated_at'],
+          }
+        }
+      }
+    }
+  }
+})
 import { FandomVisibility } from "~/types/enums/Visibility";
 
 export default defineEventHandler(async (event) => {

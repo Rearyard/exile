@@ -1,5 +1,5 @@
 export enum ErrCode {
   SUCCESS = 0,
 
-  CAPTCHA_NEEDED = -1000,
+  DB_ERROR = -1000,
 }
