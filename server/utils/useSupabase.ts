@@ -15,7 +15,7 @@ export const useSupabase = async () => {
                 error: e,
             }
         }),
-        requiredUser: await serverSupabaseUser(useEvent()),
+        requiredUser: () => serverSupabaseUser(useEvent()),
         client: await serverSupabaseClient<Database>(useEvent()),
         serviceRoleClient: serverSupabaseServiceRole<Database>(useEvent())
     }

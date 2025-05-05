@@ -15,9 +15,6 @@ const supabase = useSupabaseClient()
 const userStore = useUserStore()
 const hcaptcha = useHcaptcha()
 
-const refreshCaptcha = () => {
-  captchaUrl.value = baseCaptchaUrl + '?t=' + Date.now()
-}
 
 const formSchema = toTypedSchema(z.object({
   email: z.string().email(),
@@ -51,7 +48,7 @@ const onSubmit = handleSubmit(async (values) => {
       }
     }
     console.log(res);
-    
+
   }).catch((err) => {
     console.log(err)
   })
@@ -116,13 +113,14 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="hidden bg-muted lg:block">
-      <img src="https://source.unsplash.com/1920x1080/?nature" alt="Image" width="1920" height="1080"
-        class="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale">
-    </div>
+    <div class="hidden bg-muted lg:block tile-image border-l" />
   </div>
 </template>
 
 <style scoped>
-
+.tile-image {
+  background-image: url("~/assets/images/tile.png");
+  background-repeat: repeat;
+  background-size: 400px 400px;
+}
 </style>

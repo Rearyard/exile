@@ -6,15 +6,14 @@ const querySchema  = z.object({
 
 export default defineEventHandler(async (event) => {
   const query = await getValidatedQuery(event, querySchema.parse);
-  const { client, serviceRoleClient } = await useSupabase(event);
+  const { client, serviceRoleClient } = await useSupabase();
 
   const {uid} = query;
-
-  console.log(uid);
 
   const {data: userData} = await serviceRoleClient.auth.admin.getUserById(uid)
 
   console.log(`[emailVerificationInfo] ${JSON.stringify(userData)}`);
+
 
   return {
     email: userData?.user?.email,

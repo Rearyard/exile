@@ -1,3 +1,12 @@
+:root {
+    --ui-header-height: 4rem;
+    --ui-footer-height: 4rem;
+
+    --ui-editor-work-content-padding: 1.5rem;
+    --ui-editor-work-toolbar-height: 2.75rem;
+    --ui-editor-work-meta-container-top: calc(var(--ui-editor-work-toolbar-height) + var(--ui-editor-work-content-padding));
+}
+
 * {
     user-select:  none;
 }

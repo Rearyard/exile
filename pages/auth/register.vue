@@ -12,81 +12,59 @@ definePageMeta({
 
 const { t } = useI18n();
 const confirm = usePortableConfirm();
+const hcaptcha = useHcaptcha();
+const supabase = useSupabaseClient()
 
 const router = useRouter();
 
 const formSchema = toTypedSchema(z.object({
   email: z.string().email(),
   password: z.string().min(6).max(50),
-  inviteCode: z.string().min(6).max(50).optional(),
 }))
 
 const { errors, handleSubmit, isFieldDirty, isSubmitting} = useForm({
   validationSchema: formSchema,
 })
 
-const { captchaRef } = useGeetest('#captcha')
 
-
-const onSubmit = handleSubmit((values) => {
-  const captchaResult = captchaRef.value?.getValidate()
-  if (!captchaResult) {
-    return toast.error('请完成验证码验证')
-  }
-  return $fetch('/api/auth/register/submit', {
-    method: 'POST',
-    headers: {
-      ...Object.fromEntries(
-          Object.entries(captchaRef.value?.getValidate?.() || {})
-          .map(([key, value]) => ['x-geetest-' + key, value])
-      )
-    },
-    body: {
-      email: values.email,
-      password: values.password,
-      inviteCode: values.inviteCode,
+const onSubmit = handleSubmit(async (values) => {
+  const { response: captchaResponse, key } = await hcaptcha.execute()
+  console.log(captchaResponse, key)
+  const authRes = await supabase.auth.signUp({
+    email: values.email,
+    password: values.password,
+    options: {
+      captchaToken: captchaResponse,
     }
-  }).then(res => {
-    const { error } = res;
-    if (error) {
-      // some special process
-      if (error.code === 'user_already_exists') {
-        // TODO: show login dialog
-        confirm.show({
-          title: t('userAlreadyExists.title'),
-          description: t('userAlreadyExists.description'),
-          cancelText: t('userAlreadyExists.cancelText'),
-          confirmText: t('userAlreadyExists.confirmText'),
-          onConfirm: () => {
-            router.push('/login')
-          }
-        })
-        return;
+  }).then((res) => {
+    console.log(res);
+    if (res?.data?.user && res?.data?.session) {
+      navigateTo('/')
+    }
+    if (res?.data?.user && !res?.data?.session) {
+      // need email verification
+      navigateTo({
+        path: '/auth/emailVerification',
+        query: {
+          uid: res.data.user.id,
+        }
+      })
+    }
+    if (res.error) {
+      switch (res.error.code) {
+        default: {
+          toast.error(t(`login.authError.${res.error.code}`))
+        }
       }
-      
-      const errMsg = t(`SupabaseAuthErrorCode.${error.code}`)
-      toast.error(errMsg)
-      captchaRef.value?.reset()
-      return
     }
-    const { user } = res.data;
-    if (!user) {
-      console.log(res.data);
-      // TODO: why?
-      toast.error('注册失败，请稍后再试')
-      captchaRef.value?.reset()
-      return
-    }
-    // For email verification enabled, session will not be returned
-    const { id } = user;
-    // Go to email verification page
-    router.push({
-      path: '/auth/emailVerification',
-      query: {
-        uid: id,
-      }
-    })
+    throw new Error('Unknown sign up error')
+  }).catch((err) => {
+    toast.error(t(`login.authError.${err.code}`))
+    console.log(err)
   })
+
+  console.log(authRes);
+
 })
 
 onMounted(() => {
@@ -130,31 +108,6 @@ onMounted(() => {
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="inviteCode" :validate-on-change="!!errors.inviteCode"
-            :validate-on-model-update="!!errors.inviteCode" :validate-on-input="!!errors.inviteCode"
-            :validate-on-blur="isFieldDirty('inviteCode')">
-            <FormItem v-auto-animate data-cy="inviteCode-form-item">
-              <FormLabel class="flex items-center">
-                {{ $t('registerPage.inviteCode') }}
-              </FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="shadcn" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-          <FormField name="captcha">
-            <FormItem data-cy="captcha-form-item">
-              <FormLabel>{{ $t('captcha') }}</FormLabel>
-              <FormControl>
-                <div id="captcha"
-                  class="h-[46px] bg-secondary rounded-md text-sm leading-[46px] text-center text-muted-foreground">
-                  <span v-if="!captchaRef">验证码加载中...</span>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
           <Button type="submit" :disabled="isSubmitting">
             <Icon v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin" name="tabler:loader-2" />
             {{ $t('registerPage.submitRequest') }}
@@ -168,13 +121,14 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="hidden bg-muted lg:block">
-      <img src="https://source.unsplash.com/1920x1080/?nature" alt="Image" width="1920" height="1080"
-        class="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale">
-    </div>
+    <div class="hidden bg-muted lg:block border-l bg-tile" />
   </div>
 </template>
 
 <style scoped>
-
+.bg-tile {
+  background-image: url("~/assets/images/tile.png");
+  background-repeat: repeat;
+  background-size: 400px 400px;
+}
 </style>
