@@ -34,6 +34,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      character: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          fandom_id: number | null
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          fandom_id?: number | null
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          fandom_id?: number | null
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_fandom_id_fkey"
+            columns: ["fandom_id"]
+            isOneToOne: false
+            referencedRelation: "fandom"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat: {
+        Row: {
+          content: Json
+          created_at: string
+          from_user_id: string | null
+          id: number
+          is_read: boolean
+          seq_id: number
+          to_user_id: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          from_user_id?: string | null
+          id?: number
+          is_read?: boolean
+          seq_id: number
+          to_user_id?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          from_user_id?: string | null
+          id?: number
+          is_read?: boolean
+          seq_id?: number
+          to_user_id?: string | null
+        }
+        Relationships: []
+      }
       fandom: {
         Row: {
           created_at: string
@@ -107,6 +172,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      follow: {
+        Row: {
+          created_at: string
+          follower_id: string | null
+          following_id: string | null
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          follower_id?: string | null
+          following_id?: string | null
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string | null
+          following_id?: string | null
+          id?: number
+        }
+        Relationships: []
       }
       invitation_code: {
         Row: {
@@ -198,6 +284,36 @@ export type Database = {
           request_ip?: unknown
           request_user_agent?: string
           status?: Database["public"]["Enums"]["register_request_status"]
+        }
+        Relationships: []
+      }
+      relation: {
+        Row: {
+          characters: number[]
+          created_at: string
+          created_by: string | null
+          fandom_ids: number[]
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          characters: number[]
+          created_at?: string
+          created_by?: string | null
+          fandom_ids: number[]
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          characters?: number[]
+          created_at?: string
+          created_by?: string | null
+          fandom_ids?: number[]
+          id?: number
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
