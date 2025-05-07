@@ -5,7 +5,7 @@
 CREATE TABLE public.fandom (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    created_by uuid references auth.users(id),
+    created_by uuid references public.user_basic(user_id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     is_rps BOOLEAN NOT NULL DEFAULT FALSE,
@@ -137,7 +137,7 @@ CREATE INDEX fandom_works_creation_level_idx ON public.fandom (works_creation_le
 CREATE TABLE public.fandom_subscription (
     id SERIAL PRIMARY KEY,
     fandom_id SERIAL references public.fandom (id),
-    user_id uuid references auth.users (id),
+    user_id uuid references public.user_basic(user_id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

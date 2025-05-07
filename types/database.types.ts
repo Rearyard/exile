@@ -61,6 +61,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "character_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "character_fandom_id_fkey"
             columns: ["fandom_id"]
             isOneToOne: false
@@ -97,7 +104,78 @@ export type Database = {
           seq_id?: number
           to_user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chat_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "chat_to_user_id_fkey"
+            columns: ["to_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      content: {
+        Row: {
+          comments: number
+          created_at: string
+          id: number
+          images: string[]
+          is_deleted: boolean
+          likes: number
+          plain_text: string
+          schema_content: Json
+          tags: number[]
+          updated_at: string
+          views: number
+          work_id: number
+          work_title: string
+        }
+        Insert: {
+          comments?: number
+          created_at?: string
+          id?: number
+          images?: string[]
+          is_deleted?: boolean
+          likes?: number
+          plain_text?: string
+          schema_content?: Json
+          tags?: number[]
+          updated_at?: string
+          views?: number
+          work_id: number
+          work_title: string
+        }
+        Update: {
+          comments?: number
+          created_at?: string
+          id?: number
+          images?: string[]
+          is_deleted?: boolean
+          likes?: number
+          plain_text?: string
+          schema_content?: Json
+          tags?: number[]
+          updated_at?: string
+          views?: number
+          work_id?: number
+          work_title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "work"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fandom: {
         Row: {
@@ -142,7 +220,15 @@ export type Database = {
           visibility?: number
           works_creation_level?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fandom_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       fandom_subscription: {
         Row: {
@@ -171,6 +257,13 @@ export type Database = {
             referencedRelation: "fandom"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fandom_subscription_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       follow: {
@@ -192,7 +285,22 @@ export type Database = {
           following_id?: string | null
           id?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "follow_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "follow_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       invitation_code: {
         Row: {
@@ -285,7 +393,15 @@ export type Database = {
           request_user_agent?: string
           status?: Database["public"]["Enums"]["register_request_status"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "register_request_finished_by_fkey"
+            columns: ["finished_by"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       relation: {
         Row: {
@@ -311,6 +427,35 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           fandom_ids?: number[]
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relation_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      tag: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
           id?: number
           name?: string
           updated_at?: string
@@ -347,6 +492,56 @@ export type Database = {
         }
         Relationships: []
       }
+      work: {
+        Row: {
+          characters: number[] | null
+          contents: number[] | null
+          created_at: string
+          created_by: string
+          description: string | null
+          fandoms: number[] | null
+          id: number
+          relationships: number[] | null
+          title: string
+          type: Database["public"]["Enums"]["work_type"]
+          updated_at: string
+        }
+        Insert: {
+          characters?: number[] | null
+          contents?: number[] | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          fandoms?: number[] | null
+          id?: number
+          relationships?: number[] | null
+          title: string
+          type: Database["public"]["Enums"]["work_type"]
+          updated_at?: string
+        }
+        Update: {
+          characters?: number[] | null
+          contents?: number[] | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          fandoms?: number[] | null
+          id?: number
+          relationships?: number[] | null
+          title?: string
+          type?: Database["public"]["Enums"]["work_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -356,6 +551,7 @@ export type Database = {
     }
     Enums: {
       register_request_status: "pending" | "approved" | "rejected"
+      work_type: "passage" | "series" | "post"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -475,6 +671,7 @@ export const Constants = {
   public: {
     Enums: {
       register_request_status: ["pending", "approved", "rejected"],
+      work_type: ["passage", "series", "post"],
     },
   },
 } as const

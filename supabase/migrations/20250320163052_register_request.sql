@@ -13,7 +13,7 @@ create table public.register_request (
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     status register_request_status default 'pending' not null,
     finished_at timestamp with time zone,
-    finished_by uuid references auth.users(id)
+    finished_by uuid references public.user_basic(user_id)
 );
 
 -- create index for foreign key

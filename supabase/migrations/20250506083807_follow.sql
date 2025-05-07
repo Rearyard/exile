@@ -4,9 +4,11 @@
 --create follow table
 CREATE TABLE public.follow (
     id SERIAL PRIMARY KEY,
-    follower_id uuid references auth.users(id),
-    following_id uuid references auth.users(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+    follower_id uuid references public.user_basic(user_id),
+    following_id uuid references public.user_basic(user_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(follower_id, following_id),
+    CONSTRAINT no_self_follow CHECK (follower_id != following_id)
 );
 
 --comments

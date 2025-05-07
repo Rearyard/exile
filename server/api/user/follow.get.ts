@@ -3,7 +3,7 @@ import { ErrCode } from "~/types/enums/ErrCode"
 
 defineRouteMeta({
   openAPI: {
-    tags: ['User'],
+    tags: ['User', "Follow"],
     summary: 'Get user follow list',
     description: 'Get user follow list',
     parameters: [
@@ -26,6 +26,33 @@ defineRouteMeta({
         },
       },
     ],
+    responses: {
+      200: {
+        description: 'The follow list',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                users: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      user_id: { type: 'string' },
+                      nickname: { type: 'string' },
+                      avatar: { type: 'string' },
+                      signature: { type: 'string' },
+                    },
+                  },
+                },
+                total: { type: 'number' },
+              },
+            },
+          },
+        },
+      },
+    }
   }
 })
 
@@ -35,21 +62,26 @@ const querySchema = z.object({
 })
 
 
-export default defineEventHandler(async (event) => {
-  const { query, body } = await useParamValidGate({
+export default defineEventHandler(async () => {
+  const { query } = await useParamValidGate({
     query: querySchema,
   })
   const user = await useAuthGate()
   const { serviceRoleClient } = await useSupabase()
 
-  const { data, error } = await serviceRoleClient.from('follow').select('*').eq('follower_id', user.id).range(query.offset!, query.offset! + query.limit!);
-  if (error) {
+  const listQuery =  serviceRoleClient.from('follow').select('user_basic!following_id(user_id, nickname, avatar, signature)').eq('follower_id', user.id).range(query.offset!, query.offset! + query.limit!);
+  const countQuery = serviceRoleClient.from('follow').select('*', { count: 'exact', head: true }).eq('follower_id', user.id);
+  const [{data, error}, {count, error: countErr}] = await Promise.all([listQuery, countQuery]);
+
+  if (error || countErr) {
     return throwLogicError({
       code: ErrCode.DB_ERROR,
-      msg: error.message,
+      msg: error?.message || countErr?.message,
     })
   }
-  
-  return data
-  return 'Hello Nitro'
+
+  return {
+    users: data.map((user) => user.user_basic),
+    total: count,
+  }
 })

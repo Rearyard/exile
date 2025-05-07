@@ -11,7 +11,7 @@ export const useAuthGate = async () => {
     if (optionalUser.error) {
         return throwLogicError({
             code: ErrCode.UNAUTHORIZED,
-            msg: 'Unauthorized: Supabase error',
+            msg: 'Unauthorized: Supabase error: ' + optionalUser.error.message,
         })
     }
     if (!optionalUser.user) {

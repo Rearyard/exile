@@ -5,7 +5,7 @@
 CREATE TABLE public.relation (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    created_by uuid references auth.users(id),
+    created_by uuid references public.user_basic(user_id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     fandom_ids INTEGER[] NOT NULL CHECK (array_length(fandom_ids, 1) > 0),

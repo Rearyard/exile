@@ -1,0 +1,3 @@
+--Enable extensions
+
+create extension if not exists pgroonga with schema extensions

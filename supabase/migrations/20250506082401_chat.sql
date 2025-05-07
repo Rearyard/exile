@@ -5,8 +5,8 @@
 CREATE TABLE public.chat (
     id SERIAL PRIMARY KEY,
     seq_id INTEGER NOT NULL,
-    from_user_id uuid references auth.users(id),
-    to_user_id uuid references auth.users(id),
+    from_user_id uuid references public.user_basic(user_id),
+    to_user_id uuid references public.user_basic(user_id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     content JSONB NOT NULL,
     is_read BOOLEAN NOT NULL DEFAULT FALSE
