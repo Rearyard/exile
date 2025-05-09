@@ -115,9 +115,9 @@ onMounted(() => {
         </form>
         <div class="mt-4 text-center text-sm">
           {{ $t('alreadyHaveAccount') }}
-          <a href="#" class="underline">
+          <NuxtLink to="/login" class="underline">
             {{ $t('directToLogin') }}
-          </a>
+          </NuxtLink>
         </div>
       </div>
     </div>
