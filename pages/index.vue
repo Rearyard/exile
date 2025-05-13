@@ -18,8 +18,8 @@ const data = {
 </script>
 
 <template>
-  <div class="flex-1 flex">
-
+  <div>
+    <FeedList />
   </div>
 </template>
 

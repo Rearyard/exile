@@ -14,6 +14,12 @@ export const useGlobalConfirmState = createGlobalState(() => {
     if (instance) {
       instance.showing = false
     }
+    // 如果所有实例都隐藏，则关闭所有实例
+    if (confirmInstances.value.every(item => !item.showing)) {
+      destoryAll()
+      // remover overflow hidden from body
+      document.body.style.overflow = 'auto'
+    }
   }
 
   function destory(id: string) {

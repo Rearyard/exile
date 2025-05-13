@@ -32,6 +32,7 @@
     "@tiptap/extension-blockquote": "^2.11.9",
     "@tiptap/extension-heading": "^2.11.9",
     "@tiptap/extension-paragraph": "^2.11.9",
+    "@tiptap/extension-placeholder": "^2.12.0",
     "@tiptap/extension-text-align": "^2.11.9",
     "@tiptap/extension-underline": "^2.11.9",
     "@tiptap/pm": "^2.11.9",
@@ -47,6 +48,7 @@
     "eslint": "^9.0.0",
     "i18next": "^25.0.0",
     "lucide-vue-next": "^0.479.0",
+    "motion-v": "1.1.0-alpha.0",
     "nanoid": "^5.1.5",
     "nuxt": "^3.16.0",
     "nuxt-zod-i18n": "1.11.5",
@@ -63,10 +65,12 @@
     "zod-i18n-map": "^2.27.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@iconify-json/tabler": "^1.2.17",
     "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/tailwindcss": "^6.13.2",
-    "cypress": "^14.3.0"
+    "cypress": "^14.3.0",
+    "nuxt-lodash": "^2.5.3"
   },
   "resolutions": {
     "cookie": "1.0.2"

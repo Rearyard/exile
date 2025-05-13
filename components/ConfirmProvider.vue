@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <ConfirmModal v-for="(item, index) in confirmInstances" :key="item.id" :instance="item" />
+    <ConfirmModal style="z-index: 1000;" v-for="(item, index) in confirmInstances" :key="item.id" :instance="item" />
   </Teleport>
 </template>
 
