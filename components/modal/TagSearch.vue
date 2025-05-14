@@ -1,5 +1,8 @@
 <template>
   <ModalBase v-model="isShowing" title="添加标签" :close-on-click-outside="false">
+    <template #cancel>
+      <span class="cursor-pointer" @click="hide">取消</span>
+    </template>
     <div class="h-[350px] flex flex-col">
       <Tabs :tabs="tabs" @change="tabChange" />
       <div class="mt-4 w-full relative">
@@ -10,12 +13,37 @@
           </div>
         </Transition>
       </div>
-      <div class="mt-4 flex gap-2 flex-1 ">
+      <div class="mt-4 flex gap-2 flex-1 overflow-hidden">
         <div class="flex-1">
-          <div class="w-full h-full border rounded-md border-dashed border-divider"></div>
+          <div
+            class="w-full h-full border rounded-md border-dashed border-divider p-2 flex flex-wrap gap-2 content-start overflow-hidden overflow-y-auto after:flex-1 text-sm">
+            <div v-for="(tag, index) in tags" :key="tag"
+              class="bg-foreground/10 rounded-md py-1 px-2 h-fit grow text-center hover:bg-foreground/20 transition-all duration-200 cursor-pointer"
+              @click="addTag(tag)">
+              {{ tag }}
+            </div>
+            <div v-if="search"
+              class="bg-foreground/10 rounded-md py-1 px-2 h-fit text-center hover:bg-foreground/20 transition-all duration-200 cursor-pointer">
+              <div class="flex items-center justify-center gap-2">
+                <Icon name="tabler:plus" />
+                <div class="flex-1">{{ search }}</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="flex-1">
-          <div class="w-full h-full border rounded-md border-divider"></div>
+          <div
+            class="w-full h-full border rounded-md border-divider p-2 flex flex-wrap gap-2 content-start overflow-hidden overflow-y-auto after:flex-1 text-sm">
+            <div layout v-for="(tag, index) in tagsSelected" :key="tag"
+              class="bg-orange-200/10 rounded-md p-1 h-fit grow text-center flex items-center justify-between gap-2">
+              <div class="flex-1">{{ tag }}</div>
+              <div
+                class="cursor-pointer p-1 flex bg-transparent hover:bg-red-500/20 hover:text-red-500 transition-all duration-200 rounded-md"
+                @click="removeSelectedTag(tag)">
+                <Icon name="tabler:x" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -23,6 +51,8 @@
 </template>
 
 <script lang="ts" setup>
+import { motion, LayoutGroup } from 'motion-v';
+import { faker } from '@faker-js/faker';
 const isShowing = ref(false);
 
 onKeyStroke('Escape', () => {
@@ -34,14 +64,7 @@ function show() {
 }
 
 function hide() {
-  const confirm = useConfirm({
-    title: '确定退出？',
-    description: '当前未发布的随笔内容将不会保存',
-    onConfirm: () => {
-      isShowing.value = false;
-    }
-  });
-  confirm.show();
+  isShowing.value = false;
 }
 
 defineExpose({
@@ -71,6 +94,8 @@ const activeTab = ref(tabs.value[0]);
 function tabChange(tab: { label: string, key: string }) {
   activeTab.value = tab;
 }
+const tags = ref<string[]>([]);
+const tagsSelected = ref<string[]>([]);
 const searchLoading = ref(false);
 const search = ref('');
 const searchPlaceholder = computed(() => {
@@ -85,6 +110,31 @@ const searchPlaceholder = computed(() => {
     placeholder += '其他';
   }
   return placeholder + '...';
+})
+function shuffleTags() {
+  // random 3-10 tags with faker
+  tags.value = Array.from({ length: Math.floor(Math.random() * 8) + 3 }, () => faker.lorem.word());
+}
+
+function addTag(tag: string) {
+  tagsSelected.value.push(tag);
+  tags.value = tags.value.filter(t => t !== tag);
+}
+
+function removeSelectedTag(tag: string) {
+  tagsSelected.value = tagsSelected.value.filter(t => t !== tag);
+}
+
+watch(activeTab, (val) => {
+  search.value = '';
+})
+
+watch(search, (val) => {
+  if (val.length > 0) {
+    shuffleTags();
+  } else {
+    tags.value = [];
+  }
 })
 
 </script>
