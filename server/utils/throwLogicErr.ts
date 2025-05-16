@@ -3,6 +3,7 @@ import {ErrCode} from '~/types/enums/ErrCode';
 import {nanoid} from 'nanoid';
 
 interface ILogicErr {
+  statusCode?: number;
   code: ErrCode;
   msg?: string;
   data?: any;
@@ -17,7 +18,7 @@ export const throwLogicError = (options: ILogicErr) => {
     rid,
   });
   throw createError({
-    status: 400,
+    status: options.statusCode || 400,
     statusMessage: 'Logic Error',
     data: {
       code: options.code,

@@ -1,5 +1,6 @@
 import type { Database } from '~/types/database.types'
 import {serverSupabaseClient, serverSupabaseServiceRole, serverSupabaseUser} from "#supabase/server";
+import {ErrCode} from "~/types/enums/ErrCode";
 
 export const useSupabase = async () => {
     return {
@@ -14,7 +15,12 @@ export const useSupabase = async () => {
                 error: e,
             }
         }),
-        requiredUser: () => serverSupabaseUser(useEvent()),
+        requiredUser: () => serverSupabaseUser(useEvent()).catch(e => {
+            return throwLogicError({
+                code: ErrCode.UNAUTHORIZED,
+                msg: 'Unauthorized: No user found',
+            })
+        }),
         client: await serverSupabaseClient<Database>(useEvent()),
         serviceRoleClient: serverSupabaseServiceRole<Database>(useEvent())
     }
