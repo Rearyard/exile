@@ -8,10 +8,13 @@ interface Props extends PrimitiveProps {
   variant?: ButtonVariants['variant']
   size?: ButtonVariants['size']
   class?: HTMLAttributes['class']
+  loading?: boolean
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   as: 'button',
+  loading: false,
 })
 </script>
 
@@ -20,7 +23,9 @@ const props = withDefaults(defineProps<Props>(), {
     :as="as"
     :as-child="asChild"
     :class="cn(buttonVariants({ variant, size }), props.class)"
+    :disabled="props.loading || props.disabled"
   >
+    <Icon v-if="props.loading" name="tabler:loader-2" class="animate-spin" />
     <slot />
   </Primitive>
 </template>

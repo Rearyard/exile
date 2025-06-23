@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="flex items-center gap-2 mt-2">
-      <button @click="openTagSearch"
+      <button @click="openTagAdd"
         class="text-sm text-foreground/50 bg-foreground/10 px-4 py-1 rounded-full hover:bg-foreground/20 flex items-center gap-1">
         <Icon class="w-4 h-4" name="tabler:hash" />
         添加标签
@@ -47,17 +47,18 @@
       <Button>发 布</Button>
     </div>
   </ModalBase>
-  <ModalTagSearch ref="tagSearch" />
+  <ModalTagAddEntry ref="tagAdd" />
 </template>
 
 <script lang="ts" setup>
-import type { ModalTagSearch } from '#components';
+import type { ModalTagAddEntry } from '#components';
 
 
 const isShowing = ref(false);
 const tagSearch = ref<InstanceType<typeof ModalTagSearch> | null>(null);
 const imageInput = ref<HTMLInputElement | null>(null);
 const imageFiles = ref<File[]>([]);
+const tagAdd = ref<InstanceType<typeof ModalTagAddEntry> | null>(null);
 onKeyStroke('Escape', () => {
   hide();
 })
@@ -82,8 +83,8 @@ defineExpose({
   hide
 })
 
-function openTagSearch() {
-  tagSearch.value?.show();
+function openTagAdd() {
+  tagAdd.value?.show();
 }
 
 function handleSelectImage() {

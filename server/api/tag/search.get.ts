@@ -13,7 +13,12 @@ export default defineEventHandler(async (event) => {
     });
     const meilisearchClient = useMeilisearch();
 
-    const results = await meilisearchClient.index('tag').search(query.query, {
+    const results = await meilisearchClient.index('tag').search<{
+        id: number;
+        name: string;
+        created_at: string;
+        updated_at: string;
+    }>(query.query, {
         page: query.page,
         limit: query.limit,
         attributesToSearchOn: ['name'],
@@ -25,6 +30,10 @@ export default defineEventHandler(async (event) => {
                 return {
                     ...hit,
                     id: encodeSqid([hit.id]),
+                    _formatted: {
+                        ...hit._formatted,
+                        id: encodeSqid([hit.id]),
+                    }
                 }
             }),
         }
