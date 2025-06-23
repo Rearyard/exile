@@ -27,6 +27,7 @@
     <div class="w-16 h-16 bg-foreground/10 rounded-lg cursor-pointer flex items-center justify-center mt-2">
       <Icon class="w-6 h-6 text-foreground/50" name="tabler:photo-plus" />
     </div>
+    <EditorPostImageUpload />
     <div class="flex items-center gap-2 mt-2">
       <button @click="openTagSearch"
         class="text-sm text-foreground/50 bg-foreground/10 px-4 py-1 rounded-full hover:bg-foreground/20 flex items-center gap-1">
