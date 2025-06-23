@@ -356,6 +356,41 @@ export type Database = {
         }
         Relationships: []
       }
+      post_image_upload_meta: {
+        Row: {
+          created_at: string
+          id: number
+          quota_limit: number
+          quota_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          quota_limit?: number
+          quota_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          quota_limit?: number
+          quota_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_image_upload_meta_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_basic"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       register_request: {
         Row: {
           additional_info: Json | null

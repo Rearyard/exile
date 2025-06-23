@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-full min-h-[480px] w-[76px] fixed top-0 left-0 flex flex-col items-center backdrop:blur-sm bg-[#0a0a0ad9]">
+    class="h-full min-h-[480px] w-[76px] fixed top-0 left-0 flex flex-col items-center">
     <div class="py-4">
       <div class="w-9 h-9 bg-foreground/10 rounded">
         <PageLogo :size="36" />
@@ -36,7 +36,7 @@
           </div>
         </motion.div>
       </PopoverTrigger>
-      <PopoverContent side="top" class="rounded-xl p-2 bg-foreground/5">
+      <PopoverContent side="top" class="rounded-xl p-2 bg-background">
         <div>
           <div v-for="item in popoverContent" :key="item.key">
             <div class="flex items-center gap-2 cursor-pointer hover:bg-foreground/10 px-3 py-3 rounded-xl">

@@ -11,6 +11,8 @@ export default {
   captcha: '验证码',
   submit: '提交',
   registerPage: {
+    emailPlaceholder: '请输入邮箱',
+    passwordPlaceholder: '请输入密码',
     inviteCode: '邀请码',
     registerDesc: '申请加入 Rearyard',
     headsUp: '请注意！',

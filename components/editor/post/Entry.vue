@@ -9,6 +9,7 @@ import { Editor, EditorContent, mergeAttributes } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder'
 
+
 const editor = shallowRef<Editor | undefined>(undefined);
 
 function focusEditor() {

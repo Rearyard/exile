@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     result = defaults(result, data?.user?.user_metadata);
 
     if (!isQueryingSelf) {
-        const isFollowingReq = serviceRoleClient.from('follow').select('id').eq('follower_id', user!.id).eq('followee_id', uid).maybeSingle();
+        const isFollowingReq = serviceRoleClient.from('follow').select('id1').eq('follower_id', user!.id).eq('followee_id', uid).maybeSingle();
         const isFollowingMeReq = serviceRoleClient.from('follow').select('id').eq('follower_id', uid).eq('followee_id', user!.id).maybeSingle();
         const [isFollowingRes, isFollowingMeRes] = await Promise.all([isFollowingReq, isFollowingMeReq]);
         result.isFollowing = !!isFollowingRes.data?.id

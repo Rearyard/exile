@@ -2,7 +2,7 @@
   <Body :style="bodyStyle" />
   <Teleport to="body">
     <Transition name="modal">
-      <div class="fixed inset-0 z-50 bg-background/50 backdrop-blur-sm" v-show="isShowing">
+      <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm" v-show="isShowing">
         <div class="absolute inset-0" @click="closeOnClickOutside ? hide() : null"></div>
         <div class="absolute inset-0 flex items-center justify-center">
         <div class="w-1/2 max-w-[700px] min-w-[600px] border rounded-xl bg-background modal-wrapper">

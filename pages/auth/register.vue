@@ -90,7 +90,7 @@ onMounted(() => {
             <FormItem v-auto-animate data-cy="email-form-item">
               <FormLabel>{{ $t('email') }}</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="shadcn" v-bind="componentField" />
+                <Input type="text" :placeholder="$t('registerPage.emailPlaceholder')" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,7 +103,7 @@ onMounted(() => {
                 {{ $t('password') }}
               </FormLabel>
               <FormControl>
-                <Input type="password" placeholder="shadcn" v-bind="componentField" />
+                <Input type="password" :placeholder="$t('registerPage.passwordPlaceholder')" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
