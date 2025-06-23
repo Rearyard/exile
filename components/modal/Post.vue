@@ -24,10 +24,14 @@
       </div>
     </template>
     <EditorPostEntry />
-    <div class="w-16 h-16 bg-foreground/10 rounded-lg cursor-pointer flex items-center justify-center mt-2">
-      <Icon class="w-6 h-6 text-foreground/50" name="tabler:photo-plus" />
+    <div class="flex items-center gap-2 flex-wrap">
+      <EditorPostImageUpload v-for="file in imageFiles" :key="file.name" :file="file" />
+      <div class="w-16 h-16 bg-foreground/10 rounded-lg cursor-pointer flex items-center justify-center mt-2"
+        @click="handleSelectImage">
+        <input type="file" class="hidden" ref="imageInput" @change="handleImageSelected" accept="image/*" />
+        <Icon class="w-6 h-6 text-foreground/50" name="tabler:photo-plus" />
+      </div>
     </div>
-    <EditorPostImageUpload />
     <div class="flex items-center gap-2 mt-2">
       <button @click="openTagSearch"
         class="text-sm text-foreground/50 bg-foreground/10 px-4 py-1 rounded-full hover:bg-foreground/20 flex items-center gap-1">
@@ -52,6 +56,8 @@ import type { ModalTagSearch } from '#components';
 
 const isShowing = ref(false);
 const tagSearch = ref<InstanceType<typeof ModalTagSearch> | null>(null);
+const imageInput = ref<HTMLInputElement | null>(null);
+const imageFiles = ref<File[]>([]);
 onKeyStroke('Escape', () => {
   hide();
 })
@@ -78,6 +84,19 @@ defineExpose({
 
 function openTagSearch() {
   tagSearch.value?.show();
+}
+
+function handleSelectImage() {
+  imageInput.value?.click();
+}
+
+function handleImageSelected(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (file) {
+    imageFiles.value.push(file);
+  }
+  // 清空 input 的值
+  imageInput.value!.value = '';
 }
 </script>
 

@@ -5,7 +5,7 @@
       <div class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm" v-show="isShowing">
         <div class="absolute inset-0" @click="closeOnClickOutside ? hide() : null"></div>
         <div class="absolute inset-0 flex items-center justify-center">
-        <div class="w-1/2 max-w-[700px] min-w-[600px] border rounded-xl bg-background modal-wrapper">
+        <div class="w-1/2 max-w-[700px] min-w-[600px] border rounded-xl bg-background modal-wrapper relative">
           <div class="h-[50px] px-5 py-3 relative border-b flex items-center justify-between">
             <div class="absolute top-0 left-5">
               <div class="h-[50px] flex justify-center items-center">
