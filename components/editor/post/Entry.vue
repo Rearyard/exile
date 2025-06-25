@@ -17,6 +17,12 @@ function focusEditor() {
   editor.value?.commands.focus();
 }
 
+const getJSON = () => {
+  return editor.value?.getJSON()
+}
+
+defineExpose({ getJSON })
+
 onMounted(() => {
   editor.value = new Editor({
     extensions: [StarterKit, Placeholder.configure({

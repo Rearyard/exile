@@ -10,6 +10,7 @@ definePageMeta({
   layout: 'plain'
 })
 
+const env = useEnv()
 const { t } = useI18n()
 const supabase = useSupabaseClient()
 const userStore = useUserStore()

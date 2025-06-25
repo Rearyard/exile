@@ -18,15 +18,18 @@ const isShowing = ref(false);
 const tabs = [
   {
     label: '原作',
-    key: 'fandom'
+    key: 'fandom',
+    disabled: true,
   },
   {
     label: '人物',
-    key: 'character'
+    key: 'character',
+    disabled: true,
   },
   {
     label: 'CP',
-    key: 'cp'
+    key: 'cp',
+    disabled: true,
   },
   {
     label: '其他',
@@ -34,7 +37,7 @@ const tabs = [
   },
 ]
 
-const activeTab = ref(tabs[0]);
+const activeTab = ref(tabs[3]);
 
 useTagAddProvide({
   tabs,

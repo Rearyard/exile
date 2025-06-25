@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod/v4"
 import { ErrCode } from "~/types/enums/ErrCode"
 
 defineRouteMeta({
@@ -56,32 +56,43 @@ defineRouteMeta({
   }
 })
 
-const querySchema = z.object({
-  offset: z.number().optional().default(0),
-  limit: z.number().optional().default(10),
-})
 
+// export default defineEventHandler(async () => {
+//   const { query } = await useParamValidGate({
+//     query: querySchema,
+//   })
+//   const user = await useAuthGate()
+//   const { serviceRoleClient } = await useSupabase()
 
-export default defineEventHandler(async () => {
-  const { query } = await useParamValidGate({
-    query: querySchema,
-  })
-  const user = await useAuthGate()
-  const { serviceRoleClient } = await useSupabase()
+//   const listQuery =  serviceRoleClient.from('follow').select('user_basic!following_id(user_id, nickname, avatar, signature)').eq('follower_id', user.id).range(query.offset!, query.offset! + query.limit!);
+//   const countQuery = serviceRoleClient.from('follow').select('*', { count: 'exact', head: true }).eq('follower_id', user.id);
+//   const [{data, error}, {count, error: countErr}] = await Promise.all([listQuery, countQuery]);
 
-  const listQuery =  serviceRoleClient.from('follow').select('user_basic!following_id(user_id, nickname, avatar, signature)').eq('follower_id', user.id).range(query.offset!, query.offset! + query.limit!);
-  const countQuery = serviceRoleClient.from('follow').select('*', { count: 'exact', head: true }).eq('follower_id', user.id);
+//   if (error || countErr) {
+//     return throwLogicError({
+//       code: ErrCode.DB_ERROR,
+//       msg: error?.message || countErr?.message,
+//     })
+//   }
+
+//   return {
+//     users: data.map((user) => user.user_basic),
+//     total: count,
+//   }
+// })
+
+export default defineRearyardHandler(async (ctx) => {
+  const { query, user, supabaseServiceRole } = ctx;
+
+  const listQuery =  supabaseServiceRole.from('follow').select('user_basic!following_id(user_id, nickname, avatar, signature)').eq('follower_id', user!.id).range(query.offset!, query.offset! + query.limit!);
+  const countQuery = supabaseServiceRole.from('follow').select('*', { count: 'exact', head: true }).eq('follower_id', user!.id);
   const [{data, error}, {count, error: countErr}] = await Promise.all([listQuery, countQuery]);
 
-  if (error || countErr) {
-    return throwLogicError({
-      code: ErrCode.DB_ERROR,
-      msg: error?.message || countErr?.message,
-    })
-  }
-
-  return {
-    users: data.map((user) => user.user_basic),
-    total: count,
-  }
-})
+}, {
+  strictAuth: true,
+  querySchema: z.object({
+    q: z.string().optional(),
+    offset: z.number().optional().default(0),
+    limit: z.number().optional().default(10),
+  }),
+});

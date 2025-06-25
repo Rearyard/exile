@@ -1,21 +1,16 @@
 import { VueRenderer } from '@tiptap/vue-3'
-import tippy from 'tippy.js'
+import tippy, { type Instance } from 'tippy.js'
 
 import MentionList from './MentionList.vue'
 
 export default {
-  items: ({ query }) => {
-    return [
-      'Lea Thompson', 'Cyndi Lauper', 'Tom Cruise', 'Madonna', 'Jerry Hall', 'Joan Collins', 'Winona Ryder', 'Christina Applegate', 'Alyssa Milano', 'Molly Ringwald', 'Ally Sheedy', 'Debbie Harry', 'Olivia Newton-John', 'Elton John', 'Michael J. Fox', 'Axl Rose', 'Emilio Estevez', 'Ralph Macchio', 'Rob Lowe', 'Jennifer Grey', 'Mickey Rourke', 'John Cusack', 'Matthew Broderick', 'Justine Bateman', 'Lisa Bonet',
-    ].filter(item => item.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5)
-  },
-
   render: () => {
-    let component
-    let popup
+    let component: VueRenderer
+    let popup: Instance[]
 
     return {
-      onStart: props => {
+      onStart: (props: { editor: any; clientRect: any }) => {
+        console.log('onStart', props)
         component = new VueRenderer(MentionList, {
           // using vue 2:
           // parent: this,
@@ -40,7 +35,8 @@ export default {
         })
       },
 
-      onUpdate(props) {
+      onUpdate(props: any) {
+        console.log('onUpdate', props)
         component.updateProps(props)
 
         if (!props.clientRect) {
@@ -52,7 +48,7 @@ export default {
         })
       },
 
-      onKeyDown(props) {
+      onKeyDown(props: any) {
         if (props.event.key === 'Escape') {
           popup[0].hide()
 

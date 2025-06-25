@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { xssFilter } from "~/shared/utils/xssFilter";
 import { ErrCode } from "~/types/enums/ErrCode";
 

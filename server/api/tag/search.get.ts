@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const searchSchema = z.object({
     query: z.string().min(1).transform((val) => val.trim()),

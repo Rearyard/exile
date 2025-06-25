@@ -1,13 +1,20 @@
-import { z, ZodSchema } from "zod";
+import { z, ZodType } from "zod/v4";
 import { ErrCode } from "~/types/enums/ErrCode";
+import { fromError, createErrorMap } from 'zod-validation-error/v4';
 
 const baseSchema = z.object({});
+
+z.config({
+    customError: createErrorMap({
+      includePath: true,
+    }),
+  });
 
 type SchemaType = typeof baseSchema;
 
 interface IUseParmValidGate<Q, B> {
-    query?: ZodSchema<Q>;
-    body?: ZodSchema<B>;
+    query?: ZodType<Q>;
+    body?: ZodType<B>;
 }
 
 export const useParamValidGate = async <Q, B>(options: IUseParmValidGate<Q, B>) => {
@@ -23,10 +30,14 @@ export const useParamValidGate = async <Q, B>(options: IUseParmValidGate<Q, B>) 
     if (options.query) {
         const queryResult = await getValidatedQuery(event, options.query.safeParse);
         if (!queryResult.success) {
+            const validationError = fromError(queryResult.error);
             return throwLogicError({
                 code: ErrCode.INVALID_PARAM,
-                msg: queryResult.error.message,
-                data: queryResult.error.format(),
+                msg: validationError.message || 'Invalid query',
+                data: {
+                    name: validationError.name,
+                    details: validationError.details,
+                },
             })
         }
         result.query = queryResult.data;
@@ -37,10 +48,14 @@ export const useParamValidGate = async <Q, B>(options: IUseParmValidGate<Q, B>) 
         } else {
             const bodyResult = await readValidatedBody(event, options.body.safeParse);
             if (!bodyResult.success) {
+                const validationError = fromError(bodyResult.error);
                 return throwLogicError({
                     code: ErrCode.INVALID_PARAM,
-                    msg: bodyResult.error.message,
-                    data: bodyResult.error.format(),
+                    msg: validationError.message || 'Invalid body',
+                    data: {
+                        name: validationError.name,
+                        details: validationError.details,
+                    },
                 })
             }
             result.body = bodyResult.data;

@@ -23,7 +23,7 @@
         </Tooltip>
       </div>
     </template>
-    <EditorPostEntry />
+    <EditorPostEntry ref="editor" />
     <div class="flex items-center gap-2 flex-wrap">
       <EditorPostImageUpload v-for="file in imageFiles" :key="file.name" :file="file" />
       <div class="w-16 h-16 bg-foreground/10 rounded-lg cursor-pointer flex items-center justify-center mt-2"
@@ -44,14 +44,14 @@
         <Icon class="w-4 h-4" name="tabler:eye" />
         所有人都可见
       </div>
-      <Button>发 布</Button>
+      <Button @click="createPost">发 布</Button>
     </div>
   </ModalBase>
   <ModalTagAddEntry ref="tagAdd" />
 </template>
 
 <script lang="ts" setup>
-import type { ModalTagAddEntry } from '#components';
+import type { ModalTagAddEntry, EditorPostEntry, ModalTagSearch } from '#components';
 
 
 const isShowing = ref(false);
@@ -59,6 +59,7 @@ const tagSearch = ref<InstanceType<typeof ModalTagSearch> | null>(null);
 const imageInput = ref<HTMLInputElement | null>(null);
 const imageFiles = ref<File[]>([]);
 const tagAdd = ref<InstanceType<typeof ModalTagAddEntry> | null>(null);
+const editor = ref<InstanceType<typeof EditorPostEntry> | null>(null);
 onKeyStroke('Escape', () => {
   hide();
 })
@@ -76,6 +77,17 @@ function hide() {
     }
   });
   confirm.show();
+}
+
+function createPost() {
+  const json = editor.value?.getJSON();
+  $fetch('/api/post/create', {
+    method: 'POST',
+    body: {
+      title: '随笔',
+      content: json,
+    },
+  })
 }
 
 defineExpose({
