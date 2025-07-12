@@ -21,7 +21,11 @@ const getJSON = () => {
   return editor.value?.getJSON()
 }
 
-defineExpose({ getJSON })
+const getPlainContent = () => {
+  return editor.value?.getText()
+}
+
+defineExpose({ getJSON, getPlainContent })
 
 onMounted(() => {
   editor.value = new Editor({

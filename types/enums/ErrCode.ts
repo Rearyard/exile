@@ -5,6 +5,8 @@ export enum ErrCode {
 
   UNAUTHORIZED = -1001,
   INVALID_PARAM = -1002,
+
+  CONTENT_TAGS_INVALID = -2000,
 }
 
 

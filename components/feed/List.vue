@@ -1,29 +1,32 @@
 <template>
   <div>
-    <FeedItem v-for="item in feedList" :key="item.id" :item="item" />
+    <FeedItem v-for="item in feedList" :key="item.id" :title="item.title" :auther="item.auther"
+      :createdAt="humanizeTime(item.createdAt)" :content="item.content.plain_text" :tags="item.content.tags"
+      :likeCount="item.content.likes" :commentCount="item.content.comments" :shareCount="item.content.shares" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { faker } from '@faker-js/faker';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/zh-cn';
+import type { PostFeedItem } from '~/types/feed';
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
 
-interface FeedItem {
-  id: string
-  title: string
-  description: string
-}
-const feedList = ref<FeedItem[]>([])
+const feedList = ref<PostFeedItem[]>([])
 
-const getFakeFeed = () => {
-  return {
-    id: faker.string.uuid(),
-    title: faker.lorem.sentence(),
-    description: faker.lorem.sentence(),
-  }
+function humanizeTime(time: string) {
+  return dayjs(time).fromNow()
 }
+
+
 
 function fetchMoreFeed() {
-  feedList.value.push(...new Array(10).fill(null).map(getFakeFeed))
+  return $fetch('/api/feed/list').then((res) => {
+    feedList.value = res.data
+  })
 }
 
 onMounted(() => {

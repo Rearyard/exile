@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Loader2 } from 'lucide-vue-next'
+import type { GetAuthorizationOptions, GetAuthorizationCallbackParams } from 'cos-js-sdk-v5'
 
 interface Props {
   file: File
@@ -8,6 +9,8 @@ interface Props {
 const props = defineProps<Props>()
 
 const previewUrl = ref<string | null>(null)
+const uploadKey = ref<string>('')
+const cosUrl = ref<string>('')
 const isUploading = ref(true)
 const progress = ref(0)
 const isUploaded = ref(false)
@@ -25,17 +28,42 @@ watch(props.file, () => {
   }
 }, { immediate: true })
 
-
 async function upload() {
-  // fake upload
-  isUploading.value = true
-  progress.value = 0
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  progress.value = 50
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  progress.value = 100
-  isUploading.value = false
-  isUploaded.value = true
+  const { default: COS } = (await import('cos-js-sdk-v5'))
+  return $fetch('/api/post/getUploadCredentials', {
+    method: 'POST',
+    body: {
+      fileSize: props.file.size,
+      fileType: props.file.type,
+    }
+  }).then(res => {
+    uploadKey.value = res.data.fileName
+    return new COS({
+      SecretId: res.data.credential.credentials.tmpSecretId,
+      SecretKey: res.data.credential.credentials.tmpSecretKey,
+      SecurityToken: res.data.credential.credentials.sessionToken,
+      StartTime: res.data.credential.startTime,
+      ExpiredTime: res.data.credential.expiredTime,
+    })
+  }).then(cos => {
+    isUploading.value = true
+    return cos.putObject({
+      Bucket: 'rearyard-next-1255681256',
+      Region: 'ap-guangzhou',
+      Key: uploadKey.value,
+      Body: props.file,
+      onProgress: (progressData) => {
+        progress.value = progressData.percent * 100
+      },
+    }).then(res => {
+      isUploading.value = false
+      isUploaded.value = true
+      cosUrl.value = `https:// ${res.Location}`
+    }).catch(err => {
+      isUploading.value = false
+      isError.value = true
+    })
+  })
 }
 
 onMounted(() => {

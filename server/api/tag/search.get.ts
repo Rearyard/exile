@@ -2,8 +2,8 @@ import { z } from "zod/v4";
 
 const searchSchema = z.object({
     query: z.string().min(1).transform((val) => val.trim()),
-    page: z.number().min(1).default(1),
-    limit: z.number().min(1).max(100).default(10),
+    offset: z.preprocess((val) => Number(val), z.number().min(0).default(0)),
+    limit: z.preprocess((val) => Number(val), z.number().min(1).max(100).default(10)),
 })
 
 
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
         created_at: string;
         updated_at: string;
     }>(query.query, {
-        page: query.page,
+        offset: query.offset,
         limit: query.limit,
         attributesToSearchOn: ['name'],
         attributesToHighlight: ['name'],
@@ -33,6 +33,7 @@ export default defineEventHandler(async (event) => {
                     _formatted: {
                         ...hit._formatted,
                         id: encodeSqid([hit.id]),
+                        rawName: hit.name,
                     }
                 }
             }),

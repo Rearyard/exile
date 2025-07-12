@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+useSeoMeta({
+  title: 'Rearyard - Home',
+  description: 'Home',
+})
+
 const data = {
   nav: [
     { name: 'Notifications', icon: 'Bell' },
